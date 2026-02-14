@@ -17,14 +17,14 @@ import java.time.format.DateTimeFormatter
 
 object SampleSupabaseManager {
 
-    val context = App.instance
-    val supabase = createSupabaseClient(
-        supabaseUrl = SupabaseInitial.URL,
-        supabaseKey = SupabaseInitial.ANON_KEY
-    ) {
-        install(Auth)
-        install(Postgrest)
-    }
+//    val context = App.instance
+//    val supabase = createSupabaseClient(
+//        supabaseUrl = SupabaseInitial.URL,
+//        supabaseKey = SupabaseInitial.ANON_KEY
+//    ) {
+//        install(Auth)
+//        install(Postgrest)
+//    }
 //    val userId = MutableStateFlow<String>("")
 //    var userInfoState = MutableStateFlow<Users?>(null)
 //    val recommendQuestList = MutableStateFlow<List<RecommendQuest>>(listOf())

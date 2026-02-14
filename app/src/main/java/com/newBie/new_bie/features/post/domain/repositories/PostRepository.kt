@@ -8,20 +8,20 @@ import com.newBie.new_bie.features.post.domain.entities.SearchResultEntity
 import com.newBie.new_bie.features.post.domain.entities.UserEntity
 
 interface PostRepository {
-    suspend fun fetchPosts(orderBy : String, currentIndex : Int = 1, category : String) : List<PostWithProfileEntity>
+    suspend fun fetchPosts(orderBy : String, currentIndex : Int = 1, category : String, perPage: Int = 5) : List<PostWithProfileEntity>
 
-    suspend fun fetchPostItem(id : Int) : PostWithProfileEntity
+    suspend fun fetchPostItem(id : Int) : PostWithProfileEntity?
 
-    suspend fun fetchAuthorProfile(userId : String) : UserEntity
+    suspend fun fetchAuthorProfile(userId : String) : UserEntity?
 
     suspend fun getPostLikeCount(postId : Int) : Int
 
-    suspend fun fetchLikeItem(postId: Int, userId : String) : LikesEntity
+    suspend fun fetchLikeItem(postId: Int, userId : String) : LikesEntity?
 
     suspend fun insertLike(postId : Int, userId : String)
     suspend fun cancelLike(postId : Int, userId : String)
     suspend fun fetchCommentIds(postId : Int) : List<Int>
-    suspend fun fetchCommentItem(id : Int) : CommentWithProfileEntity
+    suspend fun fetchCommentItem(id : Int) : CommentWithProfileEntity?
     suspend fun insertComment(postId : Int, userId : String, content : String)
     suspend fun deleteComment(id : Int)
     suspend fun editComment(commentId : Int, content : String)

@@ -1,8 +1,9 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)
 
-    id("io.realm.kotlin")
+//    id("io.realm.kotlin")
 }
 
 android {
@@ -49,6 +50,8 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.material3)
+    implementation(libs.googleid)
+    implementation(libs.material3)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -70,6 +73,8 @@ dependencies {
     // 컨버터 Json을 Kotlin으로 바꿔주는 컨버터는 모두 바꾸는 것
     //서버에서 들어온 Json 데이터를 안드에서 사용하는 dataClass로 바꿔주는 것
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
+    implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:0.8.0")
     // 통신 라이브러리
     implementation("com.squareup.okhttp3:okhttp:4.9.1")
     // inter = between
@@ -78,6 +83,8 @@ dependencies {
 
     implementation("com.github.bumptech.glide:compose:1.0.0-beta07")
 
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+
     //뷰모델
     // view model
     val lifecycle_version = "2.5.1"
@@ -85,7 +92,7 @@ dependencies {
     // ViewModel utilities for Compose
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycle_version")
 
-    implementation("io.realm.kotlin:library-base:3.0.0")
+//    implementation("io.realm.kotlin:library-base:3.0.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
 
 
@@ -95,6 +102,7 @@ dependencies {
     //supaBase
     implementation(platform("io.github.jan-tennert.supabase:bom:3.2.2"))
     implementation("io.github.jan-tennert.supabase:postgrest-kt")
+    implementation("io.github.jan-tennert.supabase:supabase-kt")
     implementation("io.github.jan-tennert.supabase:auth-kt")
     implementation("io.github.jan-tennert.supabase:realtime-kt")
     implementation("io.ktor:ktor-client-android:3.2.3")
@@ -109,4 +117,17 @@ dependencies {
     //nav
     val nav_version = "2.9.3"
     implementation("androidx.navigation:navigation-compose:$nav_version")
+
+    //구글 로그인
+    implementation("androidx.credentials:credentials:1.6.0-rc01")
+    implementation("androidx.credentials:credentials-play-services-auth:1.6.0-rc01")
+    implementation("com.google.android.libraries.identity.googleid:googleid:<latest version>")
+
+    implementation("androidx.compose.material:material-icons-extended")
+
+    // 인터넷 이미지 띄우기
+    implementation("io.coil-kt:coil-compose:2.7.0")
+
+
+
 }

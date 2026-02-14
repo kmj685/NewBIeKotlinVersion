@@ -1,7 +1,256 @@
 package com.newBie.new_bie.features.post.data.datasource
 
+import android.util.Log
+import com.newBie.new_bie.core.managers.RetrofitManager
 import com.newBie.new_bie.core.managers.SupabaseManager
+import com.newBie.new_bie.core.utils.Constants
+import com.newBie.new_bie.features.post.data.dto.ActionResponse
+import com.newBie.new_bie.features.post.data.dto.CategoryTypeDTO
+import com.newBie.new_bie.features.post.data.dto.InsertPostRequestDTO
+import com.newBie.new_bie.features.post.data.dto.UpdatePostDTO
+import com.newBie.new_bie.features.post.domain.entities.CategoryTypeEntity
+import com.newBie.new_bie.features.post.domain.entities.CommentWithProfileEntity
+import com.newBie.new_bie.features.post.domain.entities.LikesCountEntity
+import com.newBie.new_bie.features.post.domain.entities.LikesEntity
+import com.newBie.new_bie.features.post.domain.entities.PostWithProfileEntity
+import com.newBie.new_bie.features.post.domain.entities.SearchResultEntity
+import com.newBie.new_bie.features.post.domain.entities.UserEntity
+import io.github.jan.supabase.postgrest.from
+import io.github.jan.supabase.postgrest.query.Columns
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
 
 class PostDatasource {
     val _supabase = SupabaseManager.supabase
+    private var _retrofit = RetrofitManager.retrofit
+
+
+    private val api: PostRetrofitInterface =
+        _retrofit.create(PostRetrofitInterface::class.java)
+
+    // 게시글 단건 조회
+    suspend fun fetchPostItem(id: Int): PostWithProfileEntity? {
+        return api.fetchPostItem(id).data
+    }
+
+    // 게시글 리스트 조회
+    suspend fun fetchPosts(
+        range: String,
+        orderBy: String,
+        category: String
+    ): List<PostWithProfileEntity> {
+        val response = api.fetchPosts(range = range, orderBy = orderBy, category = category)
+        Log.d(Constants.TAG, "fetchPosts: ${response}")
+
+
+        if (response == null) {
+            return emptyList()
+        }
+        else {
+            val list = response.data
+            return list as List<PostWithProfileEntity>
+        }
+    }
+
+    // 좋아요 개수
+    suspend fun getPostLikeCount(id: Int): LikesCountEntity? {
+        return api.getPostLikeCount(id).data
+    }
+
+    // 댓글 단건
+    suspend fun fetchCommentItem(id: Int): CommentWithProfileEntity? {
+        return api.fetchCommentItem(id).data
+    }
+
+    // 댓글 리스트
+    suspend fun fetchComments(postId: Int): List<CommentWithProfileEntity> {
+        val response = api.fetchComments(postId).data
+        if (response == null) return emptyList()
+        else return response
+    }
+
+    // 게시글 생성
+    suspend fun insertPost(body: InsertPostRequestDTO): PostWithProfileEntity? {
+        return api.insertPost(body).data
+    }
+
+    // 게시글 삭제
+    suspend fun deletePost(id: Int): ActionResponse {
+        return api.deletePost(id)
+    }
+
+    // 게시글 수정
+    suspend fun updatePost(
+        id: Int,
+        body: UpdatePostDTO
+    ): ActionResponse {
+        return api.updatePost(id, body)
+    }
+
+    // 검색
+    suspend fun searchAll(
+        range: String,
+        keyword: String,
+        type: String
+    ): SearchResultEntity {
+        return api.searchAll(
+            range = range,
+            keyword = keyword,
+            type = type
+        )
+    }
+
+    // 특정 유저 게시글
+    suspend fun fetchUserPosts(
+        range: String,
+        userId: String
+    ): List<PostWithProfileEntity> {
+        val response = api.fetchUserPosts(range = range, userId = userId).data
+        if (response == null) return emptyList()
+        else return response
+    }
+
+    suspend fun getCategoryList() :List<String> {
+        val response = _supabase.from("category_type").select(columns = Columns.list("type_title")).decodeList<CategoryTypeDTO>()
+        Log.d(Constants.TAG, "getCategoryList: ${response}")
+        return response.map { it.typeTitle }
+        }
+
+    // ✅ 카테고리 리스트
+    suspend fun getCategoryTypeList(): List<CategoryTypeEntity> {
+
+        val result = _supabase
+            .from("category_type")
+            .select()
+            .decodeList<CategoryTypeEntity>()
+
+        return result.ifEmpty { emptyList() }
+    }
+
+    // ✅ 작성자 프로필 조회
+    suspend fun fetchAuthorProfile(userId: String): UserEntity {
+
+        val result = _supabase
+            .from("users")
+            .select()
+            {
+                filter{
+                    eq("id", userId)
+                }
+            }
+            .decodeList<UserEntity>()
+
+        return result.first()
+    }
+
+    // ✅ 좋아요 단건 조회
+    suspend fun fetchLikeItem(
+        postId: Int,
+        userId: String
+    ): LikesEntity? {
+
+        val result = _supabase
+            .from("likes")
+            .select()
+            {
+                filter{
+                    eq("user_id", userId)
+                    eq("post_id", postId)
+                }
+            }
+            .decodeList<LikesEntity>()
+
+        return result.firstOrNull()
+    }
+
+    // ✅ 좋아요 추가
+    suspend fun insertLike(
+        postId: Int,
+        userId: String
+    ) {
+        _supabase
+            .from("likes")
+            .insert(
+                buildJsonObject {
+                    put("post_id", postId)
+                    put("user_id", userId)
+                }
+            )
+    }
+
+    // ✅ 좋아요 취소
+    suspend fun cancelLike(
+        postId: Int,
+        userId: String
+    ) {
+        _supabase
+            .from("likes")
+            .delete {
+                filter{
+                    eq("post_id", postId)
+                    eq("user_id", userId)
+                }
+            }
+    }
+
+    // ✅ 댓글 ID 목록
+    suspend fun fetchCommentIds(postId: Int): List<Int> {
+
+        val result = _supabase
+            .from("comments")
+            .select(columns = Columns.list("id")) {
+                filter{
+                    eq("post_id", postId)
+                }
+            }
+            .decodeList<Map<String, Int>>()
+
+        return result.map { it["id"] ?: 0 }
+    }
+
+    // ✅ 댓글 작성
+    suspend fun insertComment(
+        postId: Int,
+        userId: String,
+        content: String
+    ) {
+        _supabase
+            .from("comments")
+            .insert(
+                buildJsonObject {
+                    put("post_id", postId)
+                    put("author_id", userId)
+                    put("content", content)
+                }
+            )
+    }
+
+    // ✅ 댓글 삭제
+    suspend fun deleteComment(id: Int) {
+        _supabase
+            .from("comments")
+            .delete {
+                filter{
+                    eq("id", id)
+                }
+            }
+    }
+
+    // ✅ 댓글 수정
+    suspend fun editComment(
+        commentId: Int,
+        content: String
+    ) {
+        _supabase
+            .from("comments")
+            .update(
+                buildJsonObject {
+                    put("content", content)
+                }
+            ) {
+                filter{
+                    eq("id", commentId)
+                }
+            }
+    }
 }

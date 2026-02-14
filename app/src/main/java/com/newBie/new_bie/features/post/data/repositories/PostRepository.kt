@@ -1,5 +1,11 @@
 package com.newBie.new_bie.features.post.data.repositories
 
+import android.util.Log
+import com.newBie.new_bie.core.utils.Constants
+import com.newBie.new_bie.core.utils.getRange
+import com.newBie.new_bie.features.post.data.datasource.PostDatasource
+import com.newBie.new_bie.features.post.data.dto.InsertPostRequestDTO
+import com.newBie.new_bie.features.post.data.dto.UpdatePostDTO
 import com.newBie.new_bie.features.post.domain.entities.CategoryTypeEntity
 import com.newBie.new_bie.features.post.domain.entities.CommentWithProfileEntity
 import com.newBie.new_bie.features.post.domain.entities.LikesEntity
@@ -9,20 +15,26 @@ import com.newBie.new_bie.features.post.domain.entities.UserEntity
 import com.newBie.new_bie.features.post.domain.repositories.PostRepository
 
 class PostRepositoryImpl : PostRepository {
+    val datasource = PostDatasource()
+
     override suspend fun fetchPosts(
         orderBy: String,
         currentIndex: Int,
-        category: String
+        category: String,
+        perPage: Int
     ): List<PostWithProfileEntity> {
-        return emptyList()
+
+        val range = getRange(currentIndex, perPage)
+
+        return datasource.fetchPosts(orderBy = orderBy, category = category, range = range)
     }
 
-    override suspend fun fetchPostItem(id: Int): PostWithProfileEntity {
-        TODO("Not yet implemented")
+    override suspend fun fetchPostItem(id: Int): PostWithProfileEntity? {
+        return datasource.fetchPostItem(id)
     }
 
-    override suspend fun fetchAuthorProfile(userId: String): UserEntity {
-        TODO("Not yet implemented")
+    override suspend fun fetchAuthorProfile(userId: String): UserEntity? {
+        return datasource.fetchAuthorProfile(userId)
     }
 
     override suspend fun getPostLikeCount(postId: Int): Int {
@@ -32,8 +44,8 @@ class PostRepositoryImpl : PostRepository {
     override suspend fun fetchLikeItem(
         postId: Int,
         userId: String
-    ): LikesEntity {
-        TODO("Not yet implemented")
+    ): LikesEntity? {
+        return fetchLikeItem(postId, userId)
     }
 
     override suspend fun insertLike(postId: Int, userId: String) {
@@ -48,8 +60,8 @@ class PostRepositoryImpl : PostRepository {
         return emptyList()
     }
 
-    override suspend fun fetchCommentItem(id: Int): CommentWithProfileEntity {
-        TODO("Not yet implemented")
+    override suspend fun fetchCommentItem(id: Int): CommentWithProfileEntity? {
+        return datasource.fetchCommentItem(id)
     }
 
     override suspend fun insertComment(
@@ -57,15 +69,15 @@ class PostRepositoryImpl : PostRepository {
         userId: String,
         content: String
     ) {
-        return
+        datasource.insertComment(postId,userId, content)
     }
 
     override suspend fun deleteComment(id: Int) {
-        return
+        datasource.deleteComment(id)
     }
 
     override suspend fun editComment(commentId: Int, content: String) {
-        return
+        datasource.editComment(commentId, content)
     }
 
     override suspend fun insertPost(
@@ -75,15 +87,16 @@ class PostRepositoryImpl : PostRepository {
         images: List<String>,
         categories: List<Int>
     ) {
-        return
+        datasource.insertPost(InsertPostRequestDTO(author_id = userId,title = title, content =content,images = images,categories =categories))
     }
 
     override suspend fun getCategoryList(): List<String> {
-        return emptyList()
+        Log.d(Constants.TAG, "리포지토리 getCategoryList() ")
+        return datasource.getCategoryList()
     }
 
     override suspend fun getCategoryTypeList(): List<CategoryTypeEntity> {
-        return emptyList()
+        return datasource.getCategoryTypeList()
     }
 
     override suspend fun updatePost(
@@ -93,7 +106,7 @@ class PostRepositoryImpl : PostRepository {
         images: List<String>,
         categories: List<Int>
     ) {
-        return
+        datasource.updatePost(postId, UpdatePostDTO(title = title, content = content, images = images, categories = categories))
     }
 
     override suspend fun searchAll(
@@ -102,14 +115,15 @@ class PostRepositoryImpl : PostRepository {
         currentIndex: Int,
         perPage: Int
     ): SearchResultEntity {
-        TODO("Not yet implemented")
+        val range : String = getRange(currentIndex,perPage)
+        return datasource.searchAll(range,keyword,type)
     }
 
     override suspend fun deletePost(postId: Int) {
-        return
+        datasource.deletePost(postId)
     }
 
     override suspend fun fetchComments(postId: Int): List<CommentWithProfileEntity> {
-        return emptyList()
+        return datasource.fetchComments(postId)
     }
 }
