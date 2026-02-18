@@ -50,7 +50,7 @@ object Routes {
 
 
 enum class PageSet {
-    HOME, PROFILE
+    HOME, PROFILE, ADD_POST
 }
 
 enum class PageType{

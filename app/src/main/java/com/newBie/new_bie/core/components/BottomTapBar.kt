@@ -21,10 +21,11 @@ fun BottomTapBar(navController: NavController, pageSet: PageSet) {
     Row(horizontalArrangement = Arrangement.SpaceAround,
         modifier = Modifier
             .fillMaxWidth()
-            .background(color = Color(0xffE8DFCA))
+//            .background(color = Color(0xffE8DFCA))
             .padding(10.dp)
     ) {
-        AppBarButton(PageSet.HOME, "해빗",checkPageSet(PageSet.HOME, pageSet), navController)
-        AppBarButton(PageSet.PROFILE, "기록",checkPageSet(PageSet.PROFILE, pageSet), navController)
+        AppBarButton(PageSet.HOME, "",checkPageSet(PageSet.HOME, pageSet), navController)
+        AppBarButton(PageSet.ADD_POST, "",checkPageSet(PageSet.ADD_POST, pageSet), navController)
+        AppBarButton(PageSet.PROFILE, "",checkPageSet(PageSet.PROFILE, pageSet), navController)
     }
 }

@@ -7,6 +7,7 @@ import com.newBie.new_bie.features.post.data.datasource.PostDatasource
 import com.newBie.new_bie.features.post.data.dto.InsertPostRequestDTO
 import com.newBie.new_bie.features.post.data.dto.UpdatePostDTO
 import com.newBie.new_bie.features.post.domain.entities.CategoryTypeEntity
+import com.newBie.new_bie.features.post.domain.entities.CategoryTypeEntityWithSupabase
 import com.newBie.new_bie.features.post.domain.entities.CommentWithProfileEntity
 import com.newBie.new_bie.features.post.domain.entities.LikesEntity
 import com.newBie.new_bie.features.post.domain.entities.PostWithProfileEntity
@@ -95,7 +96,7 @@ class PostRepositoryImpl : PostRepository {
         return datasource.getCategoryList()
     }
 
-    override suspend fun getCategoryTypeList(): List<CategoryTypeEntity> {
+    override suspend fun getCategoryTypeList(): List<CategoryTypeEntityWithSupabase> {
         return datasource.getCategoryTypeList()
     }
 

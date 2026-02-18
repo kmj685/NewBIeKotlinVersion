@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material3.Icon
@@ -28,6 +29,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.newBie.new_bie.core.utils.PageSet
 import com.newBie.new_bie.core.utils.Routes
+import com.newBie.new_bie.ui.theme.BlackColor
+import com.newBie.new_bie.ui.theme.OrangeColor
 import kotlinx.coroutines.launch
 
 @Composable
@@ -36,6 +39,7 @@ fun AppBarButton(pageSet: PageSet, title : String,
                  navController: NavController ) {
     val icon = when (pageSet) {
         PageSet.HOME -> Icons.Default.Home
+        PageSet.ADD_POST -> Icons.Default.Add
         PageSet.PROFILE -> Icons.Default.List
     }
 
@@ -55,18 +59,27 @@ fun AppBarButton(pageSet: PageSet, title : String,
 //        PageSet.RECORD -> {navController.navigate("questRecord")}
 //        PageSet.QUEST -> {navController.navigate("main")}
 //    }
-    val iconColor = if (isSelected) Color(0xffF5EFE6) else Color.DarkGray
-    val buttonBGColor = if (isSelected) Color(0xff6D94C5) else Color(0xffF5EFE6)
+    val iconColor = if (isSelected) OrangeColor else Color.White
+//    val buttonBGColor = if (isSelected) Color(0xff6D94C5) else Color(0xffF5EFE6)
+    val buttonBGColor = BlackColor
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
-            .width(70.dp)
-            .clip(RoundedCornerShape(20.dp))
             .background(color = buttonBGColor)
             .clickable(enabled = !isSelected, onClick = {
                 when (pageSet) {
                     PageSet.HOME -> {
                         navController.navigate(Routes.HOME){
+                            // 기존 화면 스택들 모두 날리기
+                            popUpTo(navController.graph.startDestinationId) {
+                                inclusive = true
+                            }
+                            // 화면 하나만 나오게 처리
+                            launchSingleTop = true
+                        }
+                    }
+                    PageSet.ADD_POST -> {
+                        navController.navigate(Routes.ADD){
                             // 기존 화면 스택들 모두 날리기
                             popUpTo(navController.graph.startDestinationId) {
                                 inclusive = true
@@ -90,6 +103,6 @@ fun AppBarButton(pageSet: PageSet, title : String,
             .padding(10.dp)
     ) {
         Icon(icon, contentDescription = null,tint = iconColor)
-        Text(title, color = iconColor, fontWeight = FontWeight.Bold, )
+//        Text(title, color = iconColor, fontWeight = FontWeight.Bold, )
     }
 }

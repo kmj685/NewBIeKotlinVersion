@@ -9,3 +9,8 @@ data class CategoryTypeEntity(
     val id: Int,
     @SerializedName("type_title") val typeTitle: String
 )
+@Serializable
+data class CategoryTypeEntityWithSupabase(
+    val id: Int,
+    @SerialName("type_title") val typeTitle: String
+)

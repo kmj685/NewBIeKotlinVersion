@@ -1,0 +1,31 @@
+package com.newBie.new_bie.features.post.presentation.components.buttons
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.newBie.new_bie.features.post.domain.entities.CategoryTypeEntityWithSupabase
+import com.newBie.new_bie.ui.theme.BlackColor
+import com.newBie.new_bie.ui.theme.OrangeColor
+
+@Composable
+fun SelectedCategoryBtn(category: CategoryTypeEntityWithSupabase, onClick : (CategoryTypeEntityWithSupabase) -> Unit = {}) {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
+            .clip(RoundedCornerShape(10))
+            .background(OrangeColor)
+            .clickable(onClick = {onClick.invoke(category)})
+            .padding(16.dp)
+    ) {
+        Text(category.typeTitle, color = BlackColor, fontSize = 12.sp)
+    }
+}

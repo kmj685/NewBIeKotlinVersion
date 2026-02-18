@@ -9,6 +9,7 @@ import com.newBie.new_bie.features.post.data.dto.CategoryTypeDTO
 import com.newBie.new_bie.features.post.data.dto.InsertPostRequestDTO
 import com.newBie.new_bie.features.post.data.dto.UpdatePostDTO
 import com.newBie.new_bie.features.post.domain.entities.CategoryTypeEntity
+import com.newBie.new_bie.features.post.domain.entities.CategoryTypeEntityWithSupabase
 import com.newBie.new_bie.features.post.domain.entities.CommentWithProfileEntity
 import com.newBie.new_bie.features.post.domain.entities.LikesCountEntity
 import com.newBie.new_bie.features.post.domain.entities.LikesEntity
@@ -117,12 +118,12 @@ class PostDatasource {
         }
 
     // ✅ 카테고리 리스트
-    suspend fun getCategoryTypeList(): List<CategoryTypeEntity> {
+    suspend fun getCategoryTypeList(): List<CategoryTypeEntityWithSupabase> {
 
         val result = _supabase
             .from("category_type")
             .select()
-            .decodeList<CategoryTypeEntity>()
+            .decodeList<CategoryTypeEntityWithSupabase>()
 
         return result.ifEmpty { emptyList() }
     }

@@ -10,6 +10,7 @@ import androidx.navigation.navArgument
 import com.newBie.new_bie.core.utils.Routes
 import com.newBie.new_bie.features.auth.presentation.screens.LoginScreen
 import com.newBie.new_bie.features.post.presentation.screens.HomeScreen
+import com.newBie.new_bie.features.post.presentation.screens.PostAddScreen
 import com.newBie.new_bie.features.post.presentation.screens.SearchScreen
 
 @Composable
@@ -106,7 +107,7 @@ fun AppNavHost(modifier : Modifier, navController: NavHostController) {
         }
 
         composable(Routes.ADD) {
-            /* PostAddScreen() */
+            PostAddScreen(navController = navController)
         }
 
         composable(Routes.JOURNAL) {
