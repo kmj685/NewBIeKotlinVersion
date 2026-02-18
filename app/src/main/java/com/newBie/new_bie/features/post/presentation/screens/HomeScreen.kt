@@ -17,6 +17,8 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.magnifier
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CircularProgressIndicator
@@ -27,6 +29,7 @@ import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MenuItemColors
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
@@ -45,12 +48,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.newBie.new_bie.core.components.BottomTapBar
 import com.newBie.new_bie.core.utils.OrderByType
 import com.newBie.new_bie.core.utils.PageSet
+import com.newBie.new_bie.core.utils.Routes
 import com.newBie.new_bie.features.post.domain.entities.PostWithProfileEntity
 import com.newBie.new_bie.features.post.presentation.components.PostItem
 import com.newBie.new_bie.features.post.presentation.components.buttons.CategoryButton
@@ -102,13 +107,36 @@ fun HomeScreen(modifier: Modifier = Modifier, navController: NavController, view
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth()
-                .clip(RoundedCornerShape(8)),
+                .clip(RoundedCornerShape(10))
+                .background(color = Color(0xffF2F2F7FF), shape = RoundedCornerShape(10)),
             value = userInput,
             onValueChange = {userInput = it},
-            supportingText = {Text("검색어를 입력하세요")},
-            trailingIcon = { Icon(Icons.Default.Search, modifier = Modifier
-                .size(20.dp)
-                .clickable(onClick = {}), contentDescription = null, tint = BlackColor) }
+            placeholder = {Text("검색어를 입력하세요")},
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+            keyboardActions = KeyboardActions(
+                onSearch = {
+                    if (userInput.isNotBlank()) {
+                        // 검색 화면으로 이동 (작성하신 NavHost 경로 기준)
+                        navController.navigate("${Routes.HOME}/${Routes.SEARCH}")
+                    }
+                }
+            ),
+//            colors = OutlinedTextFieldDefaults.colors(),
+            trailingIcon = {
+                Icon(
+                    Icons.Default.Search,
+                    modifier = Modifier
+                        .size(20.dp)
+                        .clickable(onClick = {
+                            if (userInput.isNotBlank()) {
+                                // 2. 돋보기 아이콘 클릭 시 이동
+                                navController.navigate("${Routes.HOME}/${Routes.SEARCH}?query=$userInput")
+                            }
+                        }),
+                    contentDescription = null,
+                    tint = BlackColor
+                )
+            }
         )
         Spacer(modifier = Modifier.height(12.dp))
         LazyRow() {

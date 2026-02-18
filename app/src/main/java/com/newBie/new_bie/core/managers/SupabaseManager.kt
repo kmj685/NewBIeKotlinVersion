@@ -1,5 +1,6 @@
 package com.newBie.new_bie.core.managers
 
+import android.app.Activity
 import android.content.Context
 import androidx.credentials.CredentialManager
 import androidx.credentials.GetCredentialRequest
@@ -20,12 +21,6 @@ import java.util.UUID
 object SupabaseManager {
     val context = App.instance
 
-    private lateinit var credentialManager: CredentialManager
-
-    fun init(context: Context) {
-        credentialManager = CredentialManager.create(context)
-    }
-
 
 
     val supabase = createSupabaseClient(
@@ -38,7 +33,9 @@ object SupabaseManager {
 
 
 
-    suspend fun googleSignIn() {
+    suspend fun googleSignIn(activity: Activity) {
+        val credentialManager = CredentialManager.create(activity)
+
         val rawNonce = UUID.randomUUID().toString()
         val hashedNonce = MessageDigest.getInstance("SHA-256")
             .digest(rawNonce.toByteArray())
@@ -56,7 +53,7 @@ object SupabaseManager {
 
         val result = credentialManager.getCredential(
             request = request,
-            context = context
+            context = activity
         )
 
         val googleCredential =

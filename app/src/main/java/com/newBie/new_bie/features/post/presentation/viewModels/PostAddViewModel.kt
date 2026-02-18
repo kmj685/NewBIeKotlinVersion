@@ -1,4 +1,6 @@
 package com.newBie.new_bie.features.post.presentation.viewModels
 
-class PostAddViewModel {
+import androidx.lifecycle.ViewModel
+
+class PostAddViewModel : ViewModel() {
 }

@@ -13,6 +13,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.newBie.new_bie.core.NavHost.AppNavHost
 import com.newBie.new_bie.core.managers.SupabaseManager.supabase
+import com.newBie.new_bie.core.utils.Routes
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.auth.status.SessionStatus
 
@@ -29,11 +30,18 @@ fun MainScreen(modifier: Modifier = Modifier) {
             when(it) {
                 is SessionStatus.Authenticated -> {
 
-//                    it.session.user?.id?.let {
-////                        SupabaseManager.fetchUser(it)
-////                        val userNickname = SupabaseManager.userInfoState.value?.nickName
-////                        if(userNickname == null) navController.navigate("setNickName")
-////                        val questSet = SupabaseManager.fetchQuestSet(it)
+
+                    it.session.user?.id?.let {
+                        navController.navigate(Routes.HOME) {
+                            popUpTo(navController.graph.startDestinationId) {
+                                inclusive = true
+                            }
+                            launchSingleTop = true
+                        }
+//                        SupabaseManager.fetchUser(it)
+//                        val userNickname = SupabaseManager.userInfoState.value?.nickName
+//                        if(userNickname == null) navController.navigate("setNickName")
+//                        val questSet = SupabaseManager.fetchQuestSet(it)
 //                        if (questSet == null) {
 //                            navController.navigate("setNickName"){
 //                                // 기존 화면 스택들 모두 날리기
@@ -67,7 +75,8 @@ fun MainScreen(modifier: Modifier = Modifier) {
 //                                launchSingleTop = true
 //                            }
 //                        }
-//                    }
+
+                    }
 //                    it.session.user?.id?.let { blockedUserId ->
 //                        val fetchedUser = SupabaseManager.fetchUser(blockedUserId)
 //                        if (fetchedUser.isBanned) {

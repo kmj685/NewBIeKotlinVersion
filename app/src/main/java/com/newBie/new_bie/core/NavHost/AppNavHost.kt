@@ -8,7 +8,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.newBie.new_bie.core.utils.Routes
+import com.newBie.new_bie.features.auth.presentation.screens.LoginScreen
 import com.newBie.new_bie.features.post.presentation.screens.HomeScreen
+import com.newBie.new_bie.features.post.presentation.screens.SearchScreen
 
 @Composable
 fun AppNavHost(modifier : Modifier, navController: NavHostController) {
@@ -16,7 +18,7 @@ fun AppNavHost(modifier : Modifier, navController: NavHostController) {
     NavHost(
         modifier = modifier,
         navController = navController,
-        startDestination = Routes.HOME
+        startDestination = Routes.LOGIN
     ) {
 
         composable(Routes.SPLASH) {
@@ -24,7 +26,7 @@ fun AppNavHost(modifier : Modifier, navController: NavHostController) {
         }
 
         composable(Routes.LOGIN) {
-            /* LoginScreen() */
+            LoginScreen(navController=navController)
         }
 
         composable(Routes.DELETED_USER) {
@@ -90,8 +92,17 @@ fun AppNavHost(modifier : Modifier, navController: NavHostController) {
             HomeScreen(navController = navController)
         }
 
-        composable("${Routes.HOME}/${Routes.SEARCH}") {
-            /* SearchResultScreen() */
+        composable("${Routes.HOME}/${Routes.SEARCH}?query={query}",
+            arguments = listOf(
+                navArgument("query") {
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = ""
+                }
+            )
+            ) { backStackEntry ->
+            val query = backStackEntry.arguments?.getString("query") ?: ""
+            SearchScreen(navController = navController, initialQuery = query)
         }
 
         composable(Routes.ADD) {

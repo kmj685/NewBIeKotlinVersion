@@ -128,6 +128,7 @@ dependencies {
     // 인터넷 이미지 띄우기
     implementation("io.coil-kt:coil-compose:2.7.0")
 
+    implementation("com.cloudinary:kotlin-url-gen:1.7.0")
 
 
 }

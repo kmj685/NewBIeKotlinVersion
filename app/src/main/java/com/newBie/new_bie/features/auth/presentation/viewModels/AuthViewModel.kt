@@ -1,8 +1,12 @@
 package com.newBie.new_bie.features.auth.presentation.viewModels
 
+import android.app.Activity
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.newBie.new_bie.App
 import com.newBie.new_bie.core.managers.SupabaseManager
+import com.newBie.new_bie.core.utils.Constants
 import com.newBie.new_bie.features.auth.presentation.states.AuthState
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.auth.status.SessionSource
@@ -15,7 +19,7 @@ import kotlinx.coroutines.launch
 class AuthViewModel : ViewModel() {
     private val _authState = MutableStateFlow<AuthState>(AuthState.Initializing)
     val authState: StateFlow<AuthState> = _authState
-
+    val context = App.instance
     init {
 //        observeSession()
     }
@@ -45,12 +49,13 @@ class AuthViewModel : ViewModel() {
     }
 
 
-    fun signInWithGoogle() {
+    fun signInWithGoogle(activity: Activity) {
         viewModelScope.launch {
             try {
-                SupabaseManager.googleSignIn()
+                SupabaseManager.googleSignIn(activity)
             } catch (e: Exception) {
                 // 에러 처리
+                Log.d(Constants.TAG, "signInWithGoogle/ 에러 : ${e}")
             }
         }
     }
