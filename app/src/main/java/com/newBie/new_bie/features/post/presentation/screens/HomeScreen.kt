@@ -1,5 +1,7 @@
 package com.newBie.new_bie.features.post.presentation.screens
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -70,6 +72,7 @@ import kotlin.collections.emptyList
 
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(modifier: Modifier = Modifier, navController: NavController, viewModel : HomeViewModel = viewModel<HomeViewModel>()) {

@@ -11,6 +11,7 @@ import com.newBie.new_bie.features.post.data.repositories.PostRepositoryImpl
 import com.newBie.new_bie.features.post.domain.entities.PostWithProfileEntity
 import com.newBie.new_bie.features.post.domain.repositories.PostRepository
 import io.github.jan.supabase.auth.auth
+import io.github.jan.supabase.postgrest.exception.PostgrestRestException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -186,8 +187,13 @@ class HomeViewModel : ViewModel() {
 
                     try {
                         repository.insertLike(postId, userId)
-                    } catch (e: Exception) {
+                        Log.d(Constants.TAG, "likeToggle 좋아요 시도")
+                    } catch (e: PostgrestRestException) {
+                        Log.d(Constants.TAG, "likeToggle 좋아요 실패  : ${e}")
                         // 롤백
+                        if (e.code =="23505") {
+                            repository.cancelLike(postId, userId)
+                        }
                         currentList[index] =
                             target.copy(
                                 isLiked = false,
@@ -207,7 +213,9 @@ class HomeViewModel : ViewModel() {
 
                     try {
                         repository.cancelLike(postId, userId)
+                        Log.d(Constants.TAG, "likeToggle 좋아요 취소 시도")
                     } catch (e: Exception) {
+                        Log.d(Constants.TAG, "likeToggle 좋아요 취소 실패  : ${e}")
                         // 롤백
                         currentList[index] =
                             target.copy(

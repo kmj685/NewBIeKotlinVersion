@@ -1,5 +1,7 @@
 package com.newBie.new_bie.features.post.presentation.components
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -33,11 +35,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.newBie.new_bie.core.managers.SupabaseManager
+import com.newBie.new_bie.core.utils.toKoreaLocalDateTime
+import com.newBie.new_bie.core.utils.toTimeAgo
 import com.newBie.new_bie.features.post.domain.entities.PostWithProfileEntity
 import com.newBie.new_bie.ui.theme.GreedColor
 import com.newBie.new_bie.ui.theme.OrangeColor
 import io.github.jan.supabase.auth.auth
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun PostItem(post : PostWithProfileEntity, onDelete : () -> Unit, onLike : () -> Unit, onClick : (Int) -> Unit = {}) {
 
@@ -58,7 +63,7 @@ fun PostItem(post : PostWithProfileEntity, onDelete : () -> Unit, onLike : () ->
                     .weight(1f),
                 imageUrl = post.user?.profileImage,
                 nickName = post.user?.nickName ?: "",
-                introduce = post.createdAt,
+                introduce = post.createdAt.toKoreaLocalDateTime().toTimeAgo(),
                 onImageClick = {},
                 userId = post.user?.id
                 )

@@ -3,6 +3,7 @@ package com.newBie.new_bie.features.post.data.datasource
 import android.util.Log
 import com.newBie.new_bie.core.managers.RetrofitManager
 import com.newBie.new_bie.core.managers.SupabaseManager
+//import com.newBie.new_bie.core.managers.SupabaseManager.supabase
 import com.newBie.new_bie.core.utils.Constants
 import com.newBie.new_bie.features.post.data.dto.ActionResponse
 import com.newBie.new_bie.features.post.data.dto.CategoryTypeDTO
@@ -16,6 +17,7 @@ import com.newBie.new_bie.features.post.domain.entities.LikesEntity
 import com.newBie.new_bie.features.post.domain.entities.PostWithProfileEntity
 import com.newBie.new_bie.features.post.domain.entities.SearchResultEntity
 import com.newBie.new_bie.features.post.domain.entities.UserEntity
+import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.query.Columns
 import kotlinx.serialization.json.buildJsonObject
@@ -25,6 +27,13 @@ class PostDatasource {
     val _supabase = SupabaseManager.supabase
     private var _retrofit = RetrofitManager.retrofit
 
+
+    fun getAuthorizationKey() : String {
+        val session = SupabaseManager.supabase.auth.currentSessionOrNull()
+        val accessToken = session?.accessToken
+        if (accessToken != null) return "Bearer: ${accessToken}"
+        else return "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5ZmdmaWNjZWpqZ3R2cG10a3p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIwNTUwNjksImV4cCI6MjA3NzYzMTA2OX0.Ng9atODZnfRocZPtnIb74s6PLeIJ2HqqSaatj1HbRsc"
+    }
 
     private val api: PostRetrofitInterface =
         _retrofit.create(PostRetrofitInterface::class.java)
@@ -40,6 +49,7 @@ class PostDatasource {
         orderBy: String,
         category: String
     ): List<PostWithProfileEntity> {
+        Log.d(Constants.TAG, "fetchPosts: accessToken : ${getAuthorizationKey()}")
         val response = api.fetchPosts(range = range, orderBy = orderBy, category = category)
         Log.d(Constants.TAG, "fetchPosts: ${response}")
 
@@ -55,29 +65,29 @@ class PostDatasource {
 
     // 좋아요 개수
     suspend fun getPostLikeCount(id: Int): LikesCountEntity? {
-        return api.getPostLikeCount(id).data
+        return api.getPostLikeCount(id = id).data
     }
 
     // 댓글 단건
     suspend fun fetchCommentItem(id: Int): CommentWithProfileEntity? {
-        return api.fetchCommentItem(id).data
+        return api.fetchCommentItem(id = id).data
     }
 
     // 댓글 리스트
     suspend fun fetchComments(postId: Int): List<CommentWithProfileEntity> {
-        val response = api.fetchComments(postId).data
+        val response = api.fetchComments(postId=postId).data
         if (response == null) return emptyList()
         else return response
     }
 
     // 게시글 생성
     suspend fun insertPost(body: InsertPostRequestDTO): PostWithProfileEntity? {
-        return api.insertPost(body).data
+        return api.insertPost(body = body).data
     }
 
     // 게시글 삭제
     suspend fun deletePost(id: Int): ActionResponse {
-        return api.deletePost(id)
+        return api.deletePost(id=id)
     }
 
     // 게시글 수정
@@ -85,7 +95,7 @@ class PostDatasource {
         id: Int,
         body: UpdatePostDTO
     ): ActionResponse {
-        return api.updatePost(id, body)
+        return api.updatePost(id=id, body=body)
     }
 
     // 검색

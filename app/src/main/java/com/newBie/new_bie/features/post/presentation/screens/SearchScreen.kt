@@ -1,5 +1,7 @@
 package com.newBie.new_bie.features.post.presentation.screens
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -52,6 +54,7 @@ import com.newBie.new_bie.features.post.presentation.viewModels.SearchResultView
 import com.newBie.new_bie.ui.theme.OrangeColor
 import kotlinx.coroutines.launch
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun SearchScreen(modifier: Modifier = Modifier, navController: NavController,viewModel: SearchResultViewModel = viewModel<SearchResultViewModel>(), initialQuery: String = "", ) {
 
@@ -150,6 +153,7 @@ fun SearchScreen(modifier: Modifier = Modifier, navController: NavController,vie
 
 // --- 하위 뷰 컴포저블 ---
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun SearchAllView(viewModel: SearchResultViewModel, navController: NavController) {
     val posts by viewModel.posts.collectAsState()
@@ -212,6 +216,7 @@ fun SearchAllView(viewModel: SearchResultViewModel, navController: NavController
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun SearchPostView(viewModel: SearchResultViewModel, navController: NavController) {
     val posts by viewModel.posts.collectAsState()

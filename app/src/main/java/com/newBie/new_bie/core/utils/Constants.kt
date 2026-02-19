@@ -61,8 +61,3 @@ enum class OrderByType{
     NEW_FIRST, OLD_FIRST, LIKES_FIRST
 }
 
-fun getAuthorizationKey() : String {
-    val accessToken = supabase.auth.currentAccessTokenOrNull()
-    if (accessToken != null) return "Bearer: ${accessToken}"
-    else return "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5ZmdmaWNjZWpqZ3R2cG10a3p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIwNTUwNjksImV4cCI6MjA3NzYzMTA2OX0.Ng9atODZnfRocZPtnIb74s6PLeIJ2HqqSaatj1HbRsc"
-}

@@ -50,11 +50,11 @@ class PostRepositoryImpl : PostRepository {
     }
 
     override suspend fun insertLike(postId: Int, userId: String) {
-        return
+        datasource.insertLike(postId, userId)
     }
 
     override suspend fun cancelLike(postId: Int, userId: String) {
-        return
+        datasource.cancelLike(postId, userId)
     }
 
     override suspend fun fetchCommentIds(postId: Int): List<Int> {
