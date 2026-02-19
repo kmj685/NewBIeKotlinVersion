@@ -39,7 +39,7 @@ import com.newBie.new_bie.ui.theme.OrangeColor
 import io.github.jan.supabase.auth.auth
 
 @Composable
-fun PostItem(post : PostWithProfileEntity, onDelete : () -> Unit, onLike : () -> Unit) {
+fun PostItem(post : PostWithProfileEntity, onDelete : () -> Unit, onLike : () -> Unit, onClick : (Int) -> Unit = {}) {
 
     val currentUserId = SupabaseManager.supabase.auth.currentUserOrNull()?.id
     Column(
@@ -48,7 +48,7 @@ fun PostItem(post : PostWithProfileEntity, onDelete : () -> Unit, onLike : () ->
             .fillMaxWidth()
             .background(color = GreedColor)
             .clip(RoundedCornerShape(5))
-            .clickable(onClick = {})
+            .clickable(onClick = {onClick.invoke(post.id)})
     ) {
         Row(
             modifier = Modifier

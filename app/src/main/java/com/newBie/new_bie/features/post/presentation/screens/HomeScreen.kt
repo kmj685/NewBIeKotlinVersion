@@ -229,7 +229,9 @@ fun HomeScreen(modifier: Modifier = Modifier, navController: NavController, view
                         PostItem(
                             post = post,
                             onLike = { viewModel.likeToggle(index, post.id) },
-                            onDelete = { viewModel.deletePost(post.id) })
+                            onDelete = { viewModel.deletePost(post.id) },
+                            onClick = { navController.navigate("${Routes.POST}/${it}") }
+                        )
                     }
 
                 }

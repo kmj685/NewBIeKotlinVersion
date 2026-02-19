@@ -45,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.newBie.new_bie.core.utils.Routes
 import com.newBie.new_bie.features.post.presentation.components.PostItem
 import com.newBie.new_bie.features.post.presentation.components.SmallProfileComponent
 import com.newBie.new_bie.features.post.presentation.viewModels.SearchResultViewModel
@@ -194,7 +195,8 @@ fun SearchAllView(viewModel: SearchResultViewModel, navController: NavController
                     PostItem(
                         post = post,
                         onLike = { viewModel.likeToggle(index, post.id) },
-                        onDelete = { viewModel.deletePost(post.id) }
+                        onDelete = { viewModel.deletePost(post.id) },
+                        onClick = {navController.navigate("${Routes.POST}/${it}")}
                     )
                 }
                 item {
@@ -233,7 +235,8 @@ fun SearchPostView(viewModel: SearchResultViewModel, navController: NavControlle
                 PostItem(
                     post = post,
                     onLike = { viewModel.likeToggle(index, post.id) },
-                    onDelete = { viewModel.deletePost(post.id) }
+                    onDelete = { viewModel.deletePost(post.id) },
+                    onClick = {navController.navigate("${Routes.POST}/${it}")}
                 )
             }
         }

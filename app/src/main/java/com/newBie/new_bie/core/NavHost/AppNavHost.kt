@@ -11,6 +11,7 @@ import com.newBie.new_bie.core.utils.Routes
 import com.newBie.new_bie.features.auth.presentation.screens.LoginScreen
 import com.newBie.new_bie.features.post.presentation.screens.HomeScreen
 import com.newBie.new_bie.features.post.presentation.screens.PostAddScreen
+import com.newBie.new_bie.features.post.presentation.screens.PostDetailScreen
 import com.newBie.new_bie.features.post.presentation.screens.SearchScreen
 
 @Composable
@@ -52,8 +53,9 @@ fun AppNavHost(modifier : Modifier, navController: NavHostController) {
             arguments = listOf(
                 navArgument("id") { type = NavType.IntType }
             )
-        ) {
-            /* PostDetailScreen(id) */
+        ) { backStackEntry ->
+            val id = backStackEntry.arguments?.getInt("id") ?: 0
+            PostDetailScreen(navController = navController, id = id)
         }
 
         composable(
@@ -61,7 +63,8 @@ fun AppNavHost(modifier : Modifier, navController: NavHostController) {
             arguments = listOf(
                 navArgument("id") { type = NavType.IntType }
             )
-        ) {
+        ) { backStackEntry ->
+            val id = backStackEntry.arguments?.getInt("id") ?: 0
             /* PostEditScreen(postId) */
         }
 
