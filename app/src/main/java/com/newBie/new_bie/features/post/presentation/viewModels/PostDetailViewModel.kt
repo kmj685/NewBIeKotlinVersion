@@ -40,27 +40,46 @@ class PostDetailViewModel: ViewModel() {
                 try {
                     post.value?.id?.let {
                         repository.insertLike(it, userId)
-                        post.value?.isLiked = true
-                        post.value?.likesCount++
+                        val targetPost = post.value?.likesCount
+                        post.value.let{
+                            post.value = it?.copy(
+                                isLiked = true,
+                                likesCount = it.likesCount + 1
+                            )
+                        }
+                        Log.d(Constants.TAG, "좋아요 후 isLike 값 : ${post.value?.isLiked}")
                     }
 
                 } catch (e : Exception) {
                     Log.d(Constants.TAG, "좋아요 실패 : ${e}")
-                    post.value?.isLiked = false
-                    post.value?.likesCount--
+                    post.value.let{
+                        post.value = it?.copy(
+                            isLiked = false,
+                            likesCount = it.likesCount - 1
+                        )
+                    }
                 }
             } else {
                 try {
                     post.value?.let {
                         repository.cancelLike(it.id, userId)
-                        post.value?.isLiked = false
-                        post.value?.likesCount--
+                        post.value.let{
+                            post.value = it?.copy(
+                                isLiked = false,
+                                likesCount = it.likesCount - 1
+                            )
+                        }
+                        Log.d(Constants.TAG, "좋아요 취소 후 isLike 값 : ${post.value?.isLiked}")
                     }
 
                 } catch (e : Exception) {
                     Log.d(Constants.TAG, "좋아요 취소 실패 : ${e}")
-                    post.value?.isLiked = true
-                    post.value?.likesCount++
+                    post.value.let{
+                        post.value = it?.copy(
+                            isLiked = true,
+                            likesCount = it.likesCount + 1
+                        )
+                    }
                 }
             }
         }
