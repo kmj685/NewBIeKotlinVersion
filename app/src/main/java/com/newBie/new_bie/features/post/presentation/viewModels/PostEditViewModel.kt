@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.newBie.new_bie.core.utils.Constants
 import com.newBie.new_bie.features.post.data.repositories.PostRepositoryImpl
-import com.newBie.new_bie.features.post.domain.entities.CategoryTypeEntityWithSupabase
+import com.newBie.new_bie.features.post.domain.entities.CategoryTypeEntity
 import com.newBie.new_bie.features.post.domain.repositories.PostRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -14,8 +14,8 @@ class PostEditViewModel : ViewModel() {
     private val repository : PostRepository = PostRepositoryImpl()
     var titleInputTxt: MutableStateFlow<String> = MutableStateFlow("")
     var contentInputTxt: MutableStateFlow<String> = MutableStateFlow("")
-    var categoryList : MutableStateFlow<List<CategoryTypeEntityWithSupabase>> = MutableStateFlow(listOf())
-    var selectCategoryList : MutableStateFlow<List<CategoryTypeEntityWithSupabase>> = MutableStateFlow(listOf())
+    var categoryList : MutableStateFlow<List<CategoryTypeEntity>> = MutableStateFlow(listOf())
+    var selectCategoryList : MutableStateFlow<List<CategoryTypeEntity>> = MutableStateFlow(listOf())
 
     init {
         getCategoryList()
@@ -41,15 +41,15 @@ class PostEditViewModel : ViewModel() {
         }
     }
 
-    fun selectCategory(category : CategoryTypeEntityWithSupabase) {
+    fun selectCategory(category : CategoryTypeEntity) {
         selectCategoryList.value += category
     }
 
-    fun unselectCategory(category : CategoryTypeEntityWithSupabase) {
+    fun unselectCategory(category : CategoryTypeEntity) {
         selectCategoryList.value -= category
     }
 
-    fun toggleCategory(category: CategoryTypeEntityWithSupabase) {
+    fun toggleCategory(category: CategoryTypeEntity) {
         val current = selectCategoryList.value
 
         selectCategoryList.value =

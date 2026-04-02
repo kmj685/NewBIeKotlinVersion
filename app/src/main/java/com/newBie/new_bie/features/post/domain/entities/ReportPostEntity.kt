@@ -3,12 +3,12 @@ package com.newBie.new_bie.features.post.domain.entities
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-@Serializable
+
 data class ReportPostEntity(
     val id: Int,
-    @SerialName("post_id") val postId: Int,
-    @SerialName("reporter_id") val reporterId: String,
+    val postId: Int,
+    val reporterId: String,
     val reason: String,
-    @SerialName("created_at") val createdAt: String,
-    @SerialName("reviewed_at") val reviewedAt: String?
+    val createdAt: String,
+    val reviewedAt: String?
 )

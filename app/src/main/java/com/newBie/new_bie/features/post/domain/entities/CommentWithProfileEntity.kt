@@ -7,11 +7,11 @@ import kotlinx.serialization.Serializable
 
 data class CommentWithProfileEntity(
     val id: Int,
-    @SerializedName("post_id") val postId: Int,
-    @SerializedName("author_id") val authorId: String?,
+    val postId: Int,
+    val authorId: String?,
     var content: String?,
-    @SerializedName("deleted_at") val deletedAt: String?,
-    @SerializedName("created_at") val createdAt: String,
-    @SerializedName("is_block") val isBlock: Boolean,
-    @SerializedName("users") val user: PostUserEntity
+    val deletedAt: String?,
+    val createdAt: String,
+    val isBlock: Boolean,
+    val user: PostUserEntity
 )

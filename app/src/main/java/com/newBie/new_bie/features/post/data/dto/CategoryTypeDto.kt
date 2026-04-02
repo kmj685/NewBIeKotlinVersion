@@ -1,11 +1,13 @@
-package com.newBie.new_bie.features.post.domain.entities
+package com.newBie.new_bie.features.post.data.dto
 
 import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 
-data class CategoryTypeEntity(
+
+data class CategoryTypeDto(
     val id: Int,
+    @SerializedName("type_title")
     val typeTitle: String
 )

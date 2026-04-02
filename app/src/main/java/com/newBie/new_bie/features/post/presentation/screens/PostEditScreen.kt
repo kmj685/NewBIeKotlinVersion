@@ -41,6 +41,7 @@ import com.newBie.new_bie.features.post.presentation.components.buttons.PostEdit
 import com.newBie.new_bie.features.post.presentation.components.buttons.PostUpdateBtn
 import com.newBie.new_bie.features.post.presentation.viewModels.PostEditViewModel
 import com.newBie.new_bie.ui.theme.BlackColor
+import kotlin.collections.isNotEmpty
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

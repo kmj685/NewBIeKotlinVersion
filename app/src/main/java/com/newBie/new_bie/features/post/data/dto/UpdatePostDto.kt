@@ -1,7 +1,6 @@
 package com.newBie.new_bie.features.post.data.dto
 
-data class InsertPostRequestDTO(
-    val author_id: String,
+data class UpdatePostDto(
     val title: String,
     val content: String,
     val images: List<String>,

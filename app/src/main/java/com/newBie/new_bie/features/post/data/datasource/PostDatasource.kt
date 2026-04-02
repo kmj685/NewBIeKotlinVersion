@@ -6,11 +6,16 @@ import com.newBie.new_bie.core.managers.SupabaseManager
 //import com.newBie.new_bie.core.managers.SupabaseManager.supabase
 import com.newBie.new_bie.core.utils.Constants
 import com.newBie.new_bie.features.post.data.dto.ActionResponse
-import com.newBie.new_bie.features.post.data.dto.CategoryTypeDTO
-import com.newBie.new_bie.features.post.data.dto.InsertPostRequestDTO
-import com.newBie.new_bie.features.post.data.dto.UpdatePostDTO
+import com.newBie.new_bie.features.post.data.dto.CategoryTypeDto
+import com.newBie.new_bie.features.post.data.dto.CategoryTypeDtoWithSupabase
+import com.newBie.new_bie.features.post.data.dto.CategoryTypeTitleDto
+import com.newBie.new_bie.features.post.data.dto.InsertPostRequestDto
+import com.newBie.new_bie.features.post.data.dto.LikesDto
+import com.newBie.new_bie.features.post.data.dto.UpdatePostDto
+import com.newBie.new_bie.features.post.data.dto.UserDto
+import com.newBie.new_bie.features.post.data.dto.UserDtoWithSupabase
+import com.newBie.new_bie.features.post.data.mapper.toEntity
 import com.newBie.new_bie.features.post.domain.entities.CategoryTypeEntity
-import com.newBie.new_bie.features.post.domain.entities.CategoryTypeEntityWithSupabase
 import com.newBie.new_bie.features.post.domain.entities.CommentWithProfileEntity
 import com.newBie.new_bie.features.post.domain.entities.LikesCountEntity
 import com.newBie.new_bie.features.post.domain.entities.LikesEntity
@@ -40,7 +45,10 @@ class PostDatasource {
 
     // 게시글 단건 조회
     suspend fun fetchPostItem(id: Int): PostWithProfileEntity? {
-        return api.fetchPostItem(id).data
+
+        val dto = api.fetchPostItem(id).data
+        Log.d(Constants.TAG, "fetchPostItem의 dto : ${dto} ")
+        return dto?.toEntity()
     }
 
     // 게시글 리스트 조회
@@ -58,31 +66,31 @@ class PostDatasource {
             return emptyList()
         }
         else {
-            val list = response.data
+            val list = response.data?.map { it-> it.toEntity() }
             return list as List<PostWithProfileEntity>
         }
     }
 
     // 좋아요 개수
     suspend fun getPostLikeCount(id: Int): LikesCountEntity? {
-        return api.getPostLikeCount(id = id).data
+        return api.getPostLikeCount(id = id).data?.toEntity()
     }
 
     // 댓글 단건
     suspend fun fetchCommentItem(id: Int): CommentWithProfileEntity? {
-        return api.fetchCommentItem(id = id).data
+        return api.fetchCommentItem(id = id).data?.toEntity()
     }
 
     // 댓글 리스트
     suspend fun fetchComments(postId: Int): List<CommentWithProfileEntity> {
-        val response = api.fetchComments(postId=postId).data
+        val response = api.fetchComments(postId=postId).data?.map { it-> it.toEntity() }
         if (response == null) return emptyList()
         else return response
     }
 
     // 게시글 생성
-    suspend fun insertPost(body: InsertPostRequestDTO): PostWithProfileEntity? {
-        return api.insertPost(body = body).data
+    suspend fun insertPost(body: InsertPostRequestDto): PostWithProfileEntity? {
+        return api.insertPost(body = body).data?.toEntity()
     }
 
     // 게시글 삭제
@@ -93,7 +101,7 @@ class PostDatasource {
     // 게시글 수정
     suspend fun updatePost(
         id: Int,
-        body: UpdatePostDTO
+        body: UpdatePostDto
     ): ActionResponse {
         return api.updatePost(id=id, body=body)
     }
@@ -104,11 +112,13 @@ class PostDatasource {
         keyword: String,
         type: String
     ): SearchResultEntity {
-        return api.searchAll(
+        val result = api.searchAll(
             range = range,
             keyword = keyword,
             type = type
         )
+        Log.d(Constants.TAG, "searchAll result: ${result}")
+        return result.toEntity()
     }
 
     // 특정 유저 게시글
@@ -116,26 +126,28 @@ class PostDatasource {
         range: String,
         userId: String
     ): List<PostWithProfileEntity> {
-        val response = api.fetchUserPosts(range = range, userId = userId).data
+        val response = api.fetchUserPosts(range = range, userId = userId).data?.map { it-> it.toEntity() }
         if (response == null) return emptyList()
         else return response
     }
 
     suspend fun getCategoryList() :List<String> {
-        val response = _supabase.from("category_type").select(columns = Columns.list("type_title")).decodeList<CategoryTypeDTO>()
+        val response = _supabase.from("category_type").select(columns = Columns.list("type_title")).decodeList<CategoryTypeTitleDto>()
         Log.d(Constants.TAG, "getCategoryList: ${response}")
         return response.map { it.typeTitle }
         }
 
     // ✅ 카테고리 리스트
-    suspend fun getCategoryTypeList(): List<CategoryTypeEntityWithSupabase> {
+    suspend fun getCategoryTypeList(): List<CategoryTypeEntity> {
 
         val result = _supabase
             .from("category_type")
             .select()
-            .decodeList<CategoryTypeEntityWithSupabase>()
+            .decodeList<CategoryTypeDtoWithSupabase>()
 
-        return result.ifEmpty { emptyList() }
+        val list = result.map { it -> it.toEntity() }
+
+        return list.ifEmpty { emptyList() }
     }
 
     // ✅ 작성자 프로필 조회
@@ -149,9 +161,10 @@ class PostDatasource {
                     eq("id", userId)
                 }
             }
-            .decodeList<UserEntity>()
+            .decodeList<UserDtoWithSupabase>()
+        val list = result.map { it -> it.toEntity() }
 
-        return result.first()
+        return list.first()
     }
 
     // ✅ 좋아요 단건 조회
@@ -169,9 +182,11 @@ class PostDatasource {
                     eq("post_id", postId)
                 }
             }
-            .decodeList<LikesEntity>()
+            .decodeList<LikesDto>()
 
-        return result.firstOrNull()
+        val list = result.map { it -> it.toEntity() }
+
+        return list.firstOrNull()
     }
 
     // ✅ 좋아요 추가

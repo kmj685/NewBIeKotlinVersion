@@ -12,12 +12,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.newBie.new_bie.features.post.domain.entities.CategoryTypeEntityWithSupabase
+import com.newBie.new_bie.features.post.domain.entities.CategoryTypeEntity
 import com.newBie.new_bie.ui.theme.BlackColor
 import com.newBie.new_bie.ui.theme.OrangeColor
 
 @Composable
-fun SelectedCategoryBtn(category: CategoryTypeEntityWithSupabase, onClick : (CategoryTypeEntityWithSupabase) -> Unit = {}) {
+fun SelectedCategoryBtn(category: CategoryTypeEntity, onClick : (CategoryTypeEntity) -> Unit = {}) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier

@@ -10,5 +10,5 @@ data class SearchResultEntity(
     val type: String,
     val posts: List<PostWithProfileEntity> = emptyList(),
     val users: List<UserEntity> = emptyList(),
-    @SerializedName("total_count") val totalCount: Int
+    val totalCount: Int
 )

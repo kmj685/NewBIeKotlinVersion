@@ -14,11 +14,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.newBie.new_bie.MainScreen
 import com.newBie.new_bie.features.post.domain.entities.CategoryTypeEntity
-import com.newBie.new_bie.features.post.domain.entities.CategoryTypeEntityWithSupabase
 import com.newBie.new_bie.ui.theme.OrangeColor
 
 @Composable
-fun PostEditCategoryBtn(category: CategoryTypeEntityWithSupabase, isSelected : Boolean, onClick : (CategoryTypeEntityWithSupabase) -> Unit = {}) {
+fun PostEditCategoryBtn(category: CategoryTypeEntity, isSelected : Boolean, onClick : (CategoryTypeEntity) -> Unit = {}) {
     val icon = if (isSelected) Icons.Default.CheckCircle else Icons.Default.RadioButtonUnchecked
 
     Row(

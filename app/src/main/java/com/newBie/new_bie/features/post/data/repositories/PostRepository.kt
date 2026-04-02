@@ -4,10 +4,9 @@ import android.util.Log
 import com.newBie.new_bie.core.utils.Constants
 import com.newBie.new_bie.core.utils.getRange
 import com.newBie.new_bie.features.post.data.datasource.PostDatasource
-import com.newBie.new_bie.features.post.data.dto.InsertPostRequestDTO
-import com.newBie.new_bie.features.post.data.dto.UpdatePostDTO
+import com.newBie.new_bie.features.post.data.dto.InsertPostRequestDto
+import com.newBie.new_bie.features.post.data.dto.UpdatePostDto
 import com.newBie.new_bie.features.post.domain.entities.CategoryTypeEntity
-import com.newBie.new_bie.features.post.domain.entities.CategoryTypeEntityWithSupabase
 import com.newBie.new_bie.features.post.domain.entities.CommentWithProfileEntity
 import com.newBie.new_bie.features.post.domain.entities.LikesEntity
 import com.newBie.new_bie.features.post.domain.entities.PostWithProfileEntity
@@ -88,7 +87,7 @@ class PostRepositoryImpl : PostRepository {
         images: List<String>,
         categories: List<Int>
     ) {
-        datasource.insertPost(InsertPostRequestDTO(author_id = userId,title = title, content =content,images = images,categories =categories))
+        datasource.insertPost(InsertPostRequestDto(author_id = userId,title = title, content =content,images = images,categories =categories))
     }
 
     override suspend fun getCategoryList(): List<String> {
@@ -96,7 +95,7 @@ class PostRepositoryImpl : PostRepository {
         return datasource.getCategoryList()
     }
 
-    override suspend fun getCategoryTypeList(): List<CategoryTypeEntityWithSupabase> {
+    override suspend fun getCategoryTypeList(): List<CategoryTypeEntity> {
         return datasource.getCategoryTypeList()
     }
 
@@ -107,7 +106,7 @@ class PostRepositoryImpl : PostRepository {
         images: List<String>,
         categories: List<Int>
     ) {
-        datasource.updatePost(postId, UpdatePostDTO(title = title, content = content, images = images, categories = categories))
+        datasource.updatePost(postId, UpdatePostDto(title = title, content = content, images = images, categories = categories))
     }
 
     override suspend fun searchAll(

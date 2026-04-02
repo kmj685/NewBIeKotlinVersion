@@ -1,12 +1,14 @@
 package com.newBie.new_bie.features.post.data.datasource
 
-import com.newBie.new_bie.core.managers.SupabaseManager
 import com.newBie.new_bie.core.utils.API
 import com.newBie.new_bie.features.post.data.dto.ActionResponse
 import com.newBie.new_bie.features.post.data.dto.BaseResponse
-import com.newBie.new_bie.features.post.data.dto.InsertPostRequestDTO
-import com.newBie.new_bie.features.post.data.dto.PostWithProfileResponseDTO
-import com.newBie.new_bie.features.post.data.dto.UpdatePostDTO
+import com.newBie.new_bie.features.post.data.dto.CommentWithProfileDto
+import com.newBie.new_bie.features.post.data.dto.InsertPostRequestDto
+import com.newBie.new_bie.features.post.data.dto.LikesCountDto
+import com.newBie.new_bie.features.post.data.dto.PostWithProfileDto
+import com.newBie.new_bie.features.post.data.dto.SearchResultDto
+import com.newBie.new_bie.features.post.data.dto.UpdatePostDto
 import com.newBie.new_bie.features.post.domain.entities.CommentWithProfileEntity
 import com.newBie.new_bie.features.post.domain.entities.LikesCountEntity
 import com.newBie.new_bie.features.post.domain.entities.PostWithProfileEntity
@@ -15,10 +17,8 @@ import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
-import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.http.PUT
-import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -30,7 +30,7 @@ interface PostRetrofitInterface {
         @Header("Content-Type") contentType : String = "application/json",
 
 
-        ) : BaseResponse<PostWithProfileEntity>
+        ) : BaseResponse<PostWithProfileDto>
 
     @GET("posts")
     suspend fun fetchPosts(
@@ -40,35 +40,35 @@ interface PostRetrofitInterface {
         @Header("Range") range : String,
         @Query("orderBy") orderBy : String,
         @Query("category") category : String
-    ) : BaseResponse<List<PostWithProfileEntity>>
+    ) : BaseResponse<List<PostWithProfileDto>>
 
     @GET("posts/{id}/likes_count")
     suspend fun getPostLikeCount(
         @Path("id") id: Int,
 //        @Header("Authorization") authorizationKey : String = API.AUTHORIZATION,
         @Header("Content-Type") contentType : String = "application/json",
-    ) : BaseResponse<LikesCountEntity>
+    ) : BaseResponse<LikesCountDto>
 
     @GET("comments/{id}")
     suspend fun fetchCommentItem(
         @Path("id") id: Int,
 //        @Header("Authorization") authorization: String = API.AUTHORIZATION,
         @Header("Content-Type") contentType: String = API.CONTENT_TYPE
-    ): BaseResponse<CommentWithProfileEntity>
+    ): BaseResponse<CommentWithProfileDto>
 
     @GET("comment")
     suspend fun fetchComments(
         @Query("post_id") postId: Int,
 //        @Header("Authorization") authorization: String = API.AUTHORIZATION,
         @Header("Content-Type") contentType: String = API.CONTENT_TYPE
-    ): BaseResponse<List<CommentWithProfileEntity>>
+    ): BaseResponse<List<CommentWithProfileDto>>
 
     @POST("posts")
     suspend fun insertPost(
-        @Body body: InsertPostRequestDTO,
+        @Body body: InsertPostRequestDto,
 //        @Header("Authorization") authorizationKey: String = API.AUTHORIZATION,
         @Header("Content-Type") contentType: String = "application/json"
-    ): BaseResponse<PostWithProfileEntity>
+    ): BaseResponse<PostWithProfileDto>
 
     @DELETE("posts/{id}")
     suspend fun deletePost(
@@ -79,7 +79,7 @@ interface PostRetrofitInterface {
     @PUT("posts/{id}")
     suspend fun updatePost(
         @Path("id") id: Int,
-        @Body body: UpdatePostDTO,
+        @Body body: UpdatePostDto,
 //        @Header("Authorization") authorizationKey: String = API.AUTHORIZATION,
         @Header("Content-Type") contentType: String = "application/json"
     ): ActionResponse
@@ -91,7 +91,7 @@ interface PostRetrofitInterface {
         @Header("Range") range: String,
         @Query("keyword") keyword: String,
         @Query("type") type: String
-    ): SearchResultEntity
+    ): SearchResultDto
 
 
     @GET("users_posts")
@@ -100,5 +100,5 @@ interface PostRetrofitInterface {
         @Header("Content-Type") contentType: String = "application/x-www-form-urlencoded",
         @Header("Range") range: String,
         @Query("userId") userId: String
-    ): BaseResponse<List<PostWithProfileEntity>>
+    ): BaseResponse<List<PostWithProfileDto>>
 }
