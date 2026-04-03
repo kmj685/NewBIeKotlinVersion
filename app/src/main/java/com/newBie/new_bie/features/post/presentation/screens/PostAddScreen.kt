@@ -1,5 +1,9 @@
 package com.newBie.new_bie.features.post.presentation.screens
 
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -70,6 +74,19 @@ fun PostAddScreen(modifier: Modifier = Modifier, navController: NavController, v
     val contentInput by viewModel.contentInputTxt.collectAsState()
     val categoryList by viewModel.categoryList.collectAsState()
     val selectCategoryList by viewModel.selectCategoryList.collectAsState()
+    val pickMultipleMedia =
+        rememberLauncherForActivityResult(ActivityResultContracts.PickMultipleVisualMedia(10)) { uris ->
+            // Callback is invoked after the user selects media items or closes the
+            // photo picker.
+            if (uris.isNotEmpty()) {
+                //photo picker는 Uri자료형을 취급하기 때문에 String으로 mapping 해야한다.
+                val stringUri = uris.map { it.toString() }
+                viewModel.getImage(stringUri)
+                Log.d("PhotoPicker", "Number of items selected: ${uris.size}")
+            } else {
+                Log.d("PhotoPicker", "No media selected")
+            }
+        }
 
 
     // 등록에 성공했다면 홈 화면으로 이동하고 스택 없애기
@@ -105,7 +122,8 @@ fun PostAddScreen(modifier: Modifier = Modifier, navController: NavController, v
                 Row(modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp, horizontal = 10.dp),
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    PostEditScreenActionButton(Icons.Default.Photo, "사진 추가", {})
+                    PostEditScreenActionButton(Icons.Default.Photo, "사진 추가", {pickMultipleMedia.launch( PickVisualMediaRequest(
+                        ActivityResultContracts.PickVisualMedia.ImageAndVideo))})
                     PostEditScreenActionButton(Icons.Default.Label, "카테고리", {showSheet = true})
                 }
                 if (selectCategoryList.isNotEmpty()) {

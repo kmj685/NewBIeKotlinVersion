@@ -77,6 +77,15 @@ class PostAddViewModel : ViewModel() {
             }
     }
 
+    // 이미지 선택
+    fun getImage(selectImagesList: List<String>){
+        imageInputList.value = imageInputList.value + selectImagesList
+    }
+    // 이미지 선택 취소 나중에 사용하쇼ㅋ
+    fun deleteImage(selectImages: String){
+        imageInputList.value = imageInputList.value - selectImages
+    }
+
     // 게시글 등록
     fun insertPost(){
         viewModelScope.launch {
