@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 
 data class PostEntity(
     val id: Int,
-    val authorId: String,
+    val author_id: String,
     val title: String?,
     val content: String?,
     val imageUrl: String?,

@@ -80,6 +80,7 @@ class PostRepositoryImpl : PostRepository {
         datasource.editComment(commentId, content)
     }
 
+    // 포스트 등록
     override suspend fun insertPost(
         userId: String,
         title: String,

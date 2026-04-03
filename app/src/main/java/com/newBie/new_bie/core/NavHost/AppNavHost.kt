@@ -1,5 +1,7 @@
 package com.newBie.new_bie.core.NavHost
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -14,6 +16,7 @@ import com.newBie.new_bie.features.post.presentation.screens.PostAddScreen
 import com.newBie.new_bie.features.post.presentation.screens.PostDetailScreen
 import com.newBie.new_bie.features.post.presentation.screens.SearchScreen
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AppNavHost(modifier : Modifier, navController: NavHostController) {
 

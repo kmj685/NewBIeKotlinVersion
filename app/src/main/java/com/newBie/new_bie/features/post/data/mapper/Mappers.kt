@@ -139,7 +139,7 @@ fun NoticeDto.toEntity(): NoticeEntity{
 fun PostDto.toEntity(): PostEntity{
     return PostEntity(
         id = id,
-        authorId = authorId,
+        author_id = authorId,
         title = title,
         content = content,
         imageUrl = imageUrl,

@@ -24,6 +24,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -43,6 +44,7 @@ import com.newBie.new_bie.core.components.BottomTapBar
 import com.newBie.new_bie.core.components.PlaceholderText
 import com.newBie.new_bie.core.components.TopBarTitleText
 import com.newBie.new_bie.core.utils.PageSet
+import com.newBie.new_bie.core.utils.Routes
 import com.newBie.new_bie.features.post.presentation.components.ContentTextField
 import com.newBie.new_bie.features.post.presentation.components.SelectedCategoryListLazyRow
 import com.newBie.new_bie.features.post.presentation.components.TitleTextField
@@ -68,6 +70,19 @@ fun PostAddScreen(modifier: Modifier = Modifier, navController: NavController, v
     val contentInput by viewModel.contentInputTxt.collectAsState()
     val categoryList by viewModel.categoryList.collectAsState()
     val selectCategoryList by viewModel.selectCategoryList.collectAsState()
+
+
+    // 등록에 성공했다면 홈 화면으로 이동하고 스택 없애기
+    LaunchedEffect(Unit) {
+        viewModel.postSuccess.collect { isSuccess ->
+            if(isSuccess) {
+                navController.navigate(Routes.HOME){
+                    popUpTo(Routes.HOME) { inclusive = true }
+                }
+            }
+        }
+    }
+
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -96,7 +111,9 @@ fun PostAddScreen(modifier: Modifier = Modifier, navController: NavController, v
                 if (selectCategoryList.isNotEmpty()) {
                     SelectedCategoryListLazyRow(selectCategoryList, {viewModel.unselectCategory(it)})
                 }
-                PostUpdateBtn(modifier = Modifier.padding(vertical = 10.dp),title = "등록", onClick = {})
+                PostUpdateBtn(modifier = Modifier.padding(vertical = 10.dp),title = "등록", onClick = {
+                    viewModel.insertPost()
+                })
 
             }
             BottomTapBar(navController, PageSet.ADD_POST)

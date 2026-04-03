@@ -6,11 +6,13 @@ import com.newBie.new_bie.features.post.data.dto.BaseResponse
 import com.newBie.new_bie.features.post.data.dto.CommentWithProfileDto
 import com.newBie.new_bie.features.post.data.dto.InsertPostRequestDto
 import com.newBie.new_bie.features.post.data.dto.LikesCountDto
+import com.newBie.new_bie.features.post.data.dto.PostDto
 import com.newBie.new_bie.features.post.data.dto.PostWithProfileDto
 import com.newBie.new_bie.features.post.data.dto.SearchResultDto
 import com.newBie.new_bie.features.post.data.dto.UpdatePostDto
 import com.newBie.new_bie.features.post.domain.entities.CommentWithProfileEntity
 import com.newBie.new_bie.features.post.domain.entities.LikesCountEntity
+import com.newBie.new_bie.features.post.domain.entities.PostEntity
 import com.newBie.new_bie.features.post.domain.entities.PostWithProfileEntity
 import com.newBie.new_bie.features.post.domain.entities.SearchResultEntity
 import retrofit2.http.Body
@@ -68,7 +70,7 @@ interface PostRetrofitInterface {
         @Body body: InsertPostRequestDto,
 //        @Header("Authorization") authorizationKey: String = API.AUTHORIZATION,
         @Header("Content-Type") contentType: String = "application/json"
-    ): BaseResponse<PostWithProfileDto>
+    ): BaseResponse<PostDto>
 
     @DELETE("posts/{id}")
     suspend fun deletePost(

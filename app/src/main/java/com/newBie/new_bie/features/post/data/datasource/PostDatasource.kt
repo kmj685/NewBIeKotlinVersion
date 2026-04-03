@@ -11,6 +11,7 @@ import com.newBie.new_bie.features.post.data.dto.CategoryTypeDtoWithSupabase
 import com.newBie.new_bie.features.post.data.dto.CategoryTypeTitleDto
 import com.newBie.new_bie.features.post.data.dto.InsertPostRequestDto
 import com.newBie.new_bie.features.post.data.dto.LikesDto
+import com.newBie.new_bie.features.post.data.dto.PostDto
 import com.newBie.new_bie.features.post.data.dto.UpdatePostDto
 import com.newBie.new_bie.features.post.data.dto.UserDto
 import com.newBie.new_bie.features.post.data.dto.UserDtoWithSupabase
@@ -19,6 +20,7 @@ import com.newBie.new_bie.features.post.domain.entities.CategoryTypeEntity
 import com.newBie.new_bie.features.post.domain.entities.CommentWithProfileEntity
 import com.newBie.new_bie.features.post.domain.entities.LikesCountEntity
 import com.newBie.new_bie.features.post.domain.entities.LikesEntity
+import com.newBie.new_bie.features.post.domain.entities.PostEntity
 import com.newBie.new_bie.features.post.domain.entities.PostWithProfileEntity
 import com.newBie.new_bie.features.post.domain.entities.SearchResultEntity
 import com.newBie.new_bie.features.post.domain.entities.UserEntity
@@ -89,7 +91,7 @@ class PostDatasource {
     }
 
     // 게시글 생성
-    suspend fun insertPost(body: InsertPostRequestDto): PostWithProfileEntity? {
+    suspend fun insertPost(body: InsertPostRequestDto): PostEntity? {
         return api.insertPost(body = body).data?.toEntity()
     }
 
