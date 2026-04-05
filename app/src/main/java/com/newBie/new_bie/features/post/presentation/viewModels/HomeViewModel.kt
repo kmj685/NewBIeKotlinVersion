@@ -8,6 +8,7 @@ import com.newBie.new_bie.core.utils.Constants
 import com.newBie.new_bie.core.utils.OrderByType
 import com.newBie.new_bie.core.utils.PageType
 import com.newBie.new_bie.features.post.data.repositories.PostRepositoryImpl
+import com.newBie.new_bie.features.post.domain.entities.CommentWithProfileEntity
 import com.newBie.new_bie.features.post.domain.entities.PostWithProfileEntity
 import com.newBie.new_bie.features.post.domain.repositories.PostRepository
 import io.github.jan.supabase.auth.auth
@@ -21,6 +22,8 @@ class HomeViewModel : ViewModel() {
     private val repository : PostRepository = PostRepositoryImpl()
     val pageType : PageType = PageType.HOME
     var posts : MutableStateFlow<List<PostWithProfileEntity>> = MutableStateFlow<List<PostWithProfileEntity>>(listOf())
+    var comments : MutableStateFlow<List<CommentWithProfileEntity>> = MutableStateFlow<List<CommentWithProfileEntity>>(listOf())
+    var selectPostId : MutableStateFlow<Int?> = MutableStateFlow(null)
     var buttonIsWorking : MutableStateFlow<Boolean> = MutableStateFlow(false)
     var type : MutableStateFlow<OrderByType> = MutableStateFlow(OrderByType.NEW_FIRST)
 
@@ -29,6 +32,8 @@ class HomeViewModel : ViewModel() {
     var categoryList : MutableStateFlow<List<String>> = MutableStateFlow(listOf("전체"))
 
     var isRefreshing = MutableStateFlow(false)
+
+    var userCommentInput: MutableStateFlow<String> = MutableStateFlow("")
 
 
     private var isLoading = false
@@ -227,6 +232,59 @@ class HomeViewModel : ViewModel() {
                 }
             }
         }
+    }
+
+    //댓글 기능
+    fun fetchComments(id: Int) {
+        viewModelScope.launch {
+            try {
+                selectPostId.value = id
+                selectPostId.value?.let { it ->
+                    val commentsList: List<CommentWithProfileEntity> = repository.fetchComments(it)
+                    comments.value = commentsList
+                }
+            } catch (e: Exception) {
+                Log.d(Constants.TAG, "fetchComments Faile: $e")
+            }
+        }
+    }
+
+    fun unSelectPostId() {
+        selectPostId.value = null
+        comments.value = listOf()
+        userCommentInput.value=""
+    }
+
+    fun updateUserInput(input: String){
+        userCommentInput.value=input
+    }
+
+    fun insertComment() {
+        Log.d(Constants.TAG, "insertComment 호출됨 ")
+        viewModelScope.launch {
+            val postId = selectPostId.value
+            if (postId == null) return@launch
+            try {
+                val userId =
+                    SupabaseManager.supabase.auth.currentUserOrNull()?.id
+                        ?: return@launch
+                if (userCommentInput.value.isNotBlank()){
+                    selectPostId.value?.let { it ->
+                        repository.insertComment(it, userId, userCommentInput.value)
+                        Log.d(Constants.TAG, "insertComment 처리함 ")
+                    }
+
+                }
+
+            } catch (e: Exception){
+                Log.d(Constants.TAG, "insertComment Error: $e")
+                return@launch
+            }
+            userCommentInput.value=""
+            fetchComments(postId)
+            Log.d(Constants.TAG, "insertComment 처리 후처리 ")
+        }
+
     }
 
 }

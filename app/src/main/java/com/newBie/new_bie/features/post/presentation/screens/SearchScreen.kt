@@ -3,13 +3,17 @@ package com.newBie.new_bie.features.post.presentation.screens
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -21,10 +25,13 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
@@ -32,6 +39,7 @@ import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -40,20 +48,28 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.newBie.new_bie.core.components.TopBarTitleText
 import com.newBie.new_bie.core.utils.Routes
+import com.newBie.new_bie.core.utils.toKoreaLocalDateTime
+import com.newBie.new_bie.core.utils.toTimeAgo
 import com.newBie.new_bie.features.post.presentation.components.PostItem
 import com.newBie.new_bie.features.post.presentation.components.SmallProfileComponent
+import com.newBie.new_bie.features.post.presentation.components.likesAndComments.CommentItem
 import com.newBie.new_bie.features.post.presentation.viewModels.SearchResultViewModel
+import com.newBie.new_bie.ui.theme.BlackColor
 import com.newBie.new_bie.ui.theme.OrangeColor
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun SearchScreen(modifier: Modifier = Modifier, navController: NavController,viewModel: SearchResultViewModel = viewModel<SearchResultViewModel>(), initialQuery: String = "", ) {
@@ -62,6 +78,13 @@ fun SearchScreen(modifier: Modifier = Modifier, navController: NavController,vie
     val users by viewModel.users.collectAsState()
     val keyword by viewModel.keyword.collectAsState()
     val selectedTab by viewModel.selectedTab.collectAsState()
+
+    val sheetState = rememberModalBottomSheetState()
+    val selectPostId by viewModel.selectPostId.collectAsState()
+    val commentsList by viewModel.comments.collectAsState()
+    val configuration = LocalConfiguration.current
+    val screenHeight = configuration.screenHeightDp.dp
+    val userCommentInput by viewModel.userCommentInput.collectAsState()
 
     // Flutter의 TabController를 대체합니다.
     val pagerState = rememberPagerState(pageCount = { 3 })
@@ -148,7 +171,90 @@ fun SearchScreen(modifier: Modifier = Modifier, navController: NavController,vie
                 2 -> SearchUserView(viewModel, navController)
             }
         }
+        if (selectPostId != null){
+            ModalBottomSheet(
+                containerColor = BlackColor,
+                contentColor = BlackColor,
+                onDismissRequest = {viewModel.unSelectPostId()},
+                sheetState = sheetState
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = screenHeight * 0.5f, max = screenHeight * 0.5f),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ){
+                    TopBarTitleText("댓글")
+                    Box(modifier = Modifier.fillMaxWidth().height(2.dp).background(color = OrangeColor))
+                    if (commentsList.isEmpty()) {
+                        Box(
+                            modifier = Modifier.fillMaxWidth().height(40.dp).weight(1f),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text("댓글이 없습니다.", fontSize = 20.sp, color = Color.Gray)
+                        }
+                    } else {
+                        LazyColumn(modifier= Modifier.fillMaxWidth().weight(1f)) {
+                            items(commentsList) { item ->
+                                CommentItem(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    imageUrl = item.user.profileImage,
+                                    nickName = item.user.nickName?:"",
+                                    timeData = item.createdAt.toKoreaLocalDateTime().toTimeAgo(),
+                                    introduce = item.content,
+                                    userId = item.authorId,
+                                    onImageClick = {}
+                                )
+                            }
+                        }
+                    }
+                    Row(
+
+                    ) {
+                        OutlinedTextField(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(10))
+                                .background(color = Color(0xffF2F2F7FF), shape = RoundedCornerShape(10)),
+                            value = userCommentInput,
+                            onValueChange = { viewModel.updateUserInput(it) },
+                            placeholder = { Text("댓글") },
+                            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                            keyboardActions = KeyboardActions(
+                                onSend = {
+                                    if (userCommentInput.isNotBlank()) {
+                                        // 검색 화면으로 이동 (작성하신 NavHost 경로 기준)
+                                        viewModel.insertComment()
+                                    }
+                                }
+                            ),
+//            colors = OutlinedTextFieldDefaults.colors(),
+                            trailingIcon = {
+                                Icon(
+                                    Icons.Default.Send,
+                                    modifier = Modifier
+                                        .size(20.dp)
+                                        .clickable(onClick = {
+                                            if (userCommentInput.isNotBlank()) {
+                                                // 2. 돋보기 아이콘 클릭 시 이동
+                                                viewModel.insertComment()
+                                            }
+                                        }),
+                                    contentDescription = null,
+                                    tint = BlackColor
+                                )
+                            }
+                        )
+                    }
+                }
+
+            }
+        }
+
     }
+
+
+
 }
 
 // --- 하위 뷰 컴포저블 ---
@@ -200,7 +306,8 @@ fun SearchAllView(viewModel: SearchResultViewModel, navController: NavController
                         post = post,
                         onLike = { viewModel.likeToggle(index, post.id) },
                         onDelete = { viewModel.deletePost(post.id) },
-                        onClick = {navController.navigate("${Routes.POST}/${it}")}
+                        onClick = {navController.navigate("${Routes.POST}/${it}")},
+                        onComments = {viewModel.fetchComments(post.id)}
                     )
                 }
                 item {
@@ -241,7 +348,8 @@ fun SearchPostView(viewModel: SearchResultViewModel, navController: NavControlle
                     post = post,
                     onLike = { viewModel.likeToggle(index, post.id) },
                     onDelete = { viewModel.deletePost(post.id) },
-                    onClick = {navController.navigate("${Routes.POST}/${it}")}
+                    onClick = {navController.navigate("${Routes.POST}/${it}")},
+                    onComments = {viewModel.fetchComments(post.id)}
                 )
             }
         }

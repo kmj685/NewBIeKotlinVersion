@@ -14,7 +14,6 @@ import com.newBie.new_bie.features.post.data.dto.LikesDto
 import com.newBie.new_bie.features.post.data.dto.PostDto
 import com.newBie.new_bie.features.post.data.dto.UpdatePostDto
 import com.newBie.new_bie.features.post.data.dto.UserDto
-import com.newBie.new_bie.features.post.data.dto.UserDtoWithSupabase
 import com.newBie.new_bie.features.post.data.mapper.toEntity
 import com.newBie.new_bie.features.post.domain.entities.CategoryTypeEntity
 import com.newBie.new_bie.features.post.domain.entities.CommentWithProfileEntity
@@ -163,7 +162,7 @@ class PostDatasource {
                     eq("id", userId)
                 }
             }
-            .decodeList<UserDtoWithSupabase>()
+            .decodeList<UserDto>()
         val list = result.map { it -> it.toEntity() }
 
         return list.first()

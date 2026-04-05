@@ -44,7 +44,7 @@ import io.github.jan.supabase.auth.auth
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun PostItem(post : PostWithProfileEntity, onDelete : () -> Unit, onLike : () -> Unit, onClick : (Int) -> Unit = {}) {
+fun PostItem(post : PostWithProfileEntity, onDelete : () -> Unit, onLike : () -> Unit, onClick : (Int) -> Unit = {}, onComments: () -> Unit = {}) {
 
     val currentUserId = SupabaseManager.supabase.auth.currentUserOrNull()?.id
     Column(
@@ -169,6 +169,7 @@ fun PostItem(post : PostWithProfileEntity, onDelete : () -> Unit, onLike : () ->
             Spacer(modifier = Modifier.width(16.dp))
 
             Row(
+                modifier = Modifier.clickable{ onComments()},
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
