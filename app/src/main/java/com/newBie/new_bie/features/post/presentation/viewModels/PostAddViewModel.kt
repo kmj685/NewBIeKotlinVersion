@@ -92,6 +92,8 @@ class PostAddViewModel : ViewModel() {
 
     // 게시글 등록
     fun insertPost(context: Context){
+        // Activity Context 대신 생명주기가 긴 Application Context로 변환
+        val appContext = context.applicationContext
         viewModelScope.launch {
 
             val userID = SupabaseManager.supabase.auth.currentUserOrNull()?.id ?: return@launch //안되면 함수 끝냄
@@ -104,7 +106,7 @@ class PostAddViewModel : ViewModel() {
                 // core에 있는 uriToByteArray 함수를 사용해서 ByteArray로 자료형을 바꿔준다.
                 // 갤러리에 접근하려면 ContentResolver라는 권한이 필요한데 이 때 context(신분증 같은 역할)가 필요하다네요
                 val byteArrayList = imageInputList.value.mapNotNull { uri ->
-                    uriToByteArray(context, uri)
+                    uriToByteArray(appContext, uri)
                 }
 
                 // 우리가 알고 있는 http:// .... 로 path를 바꿔주는 작업
