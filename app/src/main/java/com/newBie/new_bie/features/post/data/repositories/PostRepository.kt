@@ -85,7 +85,7 @@ class PostRepositoryImpl : PostRepository {
         userId: String,
         title: String,
         content: String,
-        images: List<String>,
+        images: List<String>, // 여기서 images는 content:// 로 들어온다
         categories: List<Int>
     ) {
         datasource.insertPost(InsertPostRequestDto(author_id = userId,title = title, content =content,images = images,categories =categories))

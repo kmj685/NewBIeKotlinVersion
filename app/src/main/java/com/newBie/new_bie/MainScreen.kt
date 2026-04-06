@@ -1,6 +1,8 @@
 package com.newBie.new_bie
 
+import android.os.Build
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -18,6 +20,7 @@ import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.auth.status.SessionStatus
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun MainScreen(modifier: Modifier = Modifier) {
     val navController = rememberNavController()
@@ -130,7 +133,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
         }
     }
 
-    AppNavHost(modifier = modifier.fillMaxSize(), navController = navController)
+    AppNavHost(modifier = modifier.fillMaxSize(), navController = navController, context = context)
 
 //    NavHost(modifier = modifier.fillMaxSize(), navController = navController,
 //        startDestination = "/splash",

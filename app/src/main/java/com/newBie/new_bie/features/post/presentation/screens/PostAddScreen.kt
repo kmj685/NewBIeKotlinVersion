@@ -1,5 +1,6 @@
 package com.newBie.new_bie.features.post.presentation.screens
 
+import android.content.Context
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -60,12 +61,9 @@ import com.newBie.new_bie.features.post.presentation.viewModels.PostAddViewModel
 import com.newBie.new_bie.ui.theme.BlackColor
 import com.newBie.new_bie.ui.theme.OrangeColor
 import kotlinx.datetime.Month
-
-// imagePicker 코틀린 버전을 찾아서 사용해야 함.
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PostAddScreen(modifier: Modifier = Modifier, navController: NavController, viewModel: PostAddViewModel = viewModel<PostAddViewModel>()){
+fun PostAddScreen(modifier: Modifier = Modifier, navController: NavController, viewModel: PostAddViewModel = viewModel<PostAddViewModel>(), context: Context){
     val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
     var showSheet by remember { mutableStateOf(false) }
@@ -79,9 +77,7 @@ fun PostAddScreen(modifier: Modifier = Modifier, navController: NavController, v
             // Callback is invoked after the user selects media items or closes the
             // photo picker.
             if (uris.isNotEmpty()) {
-                //photo picker는 Uri자료형을 취급하기 때문에 String으로 mapping 해야한다.
-                val stringUri = uris.map { it.toString() }
-                viewModel.getImage(stringUri)
+                viewModel.getImage(uris)
                 Log.d("PhotoPicker", "Number of items selected: ${uris.size}")
             } else {
                 Log.d("PhotoPicker", "No media selected")
@@ -130,7 +126,7 @@ fun PostAddScreen(modifier: Modifier = Modifier, navController: NavController, v
                     SelectedCategoryListLazyRow(selectCategoryList, {viewModel.unselectCategory(it)})
                 }
                 PostUpdateBtn(modifier = Modifier.padding(vertical = 10.dp),title = "등록", onClick = {
-                    viewModel.insertPost()
+                    viewModel.insertPost(context)
                 })
 
             }

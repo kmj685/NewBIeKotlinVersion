@@ -16,6 +16,7 @@ import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import java.security.MessageDigest
 import java.util.UUID
+import io.github.jan.supabase.storage.Storage
 
 
 object SupabaseManager {
@@ -29,6 +30,7 @@ object SupabaseManager {
     ) {
         install(Auth)
         install(Postgrest)
+        install(Storage)
     }
 
 
