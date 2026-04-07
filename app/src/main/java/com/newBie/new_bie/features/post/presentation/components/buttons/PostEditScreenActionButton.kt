@@ -2,6 +2,7 @@ package com.newBie.new_bie.features.post.presentation.components.buttons
 
 
 import android.graphics.drawable.Icon
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -30,12 +31,13 @@ fun PostEditScreenActionButton (icon: ImageVector, title : String, onClick : () 
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .clip(RoundedCornerShape(50))
+            .background(color = Color.White)
             .border(width = 1.dp, color = Color.White, shape = RoundedCornerShape(50))
             .clickable(onClick = {onClick.invoke()})
             .padding(horizontal = 12.dp, vertical = 8.dp)
 
     ) {
-        Icon(imageVector = icon, contentDescription = null, tint = Color.White, modifier = Modifier.size(16.dp))
-        Text(title, color = Color.White, fontSize = 16.sp)
+        Icon(imageVector = icon, contentDescription = null, tint = Color.DarkGray, modifier = Modifier.size(16.dp))
+        Text(title, color = Color.DarkGray, fontSize = 16.sp)
     }
 }

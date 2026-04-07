@@ -17,11 +17,15 @@ import com.newBie.new_bie.features.post.domain.entities.CategoryTypeEntity
 import com.newBie.new_bie.ui.theme.OrangeColor
 
 @Composable
-fun PostEditCategoryBtn(category: CategoryTypeEntity, isSelected : Boolean, onClick : (CategoryTypeEntity) -> Unit = {}) {
+fun PostEditCategoryBtn(category: CategoryTypeEntity, isSelected : Boolean,
+                        onClick : (CategoryTypeEntity) -> Unit = {}
+) {
     val icon = if (isSelected) Icons.Default.CheckCircle else Icons.Default.RadioButtonUnchecked
 
     Row(
-        modifier = Modifier.clickable(onClick = {onClick.invoke(category)}).padding(14.dp)
+        modifier = Modifier
+            .clickable(onClick = {onClick.invoke(category)})
+            .padding(14.dp)
     ) {
         Text(category.typeTitle, fontSize = 18.sp, modifier = Modifier.weight(1f))
         Icon(icon, contentDescription = null, tint = OrangeColor)

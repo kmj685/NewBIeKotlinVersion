@@ -97,7 +97,6 @@ fun PostEditScreen(modifier: Modifier = Modifier, navController: NavController, 
                             PostEditCategoryBtn(
                                 item,
                                 selectCategoryList.contains(item),
-                                {viewModel.toggleCategory(it)}
                             )
                         }
                     }
