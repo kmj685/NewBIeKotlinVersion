@@ -10,8 +10,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.newBie.new_bie.features.post.domain.entities.CategoryTypeEntity
@@ -23,11 +21,11 @@ fun SelectedCategoryBtn(category: CategoryTypeEntity, onClick : (CategoryTypeEnt
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
-            .clip(RoundedCornerShape(30))
+            .clip(RoundedCornerShape(10))
             .background(OrangeColor)
             .clickable(onClick = {onClick.invoke(category)})
-            .padding(vertical = 5.dp, horizontal = 10.dp)
+            .padding(16.dp)
     ) {
-        Text(category.typeTitle, color = Color.White, fontSize = 12.sp, fontWeight = FontWeight(600))
+        Text(category.typeTitle, color = BlackColor, fontSize = 12.sp)
     }
 }
