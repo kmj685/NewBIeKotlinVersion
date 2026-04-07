@@ -5,15 +5,10 @@ import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.newBie.new_bie.core.components.uriToByteArray
 import com.newBie.new_bie.core.managers.SupabaseManager
-import com.newBie.new_bie.core.utils.Constants
 import com.newBie.new_bie.core.utils.Constants.TAG
-import com.newBie.new_bie.core.utils.Routes
 import com.newBie.new_bie.features.post.data.repositories.PostRepositoryImpl
-import com.newBie.new_bie.features.post.domain.entities.CategoryEntity
 import com.newBie.new_bie.features.post.domain.entities.CategoryTypeEntity
 import com.newBie.new_bie.features.post.domain.repositories.PostRepository
 import io.github.jan.supabase.auth.auth
@@ -21,7 +16,7 @@ import io.github.jan.supabase.storage.storage
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 
@@ -30,7 +25,12 @@ class PostAddViewModel : ViewModel() {
     var titleInputTxt: MutableStateFlow<String> = MutableStateFlow("")
     var contentInputTxt: MutableStateFlow<String> = MutableStateFlow("")
     var categoryList : MutableStateFlow<List<CategoryTypeEntity>> = MutableStateFlow(listOf())
+
+    //최종 추가할 완료 카테고리 리스트
     var selectCategoryList : MutableStateFlow<List<CategoryTypeEntity>> = MutableStateFlow(listOf())
+    // 바텀 시트에 체크 된 카테고리 임시로 체크 중인 리스트
+    private val _bottomSheetSelectedCategories = MutableStateFlow<List<CategoryTypeEntity>>(listOf())
+    val bottomSheetSelectedCategories = _bottomSheetSelectedCategories.asStateFlow()
 
     var imageInputList : MutableStateFlow<List<Uri>> = MutableStateFlow(listOf())
 
@@ -62,8 +62,9 @@ class PostAddViewModel : ViewModel() {
         }
     }
 
-    fun selectCategory(category : CategoryTypeEntity) {
-        selectCategoryList.value += category
+    // 바텀 시트를 열 때 확정된 리스트를 임시 보관함에 복사
+    fun openBottomSheetCopyCategoriesList(){
+        _bottomSheetSelectedCategories.value = selectCategoryList.value
     }
 
     fun unselectCategory(category : CategoryTypeEntity) {
@@ -71,14 +72,24 @@ class PostAddViewModel : ViewModel() {
     }
 
     fun toggleCategory(category: CategoryTypeEntity) {
-        val current = selectCategoryList.value
+        val current = _bottomSheetSelectedCategories.value
 
-        selectCategoryList.value =
+        _bottomSheetSelectedCategories.value =
             if (current.contains(category)) {
                 current - category
             } else {
                 current + category
             }
+    }
+
+    // 완료 버튼 눌렀을 때 임시 보관함을 실제 리스트로 확정
+    fun confirmSelection() {
+        selectCategoryList.value = _bottomSheetSelectedCategories.value
+    }
+
+    // 선택 헤제 눌렀을 때 임시 보관함 비우기
+    fun clearCategories(){
+        _bottomSheetSelectedCategories.value = emptyList()
     }
 
     // 이미지 선택
