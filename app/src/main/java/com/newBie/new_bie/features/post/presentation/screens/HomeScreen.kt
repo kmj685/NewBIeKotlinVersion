@@ -81,6 +81,7 @@ import com.newBie.new_bie.ui.theme.BlackColor
 import com.newBie.new_bie.ui.theme.OrangeColor
 import kotlin.collections.emptyList
 import androidx.compose.ui.platform.LocalConfiguration
+import com.newBie.new_bie.features.post.presentation.components.likesAndComments.CommentBottomSheet
 import io.ktor.util.collections.setValue
 import kotlinx.coroutines.launch
 
@@ -89,7 +90,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(modifier: Modifier = Modifier, navController: NavController, viewModel : HomeViewModel = viewModel<HomeViewModel>()) {
-    val sheetState = rememberModalBottomSheetState()
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val selectPostId by viewModel.selectPostId.collectAsState()
     val commentsList by viewModel.comments.collectAsState()
 
@@ -267,83 +268,7 @@ fun HomeScreen(modifier: Modifier = Modifier, navController: NavController, view
         }
         BottomTapBar(navController, PageSet.HOME)
         if (selectPostId != null){
-            ModalBottomSheet(
-                containerColor = BlackColor,
-                contentColor = BlackColor,
-                onDismissRequest = {viewModel.unSelectPostId()},
-                sheetState = sheetState
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .heightIn(min = screenHeight * 0.5f, max = screenHeight * 0.5f),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ){
-                    TopBarTitleText("댓글")
-                    Box(modifier = Modifier.fillMaxWidth().height(2.dp).background(color = OrangeColor))
-                    if (commentsList.isEmpty()) {
-                        Box(
-                            modifier = Modifier.fillMaxWidth().height(40.dp).weight(1f),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text("댓글이 없습니다.", fontSize = 20.sp, color = Color.Gray)
-                        }
-                    } else {
-                        LazyColumn(modifier= Modifier.fillMaxWidth().weight(1f)) {
-                            items(commentsList) { item ->
-                                CommentItem(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    imageUrl = item.user.profileImage,
-                                    nickName = item.user.nickName?:"",
-                                    timeData = item.createdAt.toKoreaLocalDateTime().toTimeAgo(),
-                                    introduce = item.content,
-                                    userId = item.authorId,
-                                    onImageClick = {}
-                                )
-                            }
-                        }
-                    }
-                    Row(
-
-                    ) {
-                        OutlinedTextField(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clip(RoundedCornerShape(10))
-                                .background(color = Color(0xffF2F2F7FF), shape = RoundedCornerShape(10)),
-                            value = userCommentInput,
-                            onValueChange = { viewModel.updateUserInput(it) },
-                            placeholder = { Text("댓글") },
-                            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-                            keyboardActions = KeyboardActions(
-                                onSend = {
-                                    if (userCommentInput.isNotBlank()) {
-                                        // 검색 화면으로 이동 (작성하신 NavHost 경로 기준)
-                                        viewModel.insertComment()
-                                    }
-                                }
-                            ),
-//            colors = OutlinedTextFieldDefaults.colors(),
-                            trailingIcon = {
-                                Icon(
-                                    Icons.Default.Send,
-                                    modifier = Modifier
-                                        .size(20.dp)
-                                        .clickable(onClick = {
-                                            if (userCommentInput.isNotBlank()) {
-                                                // 2. 돋보기 아이콘 클릭 시 이동
-                                                viewModel.insertComment()
-                                            }
-                                        }),
-                                    contentDescription = null,
-                                    tint = BlackColor
-                                )
-                            }
-                        )
-                    }
-                }
-
-            }
+            CommentBottomSheet(viewModel = viewModel, screenHeight=screenHeight, sheetState=sheetState)
         }
     }
 }

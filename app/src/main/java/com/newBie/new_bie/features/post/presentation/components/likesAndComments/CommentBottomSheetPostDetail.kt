@@ -24,7 +24,6 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -36,9 +35,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.ViewModel
 import com.newBie.new_bie.core.components.BottomSheetTopBatTitle
-import com.newBie.new_bie.core.components.TopBarTitleText
 import com.newBie.new_bie.core.utils.toKoreaLocalDateTime
 import com.newBie.new_bie.core.utils.toTimeAgo
 import com.newBie.new_bie.features.post.presentation.interfaces.CommentBottomSheetViewModel
@@ -48,7 +45,7 @@ import com.newBie.new_bie.ui.theme.OrangeColor
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CommentBottomSheet(viewModel : CommentBottomSheetViewModel, screenHeight: Dp , sheetState: SheetState){
+fun CommentBottomSheetPostDetail(viewModel : CommentBottomSheetViewModel, screenHeight: Dp , sheetState: SheetState){
     val commentsList by viewModel.comments.collectAsState()
     val userCommentInput by viewModel.userCommentInput.collectAsState()
     val selectedCommentId by viewModel.selectCommentId.collectAsState()
