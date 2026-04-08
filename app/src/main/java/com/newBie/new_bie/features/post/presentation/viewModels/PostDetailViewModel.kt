@@ -7,6 +7,7 @@ import com.newBie.new_bie.core.managers.SupabaseManager
 import com.newBie.new_bie.core.utils.Constants
 import com.newBie.new_bie.features.post.data.repositories.PostRepositoryImpl
 import com.newBie.new_bie.features.post.domain.entities.CommentWithProfileEntity
+import com.newBie.new_bie.features.post.domain.entities.PostImageEntity
 import com.newBie.new_bie.features.post.domain.entities.PostWithProfileEntity
 import com.newBie.new_bie.features.post.domain.repositories.PostRepository
 import io.github.jan.supabase.auth.auth
@@ -21,9 +22,14 @@ class PostDetailViewModel: ViewModel() {
     val selectCommentId: MutableStateFlow<Int?> = MutableStateFlow(null)
     var userCommentInput: MutableStateFlow<String> = MutableStateFlow("")
     val editUserCommentInput: MutableStateFlow<String> = MutableStateFlow("")
+
+    var images : MutableStateFlow<List<PostImageEntity>> = MutableStateFlow(listOf())
     fun fetchPost(id : Int) {
         viewModelScope.launch {
-            post.value = repository.fetchPostItem(id)
+            val result =repository.fetchPostItem(id)
+            if (result == null)return@launch
+            post.value = result
+            images.value = result.postImages
         }
     }
 

@@ -29,10 +29,13 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -54,6 +57,11 @@ fun CommentBottomSheet(viewModel : CommentBottomSheetViewModel, screenHeight: Dp
     val userCommentInput by viewModel.userCommentInput.collectAsState()
     val selectedCommentId by viewModel.selectCommentId.collectAsState()
     val editUserCommentInput by viewModel.editUserCommentInput.collectAsState()
+
+    // 포커스를 잡을때 필요한 상태정보
+    val focusRequester = remember { FocusRequester() }
+    // 포커스 매니저는 포커스를 해제할 때 사용됨(여기서는)
+    val focusManager = LocalFocusManager.current
 
     ModalBottomSheet(
         containerColor = BlackColor,
@@ -106,7 +114,8 @@ fun CommentBottomSheet(viewModel : CommentBottomSheetViewModel, screenHeight: Dp
                                     viewModel.editComment(it)
                                 }
                             },
-                            onDelete = {viewModel.deleteComment(item.id, item.user.id)}
+                            onDelete = {viewModel.deleteComment(item.id, item.user.id)},
+                            focusManager = focusManager
                         )
                     }
                 }

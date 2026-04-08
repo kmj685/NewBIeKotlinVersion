@@ -31,6 +31,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -61,7 +62,9 @@ fun CommentItem(
     onUpdateInput:(String) -> Unit = {},
     userInput: String,
     onCancel: () -> Unit,
-    onUpdate:()-> Unit
+    onUpdate:()-> Unit,
+    focusManager: FocusManager
+
 ) {
     val imageSize = 60.dp
     val currentUserId = SupabaseManager.supabase.auth.currentUserOrNull()?.id
