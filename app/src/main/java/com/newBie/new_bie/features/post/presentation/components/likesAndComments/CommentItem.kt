@@ -34,6 +34,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -111,7 +112,8 @@ fun CommentItem(
                     OutlinedTextField(
                         value = userInput,
                         onValueChange = { onUpdateInput.invoke(it) },
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier.weight(1f),
+                        textStyle = TextStyle(color = Color.White),
                     )
                     IconButton(onClick = {onUpdate.invoke()}) {
                         Icon(Icons.Default.Check, contentDescription = null, tint = Color.Green)

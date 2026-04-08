@@ -114,40 +114,7 @@ fun CommentBottomSheet(viewModel : CommentBottomSheetViewModel, screenHeight: Dp
             Row(
 
             ) {
-                OutlinedTextField(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(10.dp)
-                        .clip(RoundedCornerShape(10))
-                        .background(color = Color(0xffF2F2F7FF), shape = RoundedCornerShape(10)),
-                    value = userCommentInput,
-                    onValueChange = { viewModel.updateUserInput(it) },
-                    placeholder = { Text("댓글") },
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-                    keyboardActions = KeyboardActions(
-                        onSend = {
-                            if (userCommentInput.isNotBlank()) {
-                                // 검색 화면으로 이동 (작성하신 NavHost 경로 기준)
-                                viewModel.insertComment()
-                            }
-                        }
-                    ),
-//            colors = OutlinedTextFieldDefaults.colors(),
-                    trailingIcon = {
-                        Icon(
-                            Icons.Default.Send,
-                            modifier = Modifier
-                                .size(20.dp)
-                                .clickable(onClick = {
-                                    if (userCommentInput.isNotBlank()) {
-                                        viewModel.insertComment()
-                                    }
-                                }),
-                            contentDescription = null,
-                            tint = BlackColor
-                        )
-                    }
-                )
+                CommentBottomSheetTextField(userCommentInput = userCommentInput, onValueChange = {viewModel.updateUserInput(it)}, onSend = {viewModel.insertComment()})
             }
         }
 
