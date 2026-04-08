@@ -132,5 +132,8 @@ dependencies {
 
     implementation("com.cloudinary:kotlin-url-gen:1.7.0")
 
+    // Zoomable
+    val ZoomableVersion = "2.11.1"
+    implementation("net.engawapg.lib:zoomable:${ZoomableVersion}")
 
 }

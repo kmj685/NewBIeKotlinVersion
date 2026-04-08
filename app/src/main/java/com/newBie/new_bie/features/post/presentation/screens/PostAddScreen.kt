@@ -1,10 +1,16 @@
 package com.newBie.new_bie.features.post.presentation.screens
 
+import android.annotation.SuppressLint
 import android.content.Context
+import android.net.Uri
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -20,14 +26,20 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Label
 import androidx.compose.material.icons.filled.Photo
 import androidx.compose.material3.BottomSheetDefaults.DragHandle
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -61,6 +73,8 @@ import com.newBie.new_bie.features.post.presentation.components.buttons.PostUpda
 import com.newBie.new_bie.features.post.presentation.viewModels.PostAddViewModel
 import com.newBie.new_bie.ui.theme.BlackColor
 import com.newBie.new_bie.ui.theme.OrangeColor
+import net.engawapg.lib.zoomable.rememberZoomState
+import net.engawapg.lib.zoomable.zoomable
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -86,6 +100,10 @@ fun PostAddScreen(modifier: Modifier = Modifier, navController: NavController, v
                 Log.d("PhotoPicker", "No media selected")
             }
         }
+    // 꽉 차는 값 flag 값
+    var isExpanded by remember { mutableStateOf(false) }
+    // 사진 한장 한장가져올 값
+    var selectedImage by remember { mutableStateOf<Uri?>(null) }
 
 
     // 등록에 성공했다면 홈 화면으로 이동하고 스택 없애기
@@ -99,113 +117,174 @@ fun PostAddScreen(modifier: Modifier = Modifier, navController: NavController, v
         }
     }
 
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(BlackColor)
-    ) {
-        Column(modifier = Modifier.fillMaxWidth()) {
-            TopBarTitleText("게시물 작성")
-            Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp).weight(1f)) {
-                TitleTextField(
-                    modifier = Modifier.padding(bottom = 8.dp),
-                    titleInput = titleInput,
-                    onValueChange = {viewModel.onChangeTitleInput(it)}
-                )
-                Spacer(modifier = Modifier.height(1.dp).fillMaxWidth().background(color = Color.DarkGray))
-                ContentTextField(
-                    modifier = Modifier.weight(1f),
-                    contentInput = contentInput,
-                    onValueChange = {viewModel.onChangeContentInput(it)}
-                )
-                Column(modifier = Modifier.padding(vertical = 10.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                    if (imageInputList.isNotEmpty()){
-                        LazyRow(modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp), horizontalArrangement = Arrangement.spacedBy(5.dp)) {
-                            items(imageInputList){
-                                Box(contentAlignment = Alignment.TopEnd){
-                                    AsyncImage(
-                                        model = it,
-                                        contentDescription = "미리보기 이미지",
-                                        modifier = Modifier
-                                            .size(90.dp)
-                                            .clip(RoundedCornerShape(10.dp))
-                                            .clickable(onClick = {})// TODO: 사진 확대 로직 넣기
+    SharedTransitionLayout() {
+        AnimatedContent(
+            targetState = isExpanded,
+            label = "ImageTransition"
+        ) { targetExpended ->
+            if (!targetExpended){
+                Box(
+                    modifier = modifier
+                        .fillMaxSize()
+                        .background(BlackColor)
+                ) {
+                    Column(modifier = Modifier.fillMaxWidth()) {
+                        TopBarTitleText("게시물 작성")
+                        Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp).weight(1f)) {
+                            TitleTextField(
+                                modifier = Modifier.padding(bottom = 8.dp),
+                                titleInput = titleInput,
+                                onValueChange = {viewModel.onChangeTitleInput(it)}
+                            )
+                            Spacer(modifier = Modifier.height(1.dp).fillMaxWidth().background(color = Color.DarkGray))
+                            ContentTextField(
+                                modifier = Modifier.weight(1f),
+                                contentInput = contentInput,
+                                onValueChange = {viewModel.onChangeContentInput(it)}
+                            )
+                            Column(modifier = Modifier.padding(vertical = 10.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                                if (imageInputList.isNotEmpty()){
+                                    LazyRow(modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp), horizontalArrangement = Arrangement.spacedBy(5.dp)) {
+                                        items(imageInputList){
+                                            Box(contentAlignment = Alignment.TopEnd){
+                                                AsyncImage(
+                                                    model = it,
+                                                    contentDescription = "미리보기 이미지",
+                                                    modifier = Modifier
+                                                        .size(90.dp)
+                                                        .clip(RoundedCornerShape(10.dp))
+                                                        .sharedElement(
+                                                            rememberSharedContentState(key = "image_$it"),
+                                                            animatedVisibilityScope = this@AnimatedContent
+                                                        )
+                                                        .clickable(onClick = {
+                                                            selectedImage = it
+                                                            isExpanded = true
+                                                        })
+                                                )
+                                                ImageDeleteButton{ viewModel.deleteImage(it)}
+                                            }
+                                        }
+                                    }
+                                }
+                                if (selectCategoryList.isNotEmpty()) {
+                                    SelectedCategoryListLazyRow(selectCategoryList, {viewModel.unselectCategory(it)})
+                                }
+                            }
+                            Row(modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(10.dp)
+                            ) {
+                                PostEditScreenActionButton(Icons.Default.Photo, "사진 추가", {pickMultipleMedia.launch( PickVisualMediaRequest(
+                                    ActivityResultContracts.PickVisualMedia.ImageAndVideo))})
+                                PostEditScreenActionButton(Icons.Default.Label, "카테고리", {
+                                    viewModel.openBottomSheetCopyCategoriesList()
+                                    showSheet = true
+                                })
+                            }
+                            PostUpdateBtn(modifier = Modifier.padding(vertical = 10.dp),title = "등록", onClick = {
+                                viewModel.insertPost(context)
+                            })
+                        }
+                        BottomTapBar(navController, PageSet.ADD_POST)
+                        if (showSheet) {
+                            ModalBottomSheet(
+                                onDismissRequest = {showSheet = false},
+                                sheetState = sheetState,
+                                containerColor = BlackColor,
+                                contentColor = Color.White,
+                                dragHandle = {
+                                    DragHandle(
+                                        color = Color.Gray
                                     )
-                                    ImageDeleteButton{ viewModel.deleteImage(it)}
+                                }
+                            ) {
+                                Row(modifier = Modifier.fillMaxWidth().padding(10.dp), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                                    Button(modifier = Modifier.weight(0.5f),
+                                        colors = ButtonColors(
+                                            containerColor = Color.White,
+                                            contentColor = Color.Black,
+                                            disabledContainerColor = Color.DarkGray,
+                                            disabledContentColor = Color.White
+                                        ),
+                                        enabled = bottomSheetSelectedCategories.isNotEmpty(),
+                                        onClick = {
+                                            viewModel.clearCategories()
+                                        }) {
+                                        Text("선택 해제")
+                                    }
+                                    Button(modifier = Modifier.weight(0.5f),
+                                        colors = ButtonColors(
+                                            containerColor = OrangeColor,
+                                            contentColor = Color.White,
+                                            disabledContainerColor = Color.DarkGray,
+                                            disabledContentColor = Color.White
+                                        ),
+                                        onClick = {
+                                            viewModel.confirmSelection()
+                                            showSheet = false
+                                        }) {
+                                        Text("완료")
+                                    }
+                                }
+                                LazyColumn() {
+                                    items(categoryList){ item ->
+                                        PostEditCategoryBtn(
+                                            item,
+                                            bottomSheetSelectedCategories.contains(item),
+                                            {viewModel.toggleCategory(it)}
+                                        )
+                                    }
                                 }
                             }
                         }
                     }
-                    if (selectCategoryList.isNotEmpty()) {
-                        SelectedCategoryListLazyRow(selectCategoryList, {viewModel.unselectCategory(it)})
-                    }
                 }
-                Row(modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+            } else {
+                // imageInputList에서 클릭한 사진의 인덱스를 찾아 초기 페이지로 설정
+                val pagerState = rememberPagerState(
+                    initialPage = imageInputList.indexOf(selectedImage),
+                    pageCount = { imageInputList.size }
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.Black)
                 ) {
-                    PostEditScreenActionButton(Icons.Default.Photo, "사진 추가", {pickMultipleMedia.launch( PickVisualMediaRequest(
-                        ActivityResultContracts.PickVisualMedia.ImageAndVideo))})
-                    PostEditScreenActionButton(Icons.Default.Label, "카테고리", {
-                        viewModel.openBottomSheetCopyCategoriesList()
-                        showSheet = true
-                    })
-                }
-                PostUpdateBtn(modifier = Modifier.padding(vertical = 10.dp),title = "등록", onClick = {
-                    viewModel.insertPost(context)
-                })
-            }
-            BottomTapBar(navController, PageSet.ADD_POST)
-            if (showSheet) {
-                ModalBottomSheet(
-                    onDismissRequest = {showSheet = false},
-                    sheetState = sheetState,
-                    containerColor = BlackColor,
-                    contentColor = Color.White,
-                    dragHandle = {
-                        DragHandle(
-                            color = Color.Gray
-                        )
-                    }
-                ) {
-                    Row(modifier = Modifier.fillMaxWidth().padding(10.dp), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                        Button(modifier = Modifier.weight(0.5f),
-                            colors = ButtonColors(
-                                containerColor = Color.White,
-                                contentColor = Color.Black,
-                                disabledContainerColor = Color.DarkGray,
-                                disabledContentColor = Color.White
-                            ),
-                            enabled = bottomSheetSelectedCategories.isNotEmpty(),
-                            onClick = {
-                                viewModel.clearCategories()
-                            }) {
-                            Text("선택 해제")
-                        }
-                        Button(modifier = Modifier.weight(0.5f),
-                            colors = ButtonColors(
-                                containerColor = OrangeColor,
-                                contentColor = Color.White,
-                                disabledContainerColor = Color.DarkGray,
-                                disabledContentColor = Color.White
-                            ),
-                            onClick = {
-                                viewModel.confirmSelection()
-                                showSheet = false
-                            }) {
-                            Text("완료")
-                        }
-                    }
-                    LazyColumn() {
-                        items(categoryList){ item ->
-                            PostEditCategoryBtn(
-                                item,
-                                bottomSheetSelectedCategories.contains(item),
-                                {viewModel.toggleCategory(it)}
+                    HorizontalPager(
+                        state = pagerState,
+                        modifier = Modifier.fillMaxSize()
+                    ) {page ->
+                        val currentUri = imageInputList[page]
+                        val zoomState = rememberZoomState()
+
+                        Box(
+                            modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
+                        ) {
+                            AsyncImage(
+                                model = currentUri,
+                                contentDescription = "확대 이미지",
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .sharedElement(
+                                        rememberSharedContentState(key = "image_$currentUri"),
+                                        animatedVisibilityScope = this@AnimatedContent,
+                                    )
+                                    .zoomable(zoomState)
                             )
                         }
                     }
+                    // 닫기 버튼
+                    IconButton(
+                        onClick = { isExpanded = false },
+                        modifier = Modifier.align(Alignment.TopEnd).padding(16.dp)
+                    ) {
+                        Icon(Icons.Default.Close, contentDescription = "닫기", tint = Color.White)
+                    }
                 }
+                // 안드로이드 뒤로가기 키 설정
+                BackHandler() { isExpanded = false }
             }
         }
     }
+
 }

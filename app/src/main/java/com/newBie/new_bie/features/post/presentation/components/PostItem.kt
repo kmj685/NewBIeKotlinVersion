@@ -30,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -111,7 +112,7 @@ fun PostItem(post : PostWithProfileEntity, onDelete : () -> Unit, onLike : () ->
         // 🔹 내용
         Text(
             text = post.content ?: "내용 없음",
-            maxLines = 6,
+            maxLines = 3,
             overflow = TextOverflow.Ellipsis,
             color = Color.White,
             style = MaterialTheme.typography.bodyMedium
@@ -134,7 +135,8 @@ fun PostItem(post : PostWithProfileEntity, onDelete : () -> Unit, onLike : () ->
                             text = category.categoryType.typeTitle,
 //                            text = "카테고리",
                             fontSize = 12.sp,
-                            color = Color.Black
+                            fontWeight = FontWeight(600),
+                            color = Color.White
                         )
                     }
                 }
