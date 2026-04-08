@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -38,14 +39,14 @@ import androidx.compose.ui.unit.sp
 import com.newBie.new_bie.core.components.BottomSheetTopBatTitle
 import com.newBie.new_bie.core.utils.toKoreaLocalDateTime
 import com.newBie.new_bie.core.utils.toTimeAgo
-import com.newBie.new_bie.features.post.presentation.interfaces.CommentBottomSheetViewModel
+import com.newBie.new_bie.features.post.presentation.viewModels.PostDetailViewModel
 import com.newBie.new_bie.ui.theme.BlackColor
 import com.newBie.new_bie.ui.theme.OrangeColor
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CommentBottomSheetPostDetail(viewModel : CommentBottomSheetViewModel, screenHeight: Dp , sheetState: SheetState){
+fun CommentBottomSheetPostDetail(viewModel : PostDetailViewModel, screenHeight: Dp , sheetState: SheetState, onDismiss: () -> Unit){
     val commentsList by viewModel.comments.collectAsState()
     val userCommentInput by viewModel.userCommentInput.collectAsState()
     val selectedCommentId by viewModel.selectCommentId.collectAsState()
@@ -54,7 +55,7 @@ fun CommentBottomSheetPostDetail(viewModel : CommentBottomSheetViewModel, screen
     ModalBottomSheet(
         containerColor = BlackColor,
         contentColor = BlackColor,
-        onDismissRequest = {viewModel.unSelectPostId()},
+        onDismissRequest = {onDismiss.invoke()},
         sheetState = sheetState
     ) {
         Column(
@@ -113,6 +114,7 @@ fun CommentBottomSheetPostDetail(viewModel : CommentBottomSheetViewModel, screen
                 OutlinedTextField(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .padding(10.dp)
                         .clip(RoundedCornerShape(10))
                         .background(color = Color(0xffF2F2F7FF), shape = RoundedCornerShape(10)),
                     value = userCommentInput,

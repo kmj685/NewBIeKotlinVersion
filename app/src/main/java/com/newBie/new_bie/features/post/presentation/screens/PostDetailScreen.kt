@@ -37,6 +37,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -46,6 +47,7 @@ import com.newBie.new_bie.core.utils.toKoreaLocalDateTime
 import com.newBie.new_bie.core.utils.toTimeAgo
 import com.newBie.new_bie.features.post.domain.entities.PostUserEntity
 import com.newBie.new_bie.features.post.presentation.components.SmallProfileComponent
+import com.newBie.new_bie.features.post.presentation.components.likesAndComments.CommentBottomSheetPostDetail
 import com.newBie.new_bie.features.post.presentation.viewModels.HomeViewModel
 import com.newBie.new_bie.features.post.presentation.viewModels.PostDetailViewModel
 import com.newBie.new_bie.ui.theme.AppTextStyle
@@ -57,14 +59,20 @@ import io.github.jan.supabase.realtime.Column
 fun PostDetailScreen(modifier: Modifier = Modifier, navController: NavController,viewModel : PostDetailViewModel = viewModel<PostDetailViewModel>(), id: Int) {
 
 
-    val sheetState = rememberModalBottomSheetState()
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showSheet by remember { mutableStateOf(false) }
     val post by viewModel.post.collectAsState()
     val user: PostUserEntity? = post?.user
+
+    val configuration = LocalConfiguration.current
+    val screenHeight = configuration.screenHeightDp.dp
     LaunchedEffect(Unit) {
         if (id != 0) {
             viewModel.fetchPost(id)
         }
+    }
+    LaunchedEffect(post) {
+        viewModel.fetchComments()
     }
     Column(
         modifier = modifier.fillMaxSize()
@@ -145,6 +153,7 @@ fun PostDetailScreen(modifier: Modifier = Modifier, navController: NavController
             Spacer(modifier = Modifier.width(16.dp))
 
             Row(
+                modifier = Modifier.clickable(onClick = {showSheet = true}),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
@@ -161,7 +170,9 @@ fun PostDetailScreen(modifier: Modifier = Modifier, navController: NavController
                 )
             }
         }
-
+        if (showSheet) {
+            CommentBottomSheetPostDetail(viewModel=viewModel, screenHeight = screenHeight, sheetState = sheetState, onDismiss = {showSheet = false})
+        }
 
     }
 
