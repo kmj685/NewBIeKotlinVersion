@@ -193,54 +193,61 @@ fun SearchAllView(viewModel: SearchResultViewModel, navController: NavController
     if (posts.isEmpty() && users.isEmpty()) {
         EmptyResultView()
     } else {
-        LazyColumn(modifier = Modifier.fillMaxSize().padding(8.dp)) {
-            // 사용자 요약 섹션
-            if (users.isNotEmpty()) {
-                item { Text("유저 : ${users.size}명", fontWeight = FontWeight.Bold) }
-                items(users) { user -> // 전체보기에서는 일부만 표시 (Flutter 로직 대응)
-                    SmallProfileComponent(
-                        modifier = Modifier.fillMaxWidth(),
-                        imageUrl = user.profileImage, // 엔티티 필드명에 맞게 조정
-                        nickName = user.nickName ?: "",
-                        introduce = user.introduction,
-                        userId = user.id,
-                        onImageClick = {
-                            navController.navigate("user_profile/${user.id}")
+        Box(
+            modifier = Modifier
+            .fillMaxSize()
+        ){
+            LazyColumn(modifier = Modifier
+                .fillMaxSize()
+                .padding(8.dp)) {
+                // 사용자 요약 섹션
+                if (users.isNotEmpty()) {
+                    item { Text("유저 : ${users.size}명", fontWeight = FontWeight.Bold) }
+                    items(users) { user -> // 전체보기에서는 일부만 표시 (Flutter 로직 대응)
+                        SmallProfileComponent(
+                            modifier = Modifier.fillMaxWidth(),
+                            imageUrl = user.profileImage, // 엔티티 필드명에 맞게 조정
+                            nickName = user.nickName ?: "",
+                            introduce = user.introduction,
+                            userId = user.id,
+                            onImageClick = {
+                                navController.navigate("user_profile/${user.id}")
+                            }
+                        )
+                    }
+                    item {
+                        Button(
+                            onClick = { viewModel.onTabSelected(2) },
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = ButtonDefaults.buttonColors(containerColor = OrangeColor)
+                        ) {
+                            Text("유저 검색결과 더보기", color = Color.White)
                         }
-                    )
-                }
-                item {
-                    Button(
-                        onClick = { viewModel.onTabSelected(2) },
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = ButtonDefaults.buttonColors(containerColor = OrangeColor)
-                    ) {
-                        Text("유저 검색결과 더보기", color = Color.White)
                     }
                 }
-            }
 
-            item { Spacer(modifier = Modifier.height(16.dp)) }
+                item { Spacer(modifier = Modifier.height(16.dp)) }
 
-            // 게시물 요약 섹션
-            if (posts.isNotEmpty()) {
-                item { Text("게시물 : ${posts.size}개", fontWeight = FontWeight.Bold) }
-                items(posts.take(5)) { post ->
-                    val index = posts.indexOf(post)
-                    PostItem(
-                        post = post,
-                        onLike = { viewModel.likeToggle(index, post.id) },
-                        onDelete = { viewModel.deletePost(post.id) },
-                        onClick = {navController.navigate("${Routes.POST}/${it}")},
-                        onComments = {viewModel.fetchComments(post.id)}
-                    )
-                }
-                item {
-                    Button(
-                        onClick = { viewModel.onTabSelected(1) },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text("게시물 검색결과 더보기")
+                // 게시물 요약 섹션
+                if (posts.isNotEmpty()) {
+                    item { Text("게시물 : ${posts.size}개", fontWeight = FontWeight.Bold) }
+                    items(posts.take(5)) { post ->
+                        val index = posts.indexOf(post)
+                        PostItem(
+                            post = post,
+                            onLike = { viewModel.likeToggle(index, post.id) },
+                            onDelete = { viewModel.deletePost(post.id) },
+                            onClick = { navController.navigate("${Routes.POST}/${it}") },
+                            onComments = { viewModel.fetchComments(post.id) }
+                        )
+                    }
+                    item {
+                        Button(
+                            onClick = { viewModel.onTabSelected(1) },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text("게시물 검색결과 더보기")
+                        }
                     }
                 }
             }
