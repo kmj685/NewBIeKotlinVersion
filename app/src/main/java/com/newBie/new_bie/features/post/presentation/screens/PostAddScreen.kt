@@ -10,7 +10,6 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.SharedTransitionLayout
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -61,6 +60,7 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.newBie.new_bie.core.components.BottomTapBar
 import com.newBie.new_bie.core.components.TopBarTitleText
+import com.newBie.new_bie.core.utils.Constants.TAG
 import com.newBie.new_bie.core.utils.PageSet
 import com.newBie.new_bie.core.utils.Routes
 import com.newBie.new_bie.features.post.presentation.components.ContentTextField
@@ -95,7 +95,9 @@ fun PostAddScreen(modifier: Modifier = Modifier, navController: NavController, v
             // photo picker.
             if (uris.isNotEmpty()) {
                 viewModel.getImage(uris)
-                Log.d("PhotoPicker", "Number of items selected: ${uris.size}")
+                Log.d(TAG, "방금 추가된 사진 개수: ${uris.size}")
+                Log.d(TAG, "현재 선택된 전체 사진 리스트 ${viewModel.imageInputList.value}")
+                Log.d(TAG, "총 사진 개수: ${viewModel.imageInputList.value.size}")
             } else {
                 Log.d("PhotoPicker", "No media selected")
             }
@@ -130,13 +132,19 @@ fun PostAddScreen(modifier: Modifier = Modifier, navController: NavController, v
                 ) {
                     Column(modifier = Modifier.fillMaxWidth()) {
                         TopBarTitleText("게시물 작성")
-                        Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp).weight(1f)) {
+                        Column(modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 10.dp)
+                            .weight(1f)) {
                             TitleTextField(
                                 modifier = Modifier.padding(bottom = 8.dp),
                                 titleInput = titleInput,
                                 onValueChange = {viewModel.onChangeTitleInput(it)}
                             )
-                            Spacer(modifier = Modifier.height(1.dp).fillMaxWidth().background(color = Color.DarkGray))
+                            Spacer(modifier = Modifier
+                                .height(1.dp)
+                                .fillMaxWidth()
+                                .background(color = Color.DarkGray))
                             ContentTextField(
                                 modifier = Modifier.weight(1f),
                                 contentInput = contentInput,
@@ -144,7 +152,9 @@ fun PostAddScreen(modifier: Modifier = Modifier, navController: NavController, v
                             )
                             Column(modifier = Modifier.padding(vertical = 10.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                                 if (imageInputList.isNotEmpty()){
-                                    LazyRow(modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp), horizontalArrangement = Arrangement.spacedBy(5.dp)) {
+                                    LazyRow(modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 10.dp), horizontalArrangement = Arrangement.spacedBy(5.dp)) {
                                         items(imageInputList){
                                             Box(contentAlignment = Alignment.TopEnd){
                                                 AsyncImage(
@@ -174,8 +184,10 @@ fun PostAddScreen(modifier: Modifier = Modifier, navController: NavController, v
                             Row(modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.spacedBy(10.dp)
                             ) {
-                                PostEditScreenActionButton(Icons.Default.Photo, "사진 추가", {pickMultipleMedia.launch( PickVisualMediaRequest(
-                                    ActivityResultContracts.PickVisualMedia.ImageAndVideo))})
+                                PostEditScreenActionButton(Icons.Default.Photo, "사진 추가", {
+                                    pickMultipleMedia.launch( PickVisualMediaRequest(
+                                    ActivityResultContracts.PickVisualMedia.ImageAndVideo))
+                                })
                                 PostEditScreenActionButton(Icons.Default.Label, "카테고리", {
                                     viewModel.openBottomSheetCopyCategoriesList()
                                     showSheet = true
@@ -185,7 +197,9 @@ fun PostAddScreen(modifier: Modifier = Modifier, navController: NavController, v
                                 viewModel.insertPost(context)
                             })
                         }
+                        //바텀 네브 탭 바
                         BottomTapBar(navController, PageSet.ADD_POST)
+
                         if (showSheet) {
                             ModalBottomSheet(
                                 onDismissRequest = {showSheet = false},
@@ -198,7 +212,9 @@ fun PostAddScreen(modifier: Modifier = Modifier, navController: NavController, v
                                     )
                                 }
                             ) {
-                                Row(modifier = Modifier.fillMaxWidth().padding(10.dp), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                                Row(modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(10.dp), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                                     Button(modifier = Modifier.weight(0.5f),
                                         colors = ButtonColors(
                                             containerColor = Color.White,
@@ -276,7 +292,9 @@ fun PostAddScreen(modifier: Modifier = Modifier, navController: NavController, v
                     // 닫기 버튼
                     IconButton(
                         onClick = { isExpanded = false },
-                        modifier = Modifier.align(Alignment.TopEnd).padding(16.dp)
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                            .padding(16.dp)
                     ) {
                         Icon(Icons.Default.Close, contentDescription = "닫기", tint = Color.White)
                     }

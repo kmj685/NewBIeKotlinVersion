@@ -16,6 +16,7 @@ import com.newBie.new_bie.features.post.presentation.screens.HomeScreen
 import com.newBie.new_bie.features.post.presentation.screens.PostAddScreen
 import com.newBie.new_bie.features.post.presentation.screens.PostDetailScreen
 import com.newBie.new_bie.features.post.presentation.screens.SearchScreen
+import com.newBie.new_bie.features.profile.presentation.screens.MyProfileScreen
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -122,7 +123,7 @@ fun AppNavHost(modifier : Modifier, navController: NavHostController, context: C
         }
 
         composable(Routes.MY_PROFILE) {
-            /* MyProfileScreen() */
+            MyProfileScreen(navController = navController)
         }
 
         composable("${Routes.MY_PROFILE}/${Routes.SETTING}") {

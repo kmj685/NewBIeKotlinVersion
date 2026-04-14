@@ -50,7 +50,7 @@ class PostAddViewModel : ViewModel() {
         contentInputTxt.value = content
     }
 
-    // ✅ 카테고리 리스트
+    // 카테고리 리스트
     private fun getCategoryList() {
         viewModelScope.launch {
             try{
@@ -135,7 +135,7 @@ class PostAddViewModel : ViewModel() {
                     )
                     // 업로드했던 이미지의 주소를 가져오는 작업 -> 이제 밑에 보면 images에 넣어줘야지 사진이 올라가니까
                     SupabaseManager.supabase.storage.from("images").publicUrl(fileName)
-                }.filterNotNull()
+                }
                 repository.insertPost(
                     userId = userID,
                     title = titleInputTxt.value,
