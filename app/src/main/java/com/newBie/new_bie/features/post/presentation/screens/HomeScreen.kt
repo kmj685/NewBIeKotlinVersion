@@ -4,6 +4,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -37,6 +38,7 @@ import androidx.compose.material3.MenuItemColors
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
@@ -127,158 +129,162 @@ fun HomeScreen(modifier: Modifier = Modifier, navController: NavController, view
             }
     }
 
-
-
-
-    Box(modifier = modifier
-        .fillMaxSize()){
-        Column(
-            modifier = modifier
-                .fillMaxSize()
-        ) {
-            TopBarTitleText("홈")
+    Scaffold(
+        topBar = { TopBarTitleText("홈")},
+        bottomBar = {BottomTapBar(navController, PageSet.HOME)},
+        containerColor = Color.Transparent
+    ) { innerPadding ->
+        Box(modifier = modifier
+            .padding(innerPadding)
+            .fillMaxSize()){
             Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(horizontal = 10.dp)
+                modifier = modifier
+                    .fillMaxSize()
             ) {
-                OutlinedTextField(
+                Column(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(10))
-                        .background(color = Color(0xffF2F2F7FF), shape = RoundedCornerShape(10)),
-                    value = userInput,
-                    onValueChange = { userInput = it },
-                    placeholder = { Text("검색어를 입력하세요") },
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-                    keyboardActions = KeyboardActions(
-                        onSearch = {
-                            if (userInput.isNotBlank()) {
-                                // 검색 화면으로 이동 (작성하신 NavHost 경로 기준)
-                                navController.navigate("${Routes.HOME}/${Routes.SEARCH}?query=$userInput")
-                            }
-                        }
-                    ),
-//            colors = OutlinedTextFieldDefaults.colors(),
-                    trailingIcon = {
-                        Icon(
-                            Icons.Default.Search,
-                            modifier = Modifier
-                                .size(20.dp)
-                                .clickable(onClick = {
-                                    if (userInput.isNotBlank()) {
-                                        // 2. 돋보기 아이콘 클릭 시 이동
-                                        navController.navigate("${Routes.HOME}/${Routes.SEARCH}?query=$userInput")
-                                    }
-                                }),
-                            contentDescription = null,
-                            tint = BlackColor
-                        )
-                    }
-                )
-                Spacer(modifier = Modifier.height(12.dp))
-                LazyRow() {
-                    items(categoryList) { category ->
-                        CategoryButton(
-                            category,
-                            selectCategory,
-                            { viewModel.changeCategory(category) })
-                    }
-                }
-                Spacer(modifier = Modifier.height(8.dp))
-
-                // 🔽 정렬 Dropdown
-                Box(modifier = Modifier.fillMaxWidth()) {
-
-                    ExposedDropdownMenuBox(
-                        expanded = expanded,
-                        onExpandedChange = { expanded = !expanded }
-                    ) {
-
-                        OutlinedTextField(
-                            readOnly = true,
-                            value = when (orderType) {
-                                OrderByType.NEW_FIRST -> "최신순"
-                                OrderByType.OLD_FIRST -> "오래된 순"
-                                OrderByType.LIKES_FIRST -> "좋아요 순"
-                            },
-                            onValueChange = {},
-                            trailingIcon = {
-                                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
-                            },
-                            modifier = Modifier.menuAnchor(),
-                            textStyle = TextStyle(color = OrangeColor)
-                        )
-
-                        ExposedDropdownMenu(
-                            modifier = Modifier.background(color = BlackColor),
-                            expanded = expanded,
-                            onDismissRequest = { expanded = false }
-                        ) {
-
-                            DropdownMenuItem(
-                                text = { Text("최신순", color = OrangeColor) },
-                                onClick = {
-                                    viewModel.changeOrder(OrderByType.NEW_FIRST)
-                                    expanded = false
-                                },
-
-                                )
-
-                            DropdownMenuItem(
-                                text = { Text("오래된 순", color = OrangeColor) },
-                                onClick = {
-                                    viewModel.changeOrder(OrderByType.OLD_FIRST)
-                                    expanded = false
-                                }
-                            )
-
-                            DropdownMenuItem(
-                                text = { Text("좋아요 순", color = OrangeColor) },
-                                onClick = {
-                                    viewModel.changeOrder(OrderByType.LIKES_FIRST)
-                                    expanded = false
-                                }
-                            )
-                        }
-                    }
-                }
-                Spacer(modifier = Modifier.height(8.dp))
-
-                PullToRefreshBox(
-                    isRefreshing = isRefreshing,
-                    onRefresh = { viewModel.refresh() },
-                    modifier = Modifier.weight(1f)
+                        .weight(1f)
+                        .padding(horizontal = 10.dp)
                 ) {
-                    LazyColumn(
-                        state = listState,
+                    OutlinedTextField(
                         modifier = Modifier
                             .fillMaxWidth()
-
-                    ) {
-                        itemsIndexed(postItemList) { index, post ->
-                            PostItem(
-                                post = post,
-                                onLike = { viewModel.likeToggle(index, post.id) },
-                                onDelete = { viewModel.deletePost(post.id) },
-                                onClick = { navController.navigate("${Routes.POST}/${it}") },
-                                onComments = { viewModel.fetchComments(post.id) }
+                            .clip(RoundedCornerShape(10))
+                            .background(color = Color(0xffF2F2F7FF), shape = RoundedCornerShape(10)),
+                        value = userInput,
+                        onValueChange = { userInput = it },
+                        placeholder = { Text("검색어를 입력하세요") },
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                        keyboardActions = KeyboardActions(
+                            onSearch = {
+                                if (userInput.isNotBlank()) {
+                                    // 검색 화면으로 이동 (작성하신 NavHost 경로 기준)
+                                    navController.navigate("${Routes.HOME}/${Routes.SEARCH}?query=$userInput")
+                                }
+                            }
+                        ),
+//            colors = OutlinedTextFieldDefaults.colors(),
+                        trailingIcon = {
+                            Icon(
+                                Icons.Default.Search,
+                                modifier = Modifier
+                                    .size(20.dp)
+                                    .clickable(onClick = {
+                                        if (userInput.isNotBlank()) {
+                                            // 2. 돋보기 아이콘 클릭 시 이동
+                                            navController.navigate("${Routes.HOME}/${Routes.SEARCH}?query=$userInput")
+                                        }
+                                    }),
+                                contentDescription = null,
+                                tint = BlackColor
                             )
                         }
-
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    LazyRow() {
+                        items(categoryList) { category ->
+                            CategoryButton(
+                                category,
+                                selectCategory,
+                                { viewModel.changeCategory(category) })
+                        }
                     }
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    // 🔽 정렬 Dropdown
+                    Box(modifier = Modifier.fillMaxWidth()) {
+
+                        ExposedDropdownMenuBox(
+                            expanded = expanded,
+                            onExpandedChange = { expanded = !expanded }
+                        ) {
+
+                            OutlinedTextField(
+                                readOnly = true,
+                                value = when (orderType) {
+                                    OrderByType.NEW_FIRST -> "최신순"
+                                    OrderByType.OLD_FIRST -> "오래된 순"
+                                    OrderByType.LIKES_FIRST -> "좋아요 순"
+                                },
+                                onValueChange = {},
+                                trailingIcon = {
+                                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+                                },
+                                modifier = Modifier.menuAnchor(),
+                                textStyle = TextStyle(color = OrangeColor)
+                            )
+
+                            ExposedDropdownMenu(
+                                modifier = Modifier.background(color = BlackColor),
+                                expanded = expanded,
+                                onDismissRequest = { expanded = false }
+                            ) {
+
+                                DropdownMenuItem(
+                                    text = { Text("최신순", color = OrangeColor) },
+                                    onClick = {
+                                        viewModel.changeOrder(OrderByType.NEW_FIRST)
+                                        expanded = false
+                                    },
+
+                                    )
+
+                                DropdownMenuItem(
+                                    text = { Text("오래된 순", color = OrangeColor) },
+                                    onClick = {
+                                        viewModel.changeOrder(OrderByType.OLD_FIRST)
+                                        expanded = false
+                                    }
+                                )
+
+                                DropdownMenuItem(
+                                    text = { Text("좋아요 순", color = OrangeColor) },
+                                    onClick = {
+                                        viewModel.changeOrder(OrderByType.LIKES_FIRST)
+                                        expanded = false
+                                    }
+                                )
+                            }
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    PullToRefreshBox(
+                        isRefreshing = isRefreshing,
+                        onRefresh = { viewModel.refresh() },
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        LazyColumn(
+                            state = listState,
+                            modifier = Modifier
+                                .fillMaxWidth()
+
+                        ) {
+                            itemsIndexed(postItemList) { index, post ->
+                                PostItem(
+                                    post = post,
+                                    onLike = { viewModel.likeToggle(index, post.id) },
+                                    onDelete = { viewModel.deletePost(post.id) },
+                                    onClick = { navController.navigate("${Routes.POST}/${it}") },
+                                    onComments = { viewModel.fetchComments(post.id) }
+                                )
+                            }
+
+                        }
+                    }
+
+
                 }
-
-
-            }
-            BottomTapBar(navController, PageSet.HOME)
-            if (selectPostId != null) {
-                CommentBottomSheet(
-                    viewModel = viewModel,
-                    screenHeight = screenHeight,
-                    sheetState = sheetState
-                )
+                if (selectPostId != null) {
+                    CommentBottomSheet(
+                        viewModel = viewModel,
+                        screenHeight = screenHeight,
+                        sheetState = sheetState
+                    )
+                }
             }
         }
     }
+
+
 }

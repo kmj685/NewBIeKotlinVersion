@@ -28,7 +28,7 @@ import io.github.jan.supabase.auth.auth
 import io.ktor.http.ContentType
 
 @Composable
-fun SmallProfileComponent(modifier: Modifier, imageUrl : String?, nickName : String, introduce : String?, userId : String?, onImageClick : () -> Unit) {
+fun SmallProfileComponent(modifier: Modifier, imageUrl : String?, nickName : String?, introduce : String?, userId : String?, onImageClick : () -> Unit) {
     val imageSize = 60.dp
 
     val imageModifier = Modifier
@@ -62,7 +62,9 @@ fun SmallProfileComponent(modifier: Modifier, imageUrl : String?, nickName : Str
             horizontalAlignment = Alignment.Start,
             modifier = Modifier.weight(1F)
         ) {
-            Text(nickName, color = OrangeColor)
+            if (nickName != null) {
+                Text(nickName, color = OrangeColor)
+            }
             Text(introduce ?: "", color = Color.White, maxLines = 1, overflow = TextOverflow.Ellipsis)
         }
     }

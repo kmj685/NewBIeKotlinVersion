@@ -27,6 +27,9 @@ class MyProfileViewModel : ViewModel() {
     private val _buttonIsWorking = MutableStateFlow(false)
     val buttonIsWorking: StateFlow<Boolean> = _buttonIsWorking
 
+    // refresh 여부
+    var isRefreshing = MutableStateFlow(false)
+
     init {
         fetchUser()
         fetchPosts()
@@ -74,6 +77,7 @@ class MyProfileViewModel : ViewModel() {
         fetchPosts()
     }
 
+    // 팔로우 수 등등 전부 데이터 다시 받아야 함
     fun refreshAll() {
         fetchUser()
         fetchPosts()
