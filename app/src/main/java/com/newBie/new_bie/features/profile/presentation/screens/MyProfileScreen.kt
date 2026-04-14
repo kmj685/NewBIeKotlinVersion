@@ -35,14 +35,14 @@ fun MyProfileScreen(modifier: Modifier = Modifier, navController: NavController,
                 .padding(10.dp)) {
 
                 // 당겨서 새로고침
-                PullToRefreshBox(
-                    isRefreshing = TODO(),
-                    onRefresh = TODO(),
-                    modifier = TODO(),
-                    state = TODO(),
-                    contentAlignment = TODO(),
-                    indicator = TODO()
-                ) { }
+//                PullToRefreshBox(
+//                    isRefreshing = TODO(),
+//                    onRefresh = TODO(),
+//                    modifier = TODO(),
+//                    state = TODO(),
+//                    contentAlignment = TODO(),
+//                    indicator = TODO()
+//                ) { }
             }
 
             BottomTapBar(
