@@ -44,13 +44,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
@@ -80,7 +84,7 @@ fun SearchScreen(modifier: Modifier = Modifier, navController: NavController,vie
     val keyword by viewModel.keyword.collectAsState()
     val selectedTab by viewModel.selectedTab.collectAsState()
 
-    val sheetState = rememberModalBottomSheetState()
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val selectPostId by viewModel.selectPostId.collectAsState()
     val commentsList by viewModel.comments.collectAsState()
     val configuration = LocalConfiguration.current
@@ -90,6 +94,11 @@ fun SearchScreen(modifier: Modifier = Modifier, navController: NavController,vie
     // Flutter의 TabController를 대체합니다.
     val pagerState = rememberPagerState(pageCount = { 3 })
     val coroutineScope = rememberCoroutineScope()
+
+    // 포커스를 잡을때 필요한 상태정보
+    val focusRequester = remember { FocusRequester() }
+    // 포커스 매니저는 포커스를 해제할 때 사용됨(여기서는)
+    val focusManager = LocalFocusManager.current
 
     // 🔥 [추가] 처음 진입 시 검색어가 있다면 검색 실행
     LaunchedEffect(Unit) {
@@ -111,30 +120,39 @@ fun SearchScreen(modifier: Modifier = Modifier, navController: NavController,vie
 
     Scaffold(
         topBar = {
-            Column(modifier = Modifier.background(Color.White)) {
+            Column(modifier = Modifier.background(BlackColor)) {
                 // 상단 검색바
                 OutlinedTextField(
                     value = keyword,
                     onValueChange = { viewModel.keyword.value = it },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(8.dp),
+                        .padding(8.dp)
+                        .background(Color.White, shape = RoundedCornerShape(8.dp))
+                        .focusRequester(focusRequester),
                     placeholder = { Text("검색어를 입력하세요.") },
                     shape = RoundedCornerShape(8.dp),
                     trailingIcon = {
-                        IconButton(onClick = { viewModel.search(keyword) }) {
+                        IconButton(onClick = {
+                            viewModel.search(keyword)
+                            focusManager.clearFocus(true)
+                        }) {
                             Icon(Icons.Default.Search, contentDescription = "Search")
                         }
                     },
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-                    keyboardActions = KeyboardActions(onSearch = { viewModel.search(keyword) }),
-                    singleLine = true
+                    keyboardActions = KeyboardActions(onSearch = {
+                        viewModel.search(keyword)
+                        focusManager.clearFocus(true)
+                    }),
+                    singleLine = true,
+
                 )
 
                 // TabBar (전체, 게시글, 사용자)
                 TabRow(
                     selectedTabIndex = selectedTab,
-                    containerColor = Color.White,
+                    containerColor = BlackColor,
                     contentColor = OrangeColor, // 테마에 정의된 색상 사용
                     indicator = { tabPositions ->
                         TabRowDefaults.SecondaryIndicator(
@@ -195,14 +213,14 @@ fun SearchAllView(viewModel: SearchResultViewModel, navController: NavController
     } else {
         Box(
             modifier = Modifier
-            .fillMaxSize()
+            .fillMaxSize().background(BlackColor)
         ){
             LazyColumn(modifier = Modifier
                 .fillMaxSize()
                 .padding(8.dp)) {
                 // 사용자 요약 섹션
                 if (users.isNotEmpty()) {
-                    item { Text("유저 : ${users.size}명", fontWeight = FontWeight.Bold) }
+                    item { Text("유저 : ${users.size}명", fontWeight = FontWeight.Bold, color = Color.White) }
                     items(users) { user -> // 전체보기에서는 일부만 표시 (Flutter 로직 대응)
                         SmallProfileComponent(
                             modifier = Modifier.fillMaxWidth(),
@@ -230,7 +248,7 @@ fun SearchAllView(viewModel: SearchResultViewModel, navController: NavController
 
                 // 게시물 요약 섹션
                 if (posts.isNotEmpty()) {
-                    item { Text("게시물 : ${posts.size}개", fontWeight = FontWeight.Bold) }
+                    item { Text("게시물 : ${posts.size}개", fontWeight = FontWeight.Bold, color = Color.White) }
                     items(posts.take(5)) { post ->
                         val index = posts.indexOf(post)
                         PostItem(
@@ -274,7 +292,7 @@ fun SearchPostView(viewModel: SearchResultViewModel, navController: NavControlle
     if (posts.isEmpty()) {
         EmptyResultView()
     } else {
-        LazyColumn(state = listState, modifier = Modifier.fillMaxSize()) {
+        LazyColumn(state = listState, modifier = Modifier.fillMaxSize().background(BlackColor)) {
             itemsIndexed(posts) { index, post ->
                 PostItem(
                     post = post,
@@ -306,7 +324,7 @@ fun SearchUserView(viewModel: SearchResultViewModel, navController: NavControlle
     if (users.isEmpty()) {
         EmptyResultView()
     } else {
-        LazyColumn(state = listState, modifier = Modifier.fillMaxSize()) {
+        LazyColumn(state = listState, modifier = Modifier.fillMaxSize().background(BlackColor)) {
             items(users) { user ->
                 SmallProfileComponent(
                     modifier = Modifier.fillMaxWidth(),
@@ -325,7 +343,7 @@ fun SearchUserView(viewModel: SearchResultViewModel, navController: NavControlle
 
 @Composable
 fun EmptyResultView() {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text("검색 결과가 없습니다.", fontSize = 20.sp, color = Color.Gray)
+    Box(modifier = Modifier.fillMaxSize().background(BlackColor), contentAlignment = Alignment.Center) {
+        Text("검색 결과가 없습니다.", fontSize = 20.sp, color = Color.White)
     }
 }

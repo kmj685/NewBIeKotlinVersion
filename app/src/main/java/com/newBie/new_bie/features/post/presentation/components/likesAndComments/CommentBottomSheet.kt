@@ -59,7 +59,8 @@ fun CommentBottomSheet(viewModel : CommentBottomSheetViewModel, screenHeight: Dp
     val editUserCommentInput by viewModel.editUserCommentInput.collectAsState()
 
     // 포커스를 잡을때 필요한 상태정보
-    val focusRequester = remember { FocusRequester() }
+    val addCommentFocusRequester = remember { FocusRequester() }
+    val editCommentFocusRequester = remember { FocusRequester() }
     // 포커스 매니저는 포커스를 해제할 때 사용됨(여기서는)
     val focusManager = LocalFocusManager.current
 
@@ -115,7 +116,8 @@ fun CommentBottomSheet(viewModel : CommentBottomSheetViewModel, screenHeight: Dp
                                 }
                             },
                             onDelete = {viewModel.deleteComment(item.id, item.user.id)},
-                            focusManager = focusManager
+                            focusManager = focusManager,
+                            focusRequester = editCommentFocusRequester
                         )
                     }
                 }
@@ -123,7 +125,7 @@ fun CommentBottomSheet(viewModel : CommentBottomSheetViewModel, screenHeight: Dp
             Row(
 
             ) {
-                CommentBottomSheetTextField(userCommentInput = userCommentInput, onValueChange = {viewModel.updateUserInput(it)}, onSend = {viewModel.insertComment()})
+                CommentBottomSheetTextField(userCommentInput = userCommentInput, onValueChange = {viewModel.updateUserInput(it)}, onSend = {viewModel.insertComment()}, focusRequester = addCommentFocusRequester, focusManager= focusManager)
             }
         }
 

@@ -46,11 +46,14 @@ object Routes {
     const val NOTICE_DETAIL = "notice_detail"
     const val BLOCKED_USERS = "blocked_users"
     const val UPDATE_PROFILE = "updateProfile"
+    const val TEAM_PROJECT = "teamProject"
+    const val CHATTING = "chatting"
+
 }
 
 
 enum class PageSet {
-    HOME, PROFILE, ADD_POST
+    HOME, PROFILE, ADD_POST, GROUP
 }
 
 enum class PageType{

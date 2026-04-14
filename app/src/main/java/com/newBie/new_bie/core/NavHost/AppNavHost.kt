@@ -17,6 +17,7 @@ import com.newBie.new_bie.features.post.presentation.screens.PostAddScreen
 import com.newBie.new_bie.features.post.presentation.screens.PostDetailScreen
 import com.newBie.new_bie.features.post.presentation.screens.SearchScreen
 import com.newBie.new_bie.features.profile.presentation.screens.MyProfileScreen
+import com.newBie.new_bie.features.teamProject.presentation.screens.TeamProjectListScreen
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -165,6 +166,13 @@ fun AppNavHost(modifier : Modifier, navController: NavHostController, context: C
 
         composable("${Routes.MY_PROFILE}/${Routes.UPDATE_PROFILE}") {
             /* UpdateProfileScreen() */
+        }
+
+        composable("${Routes.TEAM_PROJECT}") {
+            TeamProjectListScreen(navController=navController)
+        }
+        composable("${Routes.CHATTING}") {
+            /* ChattingRoomListScreen(navController=navController) */
         }
     }
 }

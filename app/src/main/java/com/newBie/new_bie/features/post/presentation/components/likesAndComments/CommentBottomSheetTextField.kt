@@ -16,6 +16,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
@@ -23,22 +26,24 @@ import androidx.compose.ui.unit.dp
 import com.newBie.new_bie.ui.theme.BlackColor
 
 @Composable
-fun CommentBottomSheetTextField(userCommentInput: String, onValueChange: (String) -> Unit, onSend:()-> Unit){
+fun CommentBottomSheetTextField(userCommentInput: String, onValueChange: (String) -> Unit, onSend:()-> Unit, focusRequester: FocusRequester, focusManager: FocusManager){
     OutlinedTextField(
         modifier = Modifier
             .fillMaxWidth()
             .padding(10.dp)
-            .clip(RoundedCornerShape(10)),
+            .clip(RoundedCornerShape(10))
+            .focusRequester(focusRequester)
+        ,
 //            .background(color = Color(0xffF2F2F7FF), shape = RoundedCornerShape(10)),
         value = userCommentInput,
         onValueChange = { onValueChange.invoke(it) },
         placeholder = { Text("댓글") },
-        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
         keyboardActions = KeyboardActions(
             onSend = {
                 if (userCommentInput.isNotBlank()) {
-                    // 검색 화면으로 이동 (작성하신 NavHost 경로 기준)
                     onSend.invoke()
+                    focusManager.clearFocus(true)
                 }
             }
         ),
@@ -53,6 +58,7 @@ fun CommentBottomSheetTextField(userCommentInput: String, onValueChange: (String
                     .clickable(onClick = {
                         if (userCommentInput.isNotBlank()) {
                             onSend.invoke()
+                            focusManager.clearFocus(true)
                         }
                     }),
                 contentDescription = null,

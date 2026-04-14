@@ -9,6 +9,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Diversity3
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material3.Icon
@@ -41,6 +42,7 @@ fun AppBarButton(pageSet: PageSet, title : String,
         PageSet.HOME -> Icons.Default.Home
         PageSet.ADD_POST -> Icons.Default.Add
         PageSet.PROFILE -> Icons.Default.List
+        PageSet.GROUP -> Icons.Default.Diversity3
     }
 
 //    var smallFontSet by remember { mutableStateOf(false) }
@@ -90,6 +92,16 @@ fun AppBarButton(pageSet: PageSet, title : String,
                     }
                     PageSet.PROFILE -> {
                         navController.navigate(Routes.MY_PROFILE){
+                            // 기존 화면 스택들 모두 날리기
+                            popUpTo(navController.graph.startDestinationId) {
+                                inclusive = true
+                            }
+                            // 화면 하나만 나오게 처리
+                            launchSingleTop = true
+                        }
+                    }
+                    PageSet.GROUP -> {
+                        navController.navigate(Routes.TEAM_PROJECT){
                             // 기존 화면 스택들 모두 날리기
                             popUpTo(navController.graph.startDestinationId) {
                                 inclusive = true

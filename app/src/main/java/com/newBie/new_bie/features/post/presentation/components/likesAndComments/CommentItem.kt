@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.Check
@@ -32,10 +34,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -63,7 +68,8 @@ fun CommentItem(
     userInput: String,
     onCancel: () -> Unit,
     onUpdate:()-> Unit,
-    focusManager: FocusManager
+    focusManager: FocusManager,
+    focusRequester: FocusRequester
 
 ) {
     val imageSize = 60.dp
@@ -115,13 +121,29 @@ fun CommentItem(
                     OutlinedTextField(
                         value = userInput,
                         onValueChange = { onUpdateInput.invoke(it) },
-                        modifier = Modifier.weight(1f),
+                        modifier = Modifier.weight(1f).focusRequester(focusRequester),
                         textStyle = TextStyle(color = Color.White),
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
+                        keyboardActions = KeyboardActions(
+                            onSend = {
+                                if (userInput.isNotBlank()) {
+                                    onUpdate.invoke()
+                                    focusManager.clearFocus(true)
+                                }
+                            }
+                        ),
+
                     )
-                    IconButton(onClick = {onUpdate.invoke()}) {
+                    IconButton(onClick = {
+                        onUpdate.invoke()
+                        focusManager.clearFocus(true)
+                    }) {
                         Icon(Icons.Default.Check, contentDescription = null, tint = Color.Green)
                     }
-                    IconButton(onClick = {onCancel.invoke()}) {
+                    IconButton(onClick = {
+                        onCancel.invoke()
+                        focusManager.clearFocus(true)
+                    }) {
                         Icon(Icons.Default.Cancel, contentDescription = null, tint = Color.Red)
                     }
                 }
