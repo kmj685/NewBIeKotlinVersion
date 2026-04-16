@@ -11,6 +11,7 @@ data class UserEntity(
     val introduction: String?,
     val createdAt: String?,
     val unregisterAt: String?,
+    val postCount: Int,
     val followerCount: Int,
     val followingCount: Int,
     val email: String?,

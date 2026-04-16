@@ -19,6 +19,14 @@ fun getRange(currentIndex : Int, perPage : Int = 5) : String {
     return range
 }
 
+fun getGridRange(currentIndex: Int, perPage: Int = 5): String {
+    // 예: 현재 12개 있다면(currentIndex=12), 12번부터 23번까지(총 12개) 가져옴
+    val startIndex = currentIndex
+    val endIndex = currentIndex + perPage - 1
+
+    return "${startIndex}-${endIndex}"
+}
+
 @RequiresApi(Build.VERSION_CODES.O)
 fun timeAgo(dateTime: LocalDateTime): String {
 

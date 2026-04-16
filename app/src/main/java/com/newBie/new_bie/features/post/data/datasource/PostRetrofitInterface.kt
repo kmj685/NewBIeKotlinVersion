@@ -10,6 +10,7 @@ import com.newBie.new_bie.features.post.data.dto.PostDto
 import com.newBie.new_bie.features.post.data.dto.PostWithProfileDto
 import com.newBie.new_bie.features.post.data.dto.SearchResultDto
 import com.newBie.new_bie.features.post.data.dto.UpdatePostDto
+import com.newBie.new_bie.features.post.data.dto.UserDto
 import com.newBie.new_bie.features.post.domain.entities.CommentWithProfileEntity
 import com.newBie.new_bie.features.post.domain.entities.LikesCountEntity
 import com.newBie.new_bie.features.post.domain.entities.PostEntity

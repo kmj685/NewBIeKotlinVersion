@@ -39,7 +39,7 @@ import com.newBie.new_bie.core.managers.SupabaseManager
 import com.newBie.new_bie.core.utils.toKoreaLocalDateTime
 import com.newBie.new_bie.core.utils.toTimeAgo
 import com.newBie.new_bie.features.post.domain.entities.PostWithProfileEntity
-import com.newBie.new_bie.ui.theme.GreedColor
+import com.newBie.new_bie.ui.theme.GridColor
 import com.newBie.new_bie.ui.theme.OrangeColor
 import io.github.jan.supabase.auth.auth
 
@@ -52,7 +52,7 @@ fun PostItem(post : PostWithProfileEntity, onDelete : () -> Unit, onLike : () ->
         modifier = Modifier
             .padding(8.dp)
             .fillMaxWidth()
-            .background(color = GreedColor)
+            .background(color = GridColor)
             .clip(RoundedCornerShape(5))
             .clickable(onClick = {onClick.invoke(post.id)})
     ) {

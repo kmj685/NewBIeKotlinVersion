@@ -181,6 +181,7 @@ fun UserDto.toEntity(): UserEntity{
         introduction = introduction,
         createdAt = createdAt,
         unregisterAt = unregisterAt,
+        postCount = postCount,
         followingCount = followingCount,
         followerCount = followerCount,
         email = email,
@@ -199,6 +200,7 @@ fun UserDtoWithSupabase.toEntity(): UserEntity{
         followingCount = followingCount,
         followerCount = followerCount,
         email = email,
-        isBlocked = isBlocked
+        isBlocked = isBlocked,
+        postCount = postCount
     )
 }

@@ -11,6 +11,7 @@ data class UserDtoWithSupabase(
     val introduction: String?,
     @SerialName("created_at") val createdAt: String,
     @SerialName("unregister_at") val unregisterAt: String?,
+    @SerialName("post_count") val postCount: Int,
     @SerialName("following_count") val followingCount: Int,
     @SerialName("follower_count") val followerCount: Int,
     val email: String?,

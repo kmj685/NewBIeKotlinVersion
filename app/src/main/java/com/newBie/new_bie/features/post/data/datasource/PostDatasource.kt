@@ -280,4 +280,19 @@ class PostDatasource {
                 }
             }
     }
+
+    suspend fun fetchUser(
+        userId: String
+    ): UserEntity? {
+        return try {
+            _supabase.from("users").select {
+                filter {
+                    eq("id", userId)
+                }
+            }.decodeSingle<UserDto>().toEntity()
+        } catch (e: Exception) {
+            Log.e(Constants.TAG, "fetchUser: ${e.message}", )
+            null
+        }
+    }
 }

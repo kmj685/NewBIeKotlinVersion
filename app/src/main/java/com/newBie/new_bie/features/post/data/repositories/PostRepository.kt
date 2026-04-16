@@ -2,6 +2,7 @@ package com.newBie.new_bie.features.post.data.repositories
 
 import android.util.Log
 import com.newBie.new_bie.core.utils.Constants
+import com.newBie.new_bie.core.utils.getGridRange
 import com.newBie.new_bie.core.utils.getRange
 import com.newBie.new_bie.features.post.data.datasource.PostDatasource
 import com.newBie.new_bie.features.post.data.dto.InsertPostRequestDto
@@ -126,5 +127,18 @@ class PostRepositoryImpl : PostRepository {
 
     override suspend fun fetchComments(postId: Int): List<CommentWithProfileEntity> {
         return datasource.fetchComments(postId)
+    }
+
+    override suspend fun fetchUserPosts(
+        userId: String,
+        currentIndex: Int,
+        perPage: Int
+    ) : List<PostWithProfileEntity> {
+        val range : String = getGridRange(currentIndex,perPage)
+        return datasource.fetchUserPosts(range,userId)
+    }
+
+    override suspend fun fetchUser(userId: String): UserEntity? {
+        return datasource.fetchUser(userId)
     }
 }

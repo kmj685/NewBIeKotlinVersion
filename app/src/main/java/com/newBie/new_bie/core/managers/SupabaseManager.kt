@@ -8,12 +8,16 @@ import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.newBie.new_bie.App
 import com.newBie.new_bie.core.utils.SupabaseInitial
+import com.newBie.new_bie.features.post.data.dto.UserDto
+import com.newBie.new_bie.features.post.data.mapper.toEntity
+import com.newBie.new_bie.features.post.domain.entities.UserEntity
 import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.auth.providers.Google
 import io.github.jan.supabase.auth.providers.builtin.IDToken
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
+import io.github.jan.supabase.postgrest.from
 import java.security.MessageDigest
 import java.util.UUID
 import io.github.jan.supabase.storage.Storage
@@ -67,5 +71,4 @@ object SupabaseManager {
             nonce = rawNonce
         }
     }
-
 }
