@@ -50,10 +50,10 @@ fun PostItem(post : PostWithProfileEntity, onDelete : () -> Unit, onLike : () ->
     val currentUserId = SupabaseManager.supabase.auth.currentUserOrNull()?.id
     Column(
         modifier = Modifier
-            .padding(8.dp)
             .fillMaxWidth()
+            .clip(RoundedCornerShape(12))
             .background(color = GridColor)
-            .clip(RoundedCornerShape(5))
+            .padding(12.dp)
             .clickable(onClick = {onClick.invoke(post.id)})
     ) {
         Row(

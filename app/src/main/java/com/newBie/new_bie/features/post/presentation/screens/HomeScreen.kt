@@ -4,6 +4,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,6 +23,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.magnifier
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -40,6 +42,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -57,6 +60,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -83,6 +87,7 @@ import com.newBie.new_bie.ui.theme.BlackColor
 import com.newBie.new_bie.ui.theme.OrangeColor
 import kotlin.collections.emptyList
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalFocusManager
 import com.newBie.new_bie.features.post.presentation.components.likesAndComments.CommentBottomSheet
 import io.ktor.util.collections.setValue
 import kotlinx.coroutines.launch
@@ -113,6 +118,8 @@ fun HomeScreen(modifier: Modifier = Modifier, navController: NavController, view
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp.dp
 
+    val focusManager = LocalFocusManager.current
+
 
 
     LaunchedEffect(listState) {
@@ -129,6 +136,12 @@ fun HomeScreen(modifier: Modifier = Modifier, navController: NavController, view
             }
     }
 
+    LaunchedEffect(listState.isScrollInProgress) {
+        if (listState.isScrollInProgress){
+            focusManager.clearFocus()
+        }
+    }
+
     Scaffold(
         topBar = { TopBarTitleText("홈")},
         bottomBar = {BottomTapBar(navController, PageSet.HOME)},
@@ -136,7 +149,12 @@ fun HomeScreen(modifier: Modifier = Modifier, navController: NavController, view
     ) { innerPadding ->
         Box(modifier = modifier
             .padding(innerPadding)
-            .fillMaxSize()){
+            .fillMaxSize()
+            .pointerInput(Unit){
+                detectTapGestures(onTap = {
+                    focusManager.clearFocus()
+                })
+            }){
             Column(
                 modifier = modifier
                     .fillMaxSize()
@@ -149,8 +167,15 @@ fun HomeScreen(modifier: Modifier = Modifier, navController: NavController, view
                     OutlinedTextField(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clip(RoundedCornerShape(10))
-                            .background(color = Color(0xffF2F2F7FF), shape = RoundedCornerShape(10)),
+                            .height(50.dp),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedContainerColor = Color.White,
+                            unfocusedContainerColor = Color.White,
+                            focusedBorderColor = OrangeColor,
+                            unfocusedBorderColor = BlackColor
+
+                            ),
+                        shape = RoundedCornerShape(12.dp),
                         value = userInput,
                         onValueChange = { userInput = it },
                         placeholder = { Text("검색어를 입력하세요") },
@@ -257,7 +282,8 @@ fun HomeScreen(modifier: Modifier = Modifier, navController: NavController, view
                         LazyColumn(
                             state = listState,
                             modifier = Modifier
-                                .fillMaxWidth()
+                                .fillMaxWidth(),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
 
                         ) {
                             itemsIndexed(postItemList) { index, post ->
