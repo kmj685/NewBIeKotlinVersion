@@ -60,6 +60,7 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.newBie.new_bie.core.components.BottomTapBar
 import com.newBie.new_bie.core.components.TopBarTitleText
+import com.newBie.new_bie.core.components.rememberPhotoPicker
 import com.newBie.new_bie.core.utils.Constants.TAG
 import com.newBie.new_bie.core.utils.PageSet
 import com.newBie.new_bie.core.utils.Routes
@@ -89,19 +90,10 @@ fun PostAddScreen(modifier: Modifier = Modifier, navController: NavController, v
     val selectCategoryList by viewModel.selectCategoryList.collectAsState()
     val bottomSheetSelectedCategories by viewModel.bottomSheetSelectedCategories.collectAsState()
     val imageInputList by viewModel.imageInputList.collectAsState()
-    val pickMultipleMedia =
-        rememberLauncherForActivityResult(ActivityResultContracts.PickMultipleVisualMedia(10)) { uris ->
-            // Callback is invoked after the user selects media items or closes the
-            // photo picker.
-            if (uris.isNotEmpty()) {
-                viewModel.getImage(uris)
-                Log.d(TAG, "방금 추가된 사진 개수: ${uris.size}")
-                Log.d(TAG, "현재 선택된 전체 사진 리스트 ${viewModel.imageInputList.value}")
-                Log.d(TAG, "총 사진 개수: ${viewModel.imageInputList.value.size}")
-            } else {
-                Log.d("PhotoPicker", "No media selected")
-            }
-        }
+    val pickMultipleMedia = rememberPhotoPicker(10){
+        viewModel.getImage(it)
+    }
+
     // 꽉 차는 값 flag 값
     var isExpanded by remember { mutableStateOf(false) }
     // 사진 한장 한장가져올 값
@@ -185,8 +177,7 @@ fun PostAddScreen(modifier: Modifier = Modifier, navController: NavController, v
                                 horizontalArrangement = Arrangement.spacedBy(10.dp)
                             ) {
                                 PostEditScreenActionButton(Icons.Default.Photo, "사진 추가", {
-                                    pickMultipleMedia.launch( PickVisualMediaRequest(
-                                    ActivityResultContracts.PickVisualMedia.ImageAndVideo))
+                                    pickMultipleMedia()
                                 })
                                 PostEditScreenActionButton(Icons.Default.Label, "카테고리", {
                                     viewModel.openBottomSheetCopyCategoriesList()
@@ -264,7 +255,7 @@ fun PostAddScreen(modifier: Modifier = Modifier, navController: NavController, v
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(Color.Black)
+                        .background(Color.Black.copy(0.7f))
                 ) {
                     HorizontalPager(
                         state = pagerState,

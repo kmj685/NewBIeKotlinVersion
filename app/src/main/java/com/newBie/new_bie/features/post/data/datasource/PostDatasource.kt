@@ -295,4 +295,26 @@ class PostDatasource {
             null
         }
     }
+
+    suspend fun updateUserProfile(
+        userId: String,
+        profileImage: String?,
+        nickname: String,
+        introduction: String
+    ): UserEntity? {
+        return try {
+            _supabase.from("users").update({
+                set("profile_image", profileImage)
+                set("nick_name", nickname)
+                set("introduction", introduction)
+            }){
+                filter {
+                    eq("id", userId)
+                }
+            }.decodeSingle<UserDto>().toEntity()
+        } catch (e: Exception) {
+            Log.e(Constants.TAG, "updateUserProfile: ${e.message}", )
+            null
+        }
+    }
 }

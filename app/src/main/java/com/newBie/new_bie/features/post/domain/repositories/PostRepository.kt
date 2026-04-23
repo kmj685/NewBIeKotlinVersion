@@ -34,4 +34,6 @@ interface PostRepository {
     suspend fun fetchComments(postId : Int) : List<CommentWithProfileEntity>
     suspend fun fetchUser(userId: String): UserEntity?
     suspend fun fetchUserPosts(userId: String, currentIndex: Int = 1, perPage: Int = 5): List<PostWithProfileEntity>
+
+    suspend fun updateUserProfile(userId: String, image: String?, nickname: String, introduction: String)
 }

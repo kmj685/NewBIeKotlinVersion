@@ -138,6 +138,20 @@ class PostRepositoryImpl : PostRepository {
         return datasource.fetchUserPosts(range,userId)
     }
 
+    override suspend fun updateUserProfile(
+        userId: String,
+        image: String?,
+        nickname: String,
+        introduction: String
+    ) {
+        datasource.updateUserProfile(
+            userId = userId,
+            profileImage = image,
+            nickname = nickname,
+            introduction = introduction
+        )
+    }
+
     override suspend fun fetchUser(userId: String): UserEntity? {
         return datasource.fetchUser(userId)
     }
