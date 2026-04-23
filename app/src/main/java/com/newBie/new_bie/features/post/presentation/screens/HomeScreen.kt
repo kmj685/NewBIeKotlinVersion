@@ -90,6 +90,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalFocusManager
 import com.newBie.new_bie.features.post.presentation.components.likesAndComments.CommentBottomSheet
 import io.ktor.util.collections.setValue
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
 
@@ -123,8 +124,9 @@ fun HomeScreen(modifier: Modifier = Modifier, navController: NavController, view
 
 
     LaunchedEffect(listState) {
-        snapshotFlow { listState.layoutInfo }
-            .collect { layoutInfo ->
+        launch {
+            snapshotFlow { listState.layoutInfo }
+                .collect { layoutInfo ->
 
                 val totalItems = layoutInfo.totalItemsCount
                 val lastVisibleItemIndex =
@@ -134,13 +136,25 @@ fun HomeScreen(modifier: Modifier = Modifier, navController: NavController, view
                     viewModel.fetchNextPosts()
                 }
             }
+        }
+        // 포커스 해제
+        launch {
+            snapshotFlow { listState.isScrollInProgress }
+                .distinctUntilChanged() //스크롤이 시작 될 때 딱 한 번만 작동
+                .collect { isScrolling ->
+                    if (isScrolling){
+                        focusManager.clearFocus()
+                    }
+                }
+        }
+
     }
 
-    LaunchedEffect(listState.isScrollInProgress) {
-        if (listState.isScrollInProgress){
-            focusManager.clearFocus()
-        }
-    }
+//    LaunchedEffect(listState.isScrollInProgress) {
+//        if (listState.isScrollInProgress){
+//            focusManager.clearFocus()
+//        }
+//    }
 
     Scaffold(
         topBar = { TopBarTitleText("홈")},
