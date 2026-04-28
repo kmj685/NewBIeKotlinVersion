@@ -1,8 +1,6 @@
 package com.newBie.new_bie.features.post.data.dto
 
 import com.google.gson.annotations.SerializedName
-import com.newBie.new_bie.features.post.domain.entities.PostUserEntity
-
 data class CommentWithProfileDto(
     val id: Int,
     @SerializedName("post_id") val postId: Int,

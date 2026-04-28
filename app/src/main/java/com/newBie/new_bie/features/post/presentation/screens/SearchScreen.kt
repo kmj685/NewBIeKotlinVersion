@@ -256,7 +256,8 @@ fun SearchAllView(viewModel: SearchResultViewModel, navController: NavController
                             onLike = { viewModel.likeToggle(index, post.id) },
                             onDelete = { viewModel.deletePost(post.id) },
                             onClick = { navController.navigate("${Routes.POST}/${it}") },
-                            onComments = { viewModel.fetchComments(post.id) }
+                            onComments = { viewModel.fetchComments(post.id) },
+                            navController = navController
                         )
                     }
                     item {
@@ -299,7 +300,8 @@ fun SearchPostView(viewModel: SearchResultViewModel, navController: NavControlle
                     onLike = { viewModel.likeToggle(index, post.id) },
                     onDelete = { viewModel.deletePost(post.id) },
                     onClick = {navController.navigate("${Routes.POST}/${it}")},
-                    onComments = {viewModel.fetchComments(post.id)}
+                    onComments = {viewModel.fetchComments(post.id)},
+                    navController = navController
                 )
             }
         }

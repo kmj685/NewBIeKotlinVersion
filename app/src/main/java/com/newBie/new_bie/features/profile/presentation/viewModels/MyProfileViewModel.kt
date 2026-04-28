@@ -24,6 +24,9 @@ class MyProfileViewModel : ViewModel() {
     private val _user = MutableStateFlow<UserEntity?>(null)
     val user: StateFlow<UserEntity?> = _user
 
+    // 다른 유저
+    private val _targetUserId = MutableStateFlow<String?>(null)
+
     // 게시글 목록
     private val _posts = MutableStateFlow<List<PostWithProfileEntity>>(emptyList())
     val posts: StateFlow<List<PostWithProfileEntity>> = _posts
@@ -50,9 +53,14 @@ class MyProfileViewModel : ViewModel() {
         fetchPosts()
     }
 
+    fun fetchTargetUser(userId: String?){
+        _targetUserId.value = userId
+        refreshAll()
+    }
+
     fun fetchUser() {
         viewModelScope.launch {
-            val userId = SupabaseManager.supabase.auth.currentUserOrNull()?.id
+            val userId = _targetUserId.value ?: SupabaseManager.supabase.auth.currentUserOrNull()?.id
                 ?: return@launch
 
             _user.value = repository.fetchUser(userId)
@@ -64,7 +72,7 @@ class MyProfileViewModel : ViewModel() {
         pageJob?.cancel()  // 새로고침 시 이전에 진행중던 페이징 작업도 취소
 
         fetchJob = viewModelScope.launch {
-            val userId = SupabaseManager.supabase.auth.currentUserOrNull()?.id
+            val userId = _targetUserId.value ?: SupabaseManager.supabase.auth.currentUserOrNull()?.id
                 ?: return@launch
 
             try {

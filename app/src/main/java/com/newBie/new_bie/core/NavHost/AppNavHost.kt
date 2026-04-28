@@ -76,14 +76,6 @@ fun AppNavHost(modifier : Modifier, navController: NavHostController, context: C
         }
 
         // -------- User Profile --------
-        composable(
-            route = "${Routes.USER_PROFILE}/{userId}",
-            arguments = listOf(
-                navArgument("userId") { type = NavType.StringType }
-            )
-        ) {
-            /* UserProfileScreen(userId) */
-        }
 
         composable(
             route = "${Routes.USER_PROFILE}/{userId}/${Routes.FOLLOWER}?initialTab={initialTab}",
@@ -126,6 +118,21 @@ fun AppNavHost(modifier : Modifier, navController: NavHostController, context: C
 
         composable(Routes.MY_PROFILE) {
             MyProfileScreen(navController = navController)
+        }
+
+        composable(
+            route = "${Routes.MY_PROFILE}/{userId}",
+            arguments = listOf(
+                navArgument("userId") {
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = null
+                }
+            )
+        ) {backStackEntry ->
+            val userId = backStackEntry.arguments?.getString("userId")
+
+            MyProfileScreen(navController = navController, targetUserId = userId)
         }
 
         composable("${Routes.MY_PROFILE}/${Routes.SETTING}") {

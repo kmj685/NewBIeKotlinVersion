@@ -12,6 +12,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Diversity3
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -40,9 +41,9 @@ fun AppBarButton(pageSet: PageSet, title : String,
                  navController: NavController ) {
     val icon = when (pageSet) {
         PageSet.HOME -> Icons.Default.Home
-        PageSet.ADD_POST -> Icons.Default.Add
-        PageSet.PROFILE -> Icons.Default.List
         PageSet.GROUP -> Icons.Default.Diversity3
+        PageSet.ADD_POST -> Icons.Default.Add
+        PageSet.PROFILE -> Icons.Default.Person
     }
 
 //    var smallFontSet by remember { mutableStateOf(false) }

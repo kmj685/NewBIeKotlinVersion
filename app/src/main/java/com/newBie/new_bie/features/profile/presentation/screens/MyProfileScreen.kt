@@ -95,6 +95,7 @@ import net.engawapg.lib.zoomable.zoomable
 fun MyProfileScreen(
     modifier: Modifier = Modifier,
     navController: NavController,
+    targetUserId: String? = null,
     viewModel: MyProfileViewModel = viewModel<MyProfileViewModel>()
 ){
     val isRefreshing by viewModel.isRefreshing.collectAsState()
@@ -110,6 +111,11 @@ fun MyProfileScreen(
     var isExpanded by remember { mutableStateOf(false) }
     val zoomState = rememberZoomState()
 
+    val myId = SupabaseManager.supabase.auth.currentUserOrNull()?.id
+
+    LaunchedEffect(targetUserId) {
+        viewModel.fetchTargetUser(targetUserId)
+    }
 
     SharedTransitionLayout() {
         AnimatedContent(
@@ -178,14 +184,26 @@ fun MyProfileScreen(
 
                                     Spacer(modifier = Modifier.height(20.dp))
 
-                                    Button(modifier = Modifier.fillMaxWidth(),
-                                        shape = RoundedCornerShape(12.dp),
-                                        colors = ButtonDefaults.buttonColors(containerColor = Color.Gray),
-                                        onClick = {
-                                            navController.navigate("${Routes.MY_PROFILE}/${Routes.UPDATE_PROFILE}")
-                                        }) {
-                                        Text("프로필 수정", color = Color.White)
+                                    if (myId == targetUserId || targetUserId == null){
+                                        Button(modifier = Modifier.fillMaxWidth(),
+                                            shape = RoundedCornerShape(12.dp),
+                                            colors = ButtonDefaults.buttonColors(containerColor = Color.Gray),
+                                            onClick = {
+                                                navController.navigate("${Routes.MY_PROFILE}/${Routes.UPDATE_PROFILE}")
+                                            }) {
+                                            Text("프로필 수정", color = Color.White)
+                                        }
+                                    } else {
+                                        Button(modifier = Modifier.fillMaxWidth(),
+                                            shape = RoundedCornerShape(12.dp),
+                                            colors = ButtonDefaults.buttonColors(containerColor = OrangeColor),
+                                            onClick = {
+                                                //TODO: 팔로우 로직 넣기
+                                            }) {
+                                            Text("팔로우", color = Color.White)
+                                        }
                                     }
+
 
                                     Spacer(modifier = Modifier.height(20.dp))
                                 }

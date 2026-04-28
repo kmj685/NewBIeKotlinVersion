@@ -18,10 +18,16 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Chat
 import androidx.compose.material.icons.automirrored.filled.Comment
+import androidx.compose.material.icons.filled.BubbleChart
+import androidx.compose.material.icons.filled.ChatBubble
 import androidx.compose.material.icons.filled.Comment
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Forum
+import androidx.compose.material.icons.filled.Sms
+import androidx.compose.material.icons.rounded.ChatBubble
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -35,8 +41,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.newBie.new_bie.core.managers.SupabaseManager
+import com.newBie.new_bie.core.utils.Routes
 import com.newBie.new_bie.core.utils.toKoreaLocalDateTime
 import com.newBie.new_bie.core.utils.toTimeAgo
 import com.newBie.new_bie.features.post.domain.entities.PostWithProfileEntity
@@ -46,7 +54,7 @@ import io.github.jan.supabase.auth.auth
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun PostItem(post : PostWithProfileEntity, onDelete : () -> Unit, onLike : () -> Unit, onClick : (Int) -> Unit = {}, onComments: () -> Unit = {}) {
+fun PostItem(post : PostWithProfileEntity, navController: NavController, onDelete : () -> Unit, onLike : () -> Unit, onClick : (Int) -> Unit = {}, onComments: () -> Unit = {}) {
 
     val currentUserId = SupabaseManager.supabase.auth.currentUserOrNull()?.id
     Column(
@@ -64,7 +72,7 @@ fun PostItem(post : PostWithProfileEntity, onDelete : () -> Unit, onLike : () ->
                 imageUrl = post.user?.profileImage,
                 nickName = post.user?.nickName ?: "",
                 introduce = post.createdAt.toKoreaLocalDateTime().toTimeAgo(),
-                onImageClick = {},
+                onImageClick = { navController.navigate("${Routes.MY_PROFILE}/${post.user?.id}")},
                 userId = post.user?.id
                 )
 
@@ -154,10 +162,8 @@ fun PostItem(post : PostWithProfileEntity, onDelete : () -> Unit, onLike : () ->
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
-                    imageVector = if (post.isLiked == true)
-                        Icons.Default.Favorite
-                    else
-                        Icons.Default.FavoriteBorder,
+                    imageVector =
+                        Icons.Default.Favorite,
                     contentDescription = null,
                     tint = if (post.isLiked == true) Color.Red else Color.White
                 )
@@ -177,7 +183,7 @@ fun PostItem(post : PostWithProfileEntity, onDelete : () -> Unit, onLike : () ->
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
-                    imageVector = Icons.Default.Comment,
+                    imageVector = Icons.Rounded.ChatBubble,
                     contentDescription = null,
                     tint = Color.White
                 )
