@@ -7,7 +7,7 @@ import androidx.compose.ui.unit.sp
 
 object AppTextStyle {
     val Title = TextStyle(
-        color = OrangeColor,
+        color = Color.White,
         fontSize = 32.sp,
         fontWeight = FontWeight.Bold
     )

@@ -28,6 +28,7 @@ import androidx.compose.material.icons.filled.PhotoLibrary
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -56,7 +57,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import coil.compose.AsyncImage
+import coil3.compose.AsyncImage
 import com.bumptech.glide.integration.compose.placeholder
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.newBie.new_bie.R
@@ -80,6 +81,7 @@ fun UpdateProfileScreen(viewModel: UpdateProfileViewModel = viewModel<UpdateProf
     }
     val imageInput by viewModel.imageInput.collectAsState()
     val isImageDeleted by viewModel.isImageDeleted.collectAsState()
+    val isSaving by viewModel.isSaving.collectAsState()
 
     // 업데이트에 성공했다면 UserProfile 페이지로 이동하고 스택 없애기
     LaunchedEffect(Unit) {
@@ -91,7 +93,6 @@ fun UpdateProfileScreen(viewModel: UpdateProfileViewModel = viewModel<UpdateProf
             }
         }
     }
-
     Scaffold(
         containerColor = Color.Transparent,
         topBar = { TopBarTitleText("프로필 수정") }
@@ -206,14 +207,27 @@ fun UpdateProfileScreen(viewModel: UpdateProfileViewModel = viewModel<UpdateProf
                 viewModel.saveUserProfile(
                     context = context
                 )
-            }, enabled = viewModel.nicknameState.text.isNotEmpty(), modifier = Modifier.fillMaxWidth(), colors = ButtonColors(
-                containerColor = OrangeColor,
-                contentColor = Color.White,
-                disabledContainerColor = Color.Gray,
-                disabledContentColor = Color.White,
-            )) {
+            },
+                enabled = viewModel.nicknameState.text.isNotEmpty() && !isSaving,
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonColors(
+                    containerColor = OrangeColor,
+                    contentColor = Color.White,
+                    disabledContainerColor = Color.Gray,
+                    disabledContentColor = Color.White,
+                )
+            ) {
                 Text("저장")
             }
+        }
+    }
+    if(isSaving){
+        Box(modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black.copy(alpha = 0.5f))
+            .clickable(enabled = false){},
+            contentAlignment = Alignment.Center) {
+            CircularProgressIndicator(color = OrangeColor)
         }
     }
 }

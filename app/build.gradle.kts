@@ -128,7 +128,11 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended")
 
     // 인터넷 이미지 띄우기
-    implementation("io.coil-kt:coil-compose:2.7.0")
+    implementation("io.coil-kt.coil3:coil-compose:3.4.0")
+    implementation("io.coil-kt.coil3:coil-network-okhttp:3.0.4")
+    // Coil gif
+    implementation("io.coil-kt.coil3:coil-gif:3.4.0")
+
 
     implementation("com.cloudinary:kotlin-url-gen:1.7.0")
 

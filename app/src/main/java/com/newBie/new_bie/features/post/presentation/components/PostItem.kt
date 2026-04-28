@@ -4,6 +4,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -34,7 +35,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
+import coil3.compose.AsyncImage
 import com.newBie.new_bie.core.managers.SupabaseManager
 import com.newBie.new_bie.core.utils.toKoreaLocalDateTime
 import com.newBie.new_bie.core.utils.toTimeAgo
@@ -51,9 +52,7 @@ fun PostItem(post : PostWithProfileEntity, onDelete : () -> Unit, onLike : () ->
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(12))
-            .background(color = GridColor)
-            .padding(12.dp)
+            .background(color = Color.Transparent)
             .clickable(onClick = {onClick.invoke(post.id)})
     ) {
         Row(
@@ -84,7 +83,7 @@ fun PostItem(post : PostWithProfileEntity, onDelete : () -> Unit, onLike : () ->
         // 🔹 제목
         Text(
             text = post.title ?: "제목 없음",
-            style = MaterialTheme.typography.titleLarge,
+            style = MaterialTheme.typography.headlineMedium,
             color = Color.White
         )
 
@@ -106,7 +105,7 @@ fun PostItem(post : PostWithProfileEntity, onDelete : () -> Unit, onLike : () ->
                 }
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(15.dp))
         }
 
         // 🔹 내용
@@ -146,7 +145,10 @@ fun PostItem(post : PostWithProfileEntity, onDelete : () -> Unit, onLike : () ->
         }
 
         // 🔹 좋아요 + 댓글
-        Row {
+        Row(modifier = Modifier
+            .fillMaxWidth()
+            .padding(end = 8.dp),
+            horizontalArrangement = Arrangement.End) {
             Row(
                 modifier = Modifier.clickable { onLike() },
                 verticalAlignment = Alignment.CenterVertically

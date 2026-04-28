@@ -2,6 +2,7 @@ package com.newBie.new_bie.features.post.presentation.screens
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -88,7 +89,10 @@ import com.newBie.new_bie.ui.theme.OrangeColor
 import kotlin.collections.emptyList
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
+import com.newBie.new_bie.R
 import com.newBie.new_bie.features.post.presentation.components.likesAndComments.CommentBottomSheet
+import com.newBie.new_bie.ui.theme.GridColor
 import io.ktor.util.collections.setValue
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
@@ -157,7 +161,13 @@ fun HomeScreen(modifier: Modifier = Modifier, navController: NavController, view
 //    }
 
     Scaffold(
-        topBar = { TopBarTitleText("홈")},
+        topBar = { Image(
+            painter = painterResource(id = R.drawable.new_bie_logo),
+            contentDescription = "홈 로고",
+            modifier = Modifier
+                .padding(10.dp)
+                .height(30.dp)
+        )},
         bottomBar = {BottomTapBar(navController, PageSet.HOME)},
         containerColor = Color.Transparent
     ) { innerPadding ->
@@ -228,10 +238,14 @@ fun HomeScreen(modifier: Modifier = Modifier, navController: NavController, view
                                 { viewModel.changeCategory(category) })
                         }
                     }
-                    Spacer(modifier = Modifier.height(8.dp))
+//                    Spacer(modifier = Modifier.height(8.dp))
 
                     // 🔽 정렬 Dropdown
-                    Box(modifier = Modifier.fillMaxWidth()) {
+                    Box(modifier = Modifier
+                        .fillMaxWidth(0.4f)
+                        .height(50.dp)
+                        .align(Alignment.End),
+                        contentAlignment = Alignment.CenterEnd) {
 
                         ExposedDropdownMenuBox(
                             expanded = expanded,
@@ -241,7 +255,7 @@ fun HomeScreen(modifier: Modifier = Modifier, navController: NavController, view
                             OutlinedTextField(
                                 readOnly = true,
                                 value = when (orderType) {
-                                    OrderByType.NEW_FIRST -> "최신순"
+                                    OrderByType.NEW_FIRST -> "최신 순"
                                     OrderByType.OLD_FIRST -> "오래된 순"
                                     OrderByType.LIKES_FIRST -> "좋아요 순"
                                 },
@@ -250,17 +264,24 @@ fun HomeScreen(modifier: Modifier = Modifier, navController: NavController, view
                                     ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
                                 },
                                 modifier = Modifier.menuAnchor(),
-                                textStyle = TextStyle(color = OrangeColor)
+                                textStyle = TextStyle(color = Color.White, fontSize = 15.sp),
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedContainerColor = Color.Transparent,
+                                    unfocusedContainerColor = Color.Transparent,
+                                    focusedBorderColor = Color.Transparent,
+                                    unfocusedBorderColor = Color.Transparent,
+                                    focusedTrailingIconColor = OrangeColor,
+                                    unfocusedTrailingIconColor = OrangeColor)
                             )
 
                             ExposedDropdownMenu(
-                                modifier = Modifier.background(color = BlackColor),
+                                modifier = Modifier.background(color = GridColor),
                                 expanded = expanded,
                                 onDismissRequest = { expanded = false }
                             ) {
 
                                 DropdownMenuItem(
-                                    text = { Text("최신순", color = OrangeColor) },
+                                    text = { Text("최신 순", color = OrangeColor) },
                                     onClick = {
                                         viewModel.changeOrder(OrderByType.NEW_FIRST)
                                         expanded = false
@@ -297,7 +318,7 @@ fun HomeScreen(modifier: Modifier = Modifier, navController: NavController, view
                             state = listState,
                             modifier = Modifier
                                 .fillMaxWidth(),
-                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                            verticalArrangement = Arrangement.spacedBy(20.dp)
 
                         ) {
                             itemsIndexed(postItemList) { index, post ->

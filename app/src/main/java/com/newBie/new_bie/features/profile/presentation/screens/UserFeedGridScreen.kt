@@ -29,7 +29,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
+import coil3.compose.AsyncImage
 import com.newBie.new_bie.core.utils.Constants.TAG
 import com.newBie.new_bie.features.post.domain.entities.PostEntity
 import com.newBie.new_bie.features.post.domain.entities.PostImageEntity

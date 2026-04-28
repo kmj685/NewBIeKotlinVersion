@@ -20,7 +20,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
+import coil3.compose.AsyncImage
 import com.newBie.new_bie.R
 import com.newBie.new_bie.core.managers.SupabaseManager
 import com.newBie.new_bie.ui.theme.OrangeColor

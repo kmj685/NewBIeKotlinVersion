@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class MyProfileViewModel : ViewModel() {
-    private val repository : PostRepository = PostRepositoryImpl()
+        private val repository : PostRepository = PostRepositoryImpl()
 
     // 유저 정보
     private val _user = MutableStateFlow<UserEntity?>(null)
@@ -159,13 +159,5 @@ class MyProfileViewModel : ViewModel() {
 //            SupabaseManager.shared.unRegister(userId)
 //            SupabaseManager.shared.supabase.auth.signOut()
         }
-    }
-
-    /**
-     * 스크롤 위치에 따른 버튼 상태 처리
-     * (Compose or RecyclerView Scroll 콜백에서 호출)
-     */
-    fun onScroll(offset: Int) {
-        _buttonIsWorking.value = offset >= 50
     }
 }

@@ -43,7 +43,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
+import coil3.compose.AsyncImage
 import com.newBie.new_bie.R
 import com.newBie.new_bie.core.managers.SupabaseManager
 import com.newBie.new_bie.core.utils.Constants

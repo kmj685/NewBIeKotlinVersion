@@ -49,6 +49,10 @@ class UpdateProfileViewModel: ViewModel() {
     private val _isImageDeleted = MutableStateFlow<Boolean>(false)
     val isImageDeleted = _isImageDeleted.asStateFlow()
 
+    // 저장 버튼 인디케이터
+    private val _isSaving = MutableStateFlow<Boolean>(false)
+    val isSaving = _isSaving.asStateFlow()
+
     init {
         fetchUserProfile()
     }
@@ -97,6 +101,9 @@ class UpdateProfileViewModel: ViewModel() {
                 ?:return@launch
 
             try {
+
+                _isSaving.value = true
+
                 val currentUri = _imageInput.value
 
                 val uploadImageUrl =
@@ -130,6 +137,8 @@ class UpdateProfileViewModel: ViewModel() {
                 Log.e(TAG, "프로필 업데이트 HTTP 에러: $errorBody")
             } catch (e: Exception) {
                 Log.e(TAG, "프로필 업데이트 일반 에러: $e")
+            } finally {
+                _isSaving.value = false
             }
         }
     }

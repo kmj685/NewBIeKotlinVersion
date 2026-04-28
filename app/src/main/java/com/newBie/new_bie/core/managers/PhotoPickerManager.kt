@@ -2,6 +2,7 @@ package com.newBie.new_bie.core.managers
 
 import android.content.Context
 import android.net.Uri
+import android.webkit.MimeTypeMap
 import io.github.jan.supabase.storage.storage
 object PhotoPickerManager {
 
@@ -21,7 +22,11 @@ object PhotoPickerManager {
         // 우리가 알고 있는 http:// .... 로 path를 바꿔주는 작업
         // index를 붙이는 이유는 중복방지와 사진을 여러 장 올릴 경우에 순서가 필요하니까
         return byteArrayList.mapIndexed { index, bytes ->
-            val fileName = "private/${pathName}_${userId}_${System.currentTimeMillis()}_$index.png"
+
+            //  파일의 확장자를 가져오는 변수
+            val extension = getExtensionFromUri(context, uriList[index])
+
+            val fileName = "private/${pathName}_${userId}_${System.currentTimeMillis()}_$index.$extension"
 
             // supabase storage의 "images"에 httpL//로 바꿨던 주소를 업로드하는 작업
             SupabaseManager.supabase.storage.from("images").upload(
@@ -54,6 +59,12 @@ object PhotoPickerManager {
             pathName = pathName
         )
         return url.firstOrNull()
+    }
+
+    // 확장자 추출 함수
+    private fun getExtensionFromUri(context: Context, uri: Uri): String {
+        val mimeType = context.contentResolver.getType(uri)
+        return MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType) ?: "png"
     }
 }
 

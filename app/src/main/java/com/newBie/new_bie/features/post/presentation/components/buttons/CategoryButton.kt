@@ -4,6 +4,7 @@ package com.newBie.new_bie.features.post.presentation.components.buttons
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedButton
@@ -17,8 +18,8 @@ import com.newBie.new_bie.ui.theme.OrangeColor
 @Composable
 fun CategoryButton(title : String, selectedCategory : String, onSelect : () -> Unit) {
     OutlinedButton(
-        modifier = Modifier.padding(4.dp),
-        shape = RoundedCornerShape(8.dp),
+        modifier = Modifier.padding(end = 8.dp, bottom = 4.dp),
+        shape = CircleShape,
         contentPadding = PaddingValues(
             horizontal = 20.dp,
             vertical = 8.dp

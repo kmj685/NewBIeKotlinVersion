@@ -1,6 +1,8 @@
 package com.newBie.new_bie.features.profile.presentation.screens
 
 import android.graphics.drawable.Icon
+import android.os.Build
+import android.os.Build.VERSION.SDK_INT
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.SharedTransitionLayout
@@ -61,6 +63,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -68,7 +71,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import coil.compose.AsyncImage
+import coil3.ImageLoader
+import coil3.compose.AsyncImage
+import coil3.gif.AnimatedImageDecoder
+import coil3.gif.GifDecoder
 import com.cloudinary.transformation.resize.Crop
 import com.newBie.new_bie.core.components.BottomTapBar
 import com.newBie.new_bie.core.components.TopBarTitleText
@@ -234,9 +240,10 @@ fun MyProfileScreen(
                     }
                 }
             } else{
+
                 Box(modifier = Modifier
                     .fillMaxSize()
-                    .background(Color.Black.copy(0.7f)),
+                    .background(Color.Black.copy(0.3f)),
                     contentAlignment = Alignment.Center){
                     AsyncImage(
                         model = user?.profileImage,

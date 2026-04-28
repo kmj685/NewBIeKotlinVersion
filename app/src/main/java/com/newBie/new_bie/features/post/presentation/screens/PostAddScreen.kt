@@ -12,6 +12,7 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -36,6 +37,7 @@ import androidx.compose.material.icons.filled.Photo
 import androidx.compose.material3.BottomSheetDefaults.DragHandle
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -53,11 +55,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import coil.compose.AsyncImage
+import coil3.compose.AsyncImage
 import com.newBie.new_bie.core.components.BottomTapBar
 import com.newBie.new_bie.core.components.TopBarTitleText
 import com.newBie.new_bie.core.components.rememberPhotoPicker
@@ -70,7 +76,6 @@ import com.newBie.new_bie.features.post.presentation.components.TitleTextField
 import com.newBie.new_bie.features.post.presentation.components.buttons.ImageDeleteButton
 import com.newBie.new_bie.features.post.presentation.components.buttons.PostEditCategoryBtn
 import com.newBie.new_bie.features.post.presentation.components.buttons.PostEditScreenActionButton
-import com.newBie.new_bie.features.post.presentation.components.buttons.PostUpdateBtn
 import com.newBie.new_bie.features.post.presentation.viewModels.PostAddViewModel
 import com.newBie.new_bie.ui.theme.BlackColor
 import com.newBie.new_bie.ui.theme.OrangeColor
@@ -93,12 +98,15 @@ fun PostAddScreen(modifier: Modifier = Modifier, navController: NavController, v
     val pickMultipleMedia = rememberPhotoPicker(10){
         viewModel.getImage(it)
     }
-
     // 꽉 차는 값 flag 값
     var isExpanded by remember { mutableStateOf(false) }
     // 사진 한장 한장가져올 값
     var selectedImage by remember { mutableStateOf<Uri?>(null) }
 
+    val focusManager = LocalFocusManager.current
+
+    // 포스트 등록 인디케이터를 위한 플래그 값
+    val isPosting by viewModel.isPosting.collectAsState()
 
     // 등록에 성공했다면 홈 화면으로 이동하고 스택 없애기
     LaunchedEffect(Unit) {
@@ -111,7 +119,11 @@ fun PostAddScreen(modifier: Modifier = Modifier, navController: NavController, v
         }
     }
 
-    SharedTransitionLayout() {
+    SharedTransitionLayout(modifier = Modifier.pointerInput(Unit){
+        detectTapGestures(onTap = {
+            focusManager.clearFocus()
+        })
+    }) {
         AnimatedContent(
             targetState = isExpanded,
             label = "ImageTransition"
@@ -136,7 +148,7 @@ fun PostAddScreen(modifier: Modifier = Modifier, navController: NavController, v
                             Spacer(modifier = Modifier
                                 .height(1.dp)
                                 .fillMaxWidth()
-                                .background(color = Color.DarkGray))
+                                )
                             ContentTextField(
                                 modifier = Modifier.weight(1f),
                                 contentInput = contentInput,
@@ -184,9 +196,27 @@ fun PostAddScreen(modifier: Modifier = Modifier, navController: NavController, v
                                     showSheet = true
                                 })
                             }
-                            PostUpdateBtn(modifier = Modifier.padding(vertical = 10.dp),title = "등록", onClick = {
-                                viewModel.insertPost(context)
-                            })
+                            Button(onClick = {
+                                viewModel.insertPost(context = context)
+                            },
+                                enabled = titleInput.isNotEmpty() && contentInput.isNotEmpty() && !isPosting,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 12.dp),
+                                colors = ButtonColors(
+                                    containerColor = OrangeColor,
+                                    contentColor = Color.White,
+                                    disabledContainerColor = Color.Gray,
+                                    disabledContentColor = Color.White,
+                                )
+                            ) {
+                                Text("저장")
+                            }
+//                            PostUpdateBtn(
+//                                modifier = Modifier.padding(vertical = 10.dp),
+//                                title = "등록",
+//                                onClick = { viewModel.insertPost(context) }
+//                            )
                         }
                         //바텀 네브 탭 바
                         BottomTapBar(navController, PageSet.ADD_POST)
@@ -295,5 +325,13 @@ fun PostAddScreen(modifier: Modifier = Modifier, navController: NavController, v
             }
         }
     }
-
+    if(isPosting){
+        Box(modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black.copy(alpha = 0.5f))
+            .clickable(enabled = false){},
+            contentAlignment = Alignment.Center) {
+            CircularProgressIndicator(color = OrangeColor)
+        }
+    }
 }

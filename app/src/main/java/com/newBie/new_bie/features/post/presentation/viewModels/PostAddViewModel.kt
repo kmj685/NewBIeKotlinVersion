@@ -41,6 +41,10 @@ class PostAddViewModel : ViewModel() {
     private val _postSuccess = MutableSharedFlow<Boolean>()
     val postSuccess = _postSuccess.asSharedFlow()
 
+    // 게시물 등록 버튼 인디케이터
+    private val _isPosting = MutableStateFlow<Boolean>(false)
+    val isPosting = _isPosting.asStateFlow()
+
     init {
         getCategoryList()
     }
@@ -129,6 +133,8 @@ class PostAddViewModel : ViewModel() {
                 item.id
             }
             try {
+                _isPosting.value = true
+
                 val uploadedImageUrls = PhotoPickerManager.uploadImages(
                     context = appContext,
                     uriList = _imageInputList.value,
@@ -151,6 +157,8 @@ class PostAddViewModel : ViewModel() {
                 Log.e(TAG, "게시글 등록 HTTP 에러: $errorBody")
             } catch (e: Exception) {
                 Log.e(TAG, "게시글 등록 일반 에러: $e")
+            } finally {
+                _isPosting.value = false
             }
         }
     }

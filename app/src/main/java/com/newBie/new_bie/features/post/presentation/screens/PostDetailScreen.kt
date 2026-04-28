@@ -49,7 +49,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import coil.compose.AsyncImage
+import coil3.compose.AsyncImage
 import com.newBie.new_bie.core.components.TopBarTitleText
 import com.newBie.new_bie.core.utils.toKoreaLocalDateTime
 import com.newBie.new_bie.core.utils.toTimeAgo
@@ -123,7 +123,8 @@ fun PostDetailScreen(modifier: Modifier = Modifier, navController: NavController
                             )
                         }
                         Text(post?.title ?: "", style = AppTextStyle.Title, )
-                        Text(post?.content ?: "", style = AppTextStyle.Content, )
+
+                        Spacer(modifier = Modifier.height(20.dp))
 
                         if (post?.postImages?.isNotEmpty() == true && post != null){
                             val pagerState = rememberPagerState(
@@ -156,6 +157,9 @@ fun PostDetailScreen(modifier: Modifier = Modifier, navController: NavController
                                 }
                             }
                         }
+                        Spacer(modifier = Modifier.height(20.dp))
+
+                        Text(post?.content ?: "", style = AppTextStyle.Content, )
 
                     }
                     Row(modifier = Modifier.fillMaxWidth().padding(10.dp)) {
