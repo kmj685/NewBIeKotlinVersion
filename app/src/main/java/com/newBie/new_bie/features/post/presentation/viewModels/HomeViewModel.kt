@@ -184,7 +184,7 @@ class HomeViewModel : ViewModel(), CommentBottomSheetViewModel {
             val currentList = posts.value.toMutableList()
             val target = currentList[index]
 
-            target.isLiked?.let {
+            target.isLiked.let {
                 if (!it) {
                     // 👍 좋아요
                     currentList[index] =

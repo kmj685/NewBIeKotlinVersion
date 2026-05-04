@@ -17,6 +17,7 @@ import androidx.compose.material.icons.filled.Label
 import androidx.compose.material.icons.filled.Photo
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -27,11 +28,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.newBie.new_bie.core.components.BottomTapBar
-import com.newBie.new_bie.core.components.TopBarTitleText
+import com.newBie.new_bie.core.components.TopBarLayout
+
 import com.newBie.new_bie.core.utils.PageSet
 import com.newBie.new_bie.features.post.presentation.components.ContentTextField
 import com.newBie.new_bie.features.post.presentation.components.SelectedCategoryListLazyRow
@@ -55,53 +58,69 @@ fun PostEditScreen(modifier: Modifier = Modifier, navController: NavController, 
     val categoryList by viewModel.categoryList.collectAsState()
     val selectCategoryList by viewModel.selectCategoryList.collectAsState()
 
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(BlackColor)
-    ) {
-        Column(modifier = Modifier.fillMaxWidth()) {
-            TopBarTitleText("게시물 작성")
-            Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp).weight(1f)) {
-                TitleTextField(
-                    modifier = Modifier.padding(bottom = 8.dp),
-                    titleInput = titleInput,
-                    onValueChange = {viewModel.onChangeTitleInput(it)}
-                )
-                Spacer(modifier = Modifier.height(1.dp).fillMaxWidth().background(color = Color.DarkGray))
-                ContentTextField(
-                    modifier = Modifier.weight(1f),
-                    contentInput = contentInput,
-                    onValueChange = {viewModel.onChangeContentInput(it)}
-                )
-                Row(modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp, horizontal = 10.dp),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    PostEditScreenActionButton(Icons.Default.Photo, "사진 추가", {})
-                    PostEditScreenActionButton(Icons.Default.Label, "카테고리", {showSheet = true})
-                }
-                if (selectCategoryList.isNotEmpty()) {
-                    SelectedCategoryListLazyRow(selectCategoryList, {viewModel.unselectCategory(it)})
-                }
-                PostUpdateBtn(modifier = Modifier.padding(vertical = 10.dp),title = "등록", onClick = {})
+    val focusManager = LocalFocusManager.current
 
-            }
+
+    Scaffold(
+            containerColor = Color.Transparent,
+        topBar = {
+            TopBarLayout(
+                title = "게시물 작성",
+                focusManager = focusManager,
+            )
+        },
+    ) {innerPadding ->
+        Box(
+            modifier = modifier
+                .padding(
+                    innerPadding.calculateTopPadding()
+                )
+                .fillMaxSize()
+                .background(BlackColor)
+        ) {
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp).weight(1f)) {
+                    TitleTextField(
+                        modifier = Modifier.padding(bottom = 8.dp),
+                        titleInput = titleInput,
+                        onValueChange = {viewModel.onChangeTitleInput(it)}
+                    )
+                    Spacer(modifier = Modifier.height(1.dp).fillMaxWidth().background(color = Color.DarkGray))
+                    ContentTextField(
+                        modifier = Modifier.weight(1f),
+                        contentInput = contentInput,
+                        onValueChange = {viewModel.onChangeContentInput(it)}
+                    )
+                    Row(modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp, horizontal = 10.dp),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        PostEditScreenActionButton(Icons.Default.Photo, "사진 추가", {})
+                        PostEditScreenActionButton(Icons.Default.Label, "카테고리", {showSheet = true})
+                    }
+                    if (selectCategoryList.isNotEmpty()) {
+                        SelectedCategoryListLazyRow(selectCategoryList, {viewModel.unselectCategory(it)})
+                    }
+                    PostUpdateBtn(modifier = Modifier.padding(vertical = 10.dp),title = "등록", onClick = {})
+
+                }
 //            BottomTapBar(navController, PageSet.ADD_POST)
-            if (showSheet) {
-                ModalBottomSheet(
-                    onDismissRequest = {showSheet = false},
-                    sheetState = sheetState
-                ) {
-                    LazyColumn() {
-                        items(categoryList){ item ->
-                            PostEditCategoryBtn(
-                                item,
-                                selectCategoryList.contains(item),
-                            )
+                if (showSheet) {
+                    ModalBottomSheet(
+                        onDismissRequest = {showSheet = false},
+                        sheetState = sheetState
+                    ) {
+                        LazyColumn() {
+                            items(categoryList){ item ->
+                                PostEditCategoryBtn(
+                                    item,
+                                    selectCategoryList.contains(item),
+                                )
+                            }
                         }
                     }
                 }
             }
         }
     }
+
 }

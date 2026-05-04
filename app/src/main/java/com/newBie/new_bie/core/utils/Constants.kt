@@ -38,7 +38,7 @@ object Routes {
     const val POST_EDIT = "edit"
 
     const val USER_PROFILE = "user_profile"
-    const val FOLLOWER = "follower"
+    const val FOLLOW = "follow"
 
     const val SETTING = "setting"
     const val QUESTION = "question"

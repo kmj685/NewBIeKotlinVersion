@@ -20,6 +20,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
@@ -42,7 +43,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import com.newBie.new_bie.core.components.BottomSheetTopBatTitle
-import com.newBie.new_bie.core.components.TopBarTitleText
 import com.newBie.new_bie.core.utils.toKoreaLocalDateTime
 import com.newBie.new_bie.core.utils.toTimeAgo
 import com.newBie.new_bie.features.post.presentation.interfaces.CommentBottomSheetViewModel
@@ -77,10 +77,12 @@ fun CommentBottomSheet(viewModel : CommentBottomSheetViewModel, screenHeight: Dp
             horizontalAlignment = Alignment.CenterHorizontally
         ){
             BottomSheetTopBatTitle("댓글")
-            Box(modifier = Modifier
-                .fillMaxWidth()
-                .height(2.dp)
-                .background(color = OrangeColor))
+            HorizontalDivider(
+                thickness = 0.5.dp,
+                color = OrangeColor,
+                modifier = Modifier
+                    .padding(5.dp)
+            )
             if (commentsList.isEmpty()) {
                 Box(
                     modifier = Modifier

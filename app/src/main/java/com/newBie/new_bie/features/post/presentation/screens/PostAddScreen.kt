@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -33,6 +34,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Label
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Photo
 import androidx.compose.material3.BottomSheetDefaults.DragHandle
 import androidx.compose.material3.Button
@@ -42,6 +44,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -58,6 +61,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
@@ -65,7 +69,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.newBie.new_bie.core.components.BottomTapBar
-import com.newBie.new_bie.core.components.TopBarTitleText
+import com.newBie.new_bie.core.components.TopBarLayout
 import com.newBie.new_bie.core.components.rememberPhotoPicker
 import com.newBie.new_bie.core.utils.Constants.TAG
 import com.newBie.new_bie.core.utils.PageSet
@@ -119,27 +123,37 @@ fun PostAddScreen(modifier: Modifier = Modifier, navController: NavController, v
         }
     }
 
-    SharedTransitionLayout(modifier = Modifier.pointerInput(Unit){
-        detectTapGestures(onTap = {
-            focusManager.clearFocus()
-        })
-    }) {
-        AnimatedContent(
-            targetState = isExpanded,
-            label = "ImageTransition"
-        ) { targetExpended ->
-            if (!targetExpended){
-                Box(
-                    modifier = modifier
-                        .fillMaxSize()
-                        .background(BlackColor)
-                ) {
-                    Column(modifier = Modifier.fillMaxWidth()) {
-                        TopBarTitleText("게시물 작성")
+    Scaffold(
+        containerColor = Color.Transparent,
+        topBar = {
+            TopBarLayout(
+                title = "게시물 작성",
+                focusManager = focusManager,
+            )
+        },
+    ) {innerPadding ->
+        SharedTransitionLayout(modifier = Modifier
+            .padding(
+                top = innerPadding.calculateTopPadding(), // 상단만 적용
+            )
+            .pointerInput(Unit){
+            detectTapGestures(onTap = {
+                focusManager.clearFocus()
+            })
+        }) {
+            AnimatedContent(
+                targetState = isExpanded,
+                label = "ImageTransition"
+            ) { targetExpended ->
+                if (!targetExpended){
+                    Box(
+                        modifier = modifier
+                            .fillMaxSize()
+                            .background(BlackColor)
+                    ) {
                         Column(modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 10.dp)
-                            .weight(1f)) {
+                            .padding(horizontal = 10.dp)) {
                             TitleTextField(
                                 modifier = Modifier.padding(bottom = 8.dp),
                                 titleInput = titleInput,
@@ -148,7 +162,7 @@ fun PostAddScreen(modifier: Modifier = Modifier, navController: NavController, v
                             Spacer(modifier = Modifier
                                 .height(1.dp)
                                 .fillMaxWidth()
-                                )
+                            )
                             ContentTextField(
                                 modifier = Modifier.weight(1f),
                                 contentInput = contentInput,
@@ -199,7 +213,7 @@ fun PostAddScreen(modifier: Modifier = Modifier, navController: NavController, v
                             Button(onClick = {
                                 viewModel.insertPost(context = context)
                             },
-                                enabled = titleInput.isNotEmpty() && contentInput.isNotEmpty() && !isPosting,
+                                enabled = titleInput.isNotEmpty() && contentInput.isNotEmpty() && !isPosting && selectCategoryList.isNotEmpty(),
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(vertical = 12.dp),
@@ -218,8 +232,6 @@ fun PostAddScreen(modifier: Modifier = Modifier, navController: NavController, v
 //                                onClick = { viewModel.insertPost(context) }
 //                            )
                         }
-                        //바텀 네브 탭 바
-                        BottomTapBar(navController, PageSet.ADD_POST)
 
                         if (showSheet) {
                             ModalBottomSheet(
@@ -275,63 +287,65 @@ fun PostAddScreen(modifier: Modifier = Modifier, navController: NavController, v
                             }
                         }
                     }
-                }
-            } else {
-                // imageInputList에서 클릭한 사진의 인덱스를 찾아 초기 페이지로 설정
-                val pagerState = rememberPagerState(
-                    initialPage = imageInputList.indexOf(selectedImage),
-                    pageCount = { imageInputList.size }
-                )
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color.Black.copy(0.7f))
-                ) {
-                    HorizontalPager(
-                        state = pagerState,
-                        modifier = Modifier.fillMaxSize()
-                    ) {page ->
-                        val currentUri = imageInputList[page]
-                        val zoomState = rememberZoomState()
+                } else {
+                    // imageInputList에서 클릭한 사진의 인덱스를 찾아 초기 페이지로 설정
+                    val pagerState = rememberPagerState(
+                        initialPage = imageInputList.indexOf(selectedImage),
+                        pageCount = { imageInputList.size }
+                    )
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(Color.Black.copy(0.7f))
+                    ) {
+                        HorizontalPager(
+                            state = pagerState,
+                            modifier = Modifier.fillMaxSize()
+                        ) {page ->
+                            val currentUri = imageInputList[page]
+                            val zoomState = rememberZoomState()
 
-                        Box(
-                            modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
+                            Box(
+                                modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
+                            ) {
+                                AsyncImage(
+                                    model = currentUri,
+                                    contentDescription = "확대 이미지",
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .sharedElement(
+                                            rememberSharedContentState(key = "image_$currentUri"),
+                                            animatedVisibilityScope = this@AnimatedContent,
+                                        )
+                                        .zoomable(zoomState)
+                                )
+                            }
+                        }
+                        // 닫기 버튼
+                        IconButton(
+                            onClick = { isExpanded = false },
+                            modifier = Modifier
+                                .align(Alignment.TopEnd)
+                                .padding(16.dp)
                         ) {
-                            AsyncImage(
-                                model = currentUri,
-                                contentDescription = "확대 이미지",
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .sharedElement(
-                                        rememberSharedContentState(key = "image_$currentUri"),
-                                        animatedVisibilityScope = this@AnimatedContent,
-                                    )
-                                    .zoomable(zoomState)
-                            )
+                            Icon(Icons.Default.Close, contentDescription = "닫기", tint = Color.White)
                         }
                     }
-                    // 닫기 버튼
-                    IconButton(
-                        onClick = { isExpanded = false },
-                        modifier = Modifier
-                            .align(Alignment.TopEnd)
-                            .padding(16.dp)
-                    ) {
-                        Icon(Icons.Default.Close, contentDescription = "닫기", tint = Color.White)
-                    }
+                    // 안드로이드 뒤로가기 키 설정
+                    BackHandler() { isExpanded = false }
                 }
-                // 안드로이드 뒤로가기 키 설정
-                BackHandler() { isExpanded = false }
+            }
+        }
+        if(isPosting){
+            Box(modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.5f))
+                .clickable(enabled = false){},
+                contentAlignment = Alignment.Center) {
+                CircularProgressIndicator(color = OrangeColor)
             }
         }
     }
-    if(isPosting){
-        Box(modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Black.copy(alpha = 0.5f))
-            .clickable(enabled = false){},
-            contentAlignment = Alignment.Center) {
-            CircularProgressIndicator(color = OrangeColor)
-        }
-    }
+
+
 }

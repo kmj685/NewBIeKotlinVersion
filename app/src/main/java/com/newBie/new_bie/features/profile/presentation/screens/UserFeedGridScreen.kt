@@ -55,10 +55,8 @@ fun UserFeedGridScreen(posts: List<PostWithProfileEntity>,
                 }
             }
     }
-
-
-
     Log.d(TAG, "UserFeedGridScreen: posts size = ${posts.size}")
+
     LazyVerticalGrid(
         state = gridState, // 상태 연결
         columns = GridCells.Fixed(3),

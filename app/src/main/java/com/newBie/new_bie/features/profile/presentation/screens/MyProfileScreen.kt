@@ -3,6 +3,7 @@ package com.newBie.new_bie.features.profile.presentation.screens
 import android.graphics.drawable.Icon
 import android.os.Build
 import android.os.Build.VERSION.SDK_INT
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.SharedTransitionLayout
@@ -20,6 +21,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
@@ -60,10 +62,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.Modifier.Companion
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -77,8 +81,9 @@ import coil3.gif.AnimatedImageDecoder
 import coil3.gif.GifDecoder
 import com.cloudinary.transformation.resize.Crop
 import com.newBie.new_bie.core.components.BottomTapBar
-import com.newBie.new_bie.core.components.TopBarTitleText
+import com.newBie.new_bie.core.components.TopBarLayout
 import com.newBie.new_bie.core.managers.SupabaseManager
+import com.newBie.new_bie.core.utils.Constants
 import com.newBie.new_bie.core.utils.PageSet
 import com.newBie.new_bie.core.utils.Routes
 import com.newBie.new_bie.features.post.presentation.components.SmallProfileComponent
@@ -112,6 +117,11 @@ fun MyProfileScreen(
     val zoomState = rememberZoomState()
 
     val myId = SupabaseManager.supabase.auth.currentUserOrNull()?.id
+    val myProfile = myId == targetUserId || targetUserId == null
+
+    val isFollowing by viewModel.isFollowing.collectAsState()
+
+    val focusManager = LocalFocusManager.current
 
     LaunchedEffect(targetUserId) {
         viewModel.fetchTargetUser(targetUserId)
@@ -123,7 +133,17 @@ fun MyProfileScreen(
         ) {targetExpended ->
             if (!targetExpended){
                 Scaffold(
-                    topBar = { TopBarTitleText("마이페이지") },
+                    topBar = {
+                        TopBarLayout(
+                            title = if (myProfile) {
+                                "마이페이지"
+                            } else {
+                                user?.nickName ?: ""
+                            },
+                            moreVert = true,
+                            targetId = targetUserId,
+                            focusManager = focusManager,
+                        )},
                     bottomBar = { BottomTapBar(navController = navController, pageSet = PageSet.PROFILE) },
                     containerColor = Color.Transparent
                 ) { innerPadding ->
@@ -155,7 +175,7 @@ fun MyProfileScreen(
                                         nickName = user?.nickName,
                                         introduce = user?.introduction,
                                         userId = SupabaseManager.supabase.auth.currentUserOrNull()?.id,
-                                        onImageClick = { isExpanded = true } //TODO: zoomable 연결해서 확대해서 볼 수 있도록
+                                        onImageClick = { isExpanded = true }
                                     )
 
                                     Spacer(modifier = Modifier.height(20.dp))
@@ -168,15 +188,21 @@ fun MyProfileScreen(
                                             Spacer(modifier = Modifier.height(4.dp))
                                             Text("게시글", color = Color.White)
                                         }
-                                        Column(modifier = Modifier.clickable(onClick = {}),
+                                        Column(modifier = Modifier.clickable(onClick = {
+                                            val userId = user?.id
+                                            navController.navigate("${Routes.MY_PROFILE}/$userId/${Routes.FOLLOW}?initialTab=0")
+                                        }),
                                             horizontalAlignment = Alignment.CenterHorizontally) {
                                             Text("${user?.followerCount}", color = OrangeColor, fontWeight = FontWeight.Bold, fontSize = 18.sp)
                                             Spacer(modifier = Modifier.height(4.dp))
                                             Text("팔로워", color = Color.White)
                                         }
-                                        Column(modifier = Modifier.clickable(onClick = {}),
+                                        Column(modifier = Modifier.clickable(onClick = {
+                                            val userId = user?.id
+                                            navController.navigate("${Routes.MY_PROFILE}/$userId/${Routes.FOLLOW}?initialTab=1")
+                                        }),
                                             horizontalAlignment = Alignment.CenterHorizontally) {
-                                            Text("${user?.followerCount}", color = OrangeColor, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                                            Text("${user?.followingCount}", color = OrangeColor, fontWeight = FontWeight.Bold, fontSize = 18.sp)
                                             Spacer(modifier = Modifier.height(4.dp))
                                             Text("팔로잉", color = Color.White)
                                         }
@@ -184,7 +210,7 @@ fun MyProfileScreen(
 
                                     Spacer(modifier = Modifier.height(20.dp))
 
-                                    if (myId == targetUserId || targetUserId == null){
+                                    if (myProfile){
                                         Button(modifier = Modifier.fillMaxWidth(),
                                             shape = RoundedCornerShape(12.dp),
                                             colors = ButtonDefaults.buttonColors(containerColor = Color.Gray),
@@ -196,11 +222,13 @@ fun MyProfileScreen(
                                     } else {
                                         Button(modifier = Modifier.fillMaxWidth(),
                                             shape = RoundedCornerShape(12.dp),
-                                            colors = ButtonDefaults.buttonColors(containerColor = OrangeColor),
+                                            colors = ButtonDefaults.buttonColors(containerColor = if (isFollowing) Color.Gray else OrangeColor),
                                             onClick = {
-                                                //TODO: 팔로우 로직 넣기
+                                                user?.id?.let {
+                                                    viewModel.toggleFollow(it)
+                                                }
                                             }) {
-                                            Text("팔로우", color = Color.White)
+                                            Text(if(isFollowing) "팔로잉" else "팔로우", color = Color.White)
                                         }
                                     }
 
@@ -219,7 +247,6 @@ fun MyProfileScreen(
                                         modifier = Modifier.tabIndicatorOffset(pagerState.currentPage),
                                         color = OrangeColor
                                     )},
-                                    divider = {}
                                 ) {
                                     pagerTitle.forEachIndexed { index, iconVector ->
                                         Tab(

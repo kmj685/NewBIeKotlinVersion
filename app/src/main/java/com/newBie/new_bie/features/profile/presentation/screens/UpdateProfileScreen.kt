@@ -61,7 +61,7 @@ import coil3.compose.AsyncImage
 import com.bumptech.glide.integration.compose.placeholder
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.newBie.new_bie.R
-import com.newBie.new_bie.core.components.TopBarTitleText
+import com.newBie.new_bie.core.components.TopBarLayout
 import com.newBie.new_bie.core.components.rememberPhotoPicker
 import com.newBie.new_bie.core.components.rememberSinglePhotoPicker
 import com.newBie.new_bie.core.utils.Routes
@@ -95,7 +95,7 @@ fun UpdateProfileScreen(viewModel: UpdateProfileViewModel = viewModel<UpdateProf
     }
     Scaffold(
         containerColor = Color.Transparent,
-        topBar = { TopBarTitleText("프로필 수정") }
+        topBar = { TopBarLayout("프로필 수정") }
     ) {innerPadding ->
         Column(modifier = Modifier
             .padding(innerPadding)

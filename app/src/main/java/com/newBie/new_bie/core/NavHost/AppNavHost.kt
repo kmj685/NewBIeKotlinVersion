@@ -16,6 +16,7 @@ import com.newBie.new_bie.features.post.presentation.screens.HomeScreen
 import com.newBie.new_bie.features.post.presentation.screens.PostAddScreen
 import com.newBie.new_bie.features.post.presentation.screens.PostDetailScreen
 import com.newBie.new_bie.features.post.presentation.screens.SearchScreen
+import com.newBie.new_bie.features.profile.presentation.screens.FollowScreen
 import com.newBie.new_bie.features.profile.presentation.screens.MyProfileScreen
 import com.newBie.new_bie.features.profile.presentation.screens.UpdateProfileScreen
 import com.newBie.new_bie.features.teamProject.presentation.screens.TeamProjectListScreen
@@ -75,20 +76,6 @@ fun AppNavHost(modifier : Modifier, navController: NavHostController, context: C
             /* PostEditScreen(postId) */
         }
 
-        // -------- User Profile --------
-
-        composable(
-            route = "${Routes.USER_PROFILE}/{userId}/${Routes.FOLLOWER}?initialTab={initialTab}",
-            arguments = listOf(
-                navArgument("userId") { type = NavType.StringType },
-                navArgument("initialTab") {
-                    type = NavType.IntType
-                    defaultValue = 0
-                }
-            )
-        ) {
-            /* FollowerListScreen(targetUserId, initialTab) */
-        }
 
         // -------- ShellRoute 대응 (BottomNav 영역) --------
         composable(Routes.HOME) {
@@ -135,6 +122,28 @@ fun AppNavHost(modifier : Modifier, navController: NavHostController, context: C
             MyProfileScreen(navController = navController, targetUserId = userId)
         }
 
+        composable(
+            route = "${Routes.MY_PROFILE}/{userId}/${Routes.FOLLOW}?initialTab={initialTab}",
+            arguments = listOf(
+                navArgument("userId") {
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = null
+                },
+                navArgument("initialTab") {
+                    type = NavType.IntType
+                    defaultValue = 0
+                }
+            )
+        ) {backStackEntry ->
+            val userId = backStackEntry.arguments?.getString("userId")
+            println("NavHost userId: $userId")
+            val initialTab = backStackEntry.arguments?.getInt("initialTab")
+            println("NavHose initialTab: $initialTab")
+
+            FollowScreen(navController = navController, targetUserId = userId, initialTab = initialTab)
+        }
+
         composable("${Routes.MY_PROFILE}/${Routes.SETTING}") {
             /* SettingScreen() */
         }
@@ -158,18 +167,6 @@ fun AppNavHost(modifier : Modifier, navController: NavHostController, context: C
 
         composable("${Routes.MY_PROFILE}/${Routes.SETTING}/${Routes.BLOCKED_USERS}") {
             /* BlockedUserScreen() */
-        }
-
-        composable(
-            route = "${Routes.MY_PROFILE}/${Routes.FOLLOWER}?initialTab={initialTab}",
-            arguments = listOf(
-                navArgument("initialTab") {
-                    type = NavType.IntType
-                    defaultValue = 0
-                }
-            )
-        ) {
-            /* MyFollowerListScreen(initialTab) */
         }
 
         composable("${Routes.MY_PROFILE}/${Routes.UPDATE_PROFILE}") {

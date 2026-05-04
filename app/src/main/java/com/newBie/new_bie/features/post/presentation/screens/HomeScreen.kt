@@ -29,6 +29,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.CircularProgressIndicator
@@ -37,6 +38,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MenuItemColors
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
@@ -72,7 +74,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.cloudinary.transformation.BackgroundColor
 import com.newBie.new_bie.core.components.BottomTapBar
-import com.newBie.new_bie.core.components.TopBarTitleText
 import com.newBie.new_bie.core.utils.OrderByType
 import com.newBie.new_bie.core.utils.PageSet
 import com.newBie.new_bie.core.utils.Routes
@@ -151,7 +152,6 @@ fun HomeScreen(modifier: Modifier = Modifier, navController: NavController, view
                     }
                 }
         }
-
     }
 
 //    LaunchedEffect(listState.isScrollInProgress) {
@@ -161,13 +161,24 @@ fun HomeScreen(modifier: Modifier = Modifier, navController: NavController, view
 //    }
 
     Scaffold(
-        topBar = { Image(
-            painter = painterResource(id = R.drawable.new_bie_logo),
-            contentDescription = "홈 로고",
-            modifier = Modifier
-                .padding(10.dp)
-                .height(30.dp)
-        )},
+        topBar = {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.new_bie_logo),
+                    contentDescription = "홈 로고",
+                    modifier = Modifier
+                        .padding(10.dp)
+                        .height(30.dp)
+                )
+                IconButton(onClick = { /* 알림 */ }) {
+                    Icon(Icons.Default.Notifications, contentDescription = "알림", tint = OrangeColor)
+                }
+            }
+                 },
         bottomBar = {BottomTapBar(navController, PageSet.HOME)},
         containerColor = Color.Transparent
     ) { innerPadding ->

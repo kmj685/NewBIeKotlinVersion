@@ -17,7 +17,10 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -72,7 +75,7 @@ fun CommentItem(
     focusRequester: FocusRequester
 
 ) {
-    val imageSize = 60.dp
+    val imageSize = 40.dp
     val currentUserId = SupabaseManager.supabase.auth.currentUserOrNull()?.id
 
     val imageModifier = Modifier
@@ -134,31 +137,29 @@ fun CommentItem(
                         ),
 
                     )
-                    IconButton(onClick = {
-                        onUpdate.invoke()
-                        focusManager.clearFocus(true)
-                    }) {
-                        Icon(Icons.Default.Check, contentDescription = null, tint = Color.Green)
+                    Column() {
+                        IconButton(onClick = {
+                            onUpdate.invoke()
+                            focusManager.clearFocus(true)
+                        }) {
+                            Icon(Icons.Filled.CheckCircle, contentDescription = null, tint = OrangeColor)
+                        }
+                        IconButton(onClick = {
+                            onCancel.invoke()
+                            focusManager.clearFocus(true)
+                        }) {
+                            Icon(Icons.Filled.Cancel, contentDescription = null, tint = Color.Gray)
+                        }
                     }
-                    IconButton(onClick = {
-                        onCancel.invoke()
-                        focusManager.clearFocus(true)
-                    }) {
-                        Icon(Icons.Default.Cancel, contentDescription = null, tint = Color.Red)
-                    }
+
                 }
             } else{
                 Text(introduce ?: "", color = Color.White)
             }
         }
-
-
         var expanded by remember { mutableStateOf(false) }
         if (selectedId == null){
-            Box(
-                modifier = Modifier
-                    .padding(16.dp)
-            ) {
+            Box {
                 IconButton(onClick = { expanded = !expanded }) {
                     Icon(
                         Icons.Default.MoreVert,
