@@ -80,6 +80,7 @@ import coil3.compose.AsyncImage
 import coil3.gif.AnimatedImageDecoder
 import coil3.gif.GifDecoder
 import com.cloudinary.transformation.resize.Crop
+import com.newBie.new_bie.core.components.BaseAsyncImage
 import com.newBie.new_bie.core.components.BottomTapBar
 import com.newBie.new_bie.core.components.TopBarLayout
 import com.newBie.new_bie.core.managers.SupabaseManager
@@ -290,7 +291,7 @@ fun MyProfileScreen(
                     .fillMaxSize()
                     .background(Color.Black.copy(0.3f)),
                     contentAlignment = Alignment.Center){
-                    AsyncImage(
+                    BaseAsyncImage(
                         model = user?.profileImage,
                         contentDescription = "프로필 확대 이미지",
                         contentScale = ContentScale.Crop,

@@ -61,6 +61,7 @@ import coil3.compose.AsyncImage
 import com.bumptech.glide.integration.compose.placeholder
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.newBie.new_bie.R
+import com.newBie.new_bie.core.components.BaseAsyncImage
 import com.newBie.new_bie.core.components.TopBarLayout
 import com.newBie.new_bie.core.components.rememberPhotoPicker
 import com.newBie.new_bie.core.components.rememberSinglePhotoPicker
@@ -133,7 +134,7 @@ fun UpdateProfileScreen(viewModel: UpdateProfileViewModel = viewModel<UpdateProf
                         imageInput ?: user?.profileImage
 
                     if(selectedImage != null){
-                        AsyncImage(
+                        BaseAsyncImage(
                             model = selectedImage,
                             contentDescription = "프로필 이미지",
                             modifier = imageModifier,

@@ -19,6 +19,7 @@ import coil3.ImageLoader
 import coil3.SingletonImageLoader
 import coil3.gif.AnimatedImageDecoder
 import coil3.gif.GifDecoder
+import com.newBie.new_bie.core.components.BackOnBackPressed
 import com.newBie.new_bie.ui.theme.BlackColor
 import com.newBie.new_bie.ui.theme.NewBieTheme
 
@@ -35,6 +36,10 @@ class MainActivity : ComponentActivity() {
             )
         )
         setContent {
+            // 두 번 눌러 앱 종료
+            BackOnBackPressed {
+                finish()
+            }
             NewBieTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     MainScreen(

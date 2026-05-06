@@ -30,6 +30,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
+import com.newBie.new_bie.core.components.BaseAsyncImage
 import com.newBie.new_bie.core.utils.Constants.TAG
 import com.newBie.new_bie.features.post.domain.entities.PostEntity
 import com.newBie.new_bie.features.post.domain.entities.PostImageEntity
@@ -85,7 +86,7 @@ fun FeedItem(post: PostWithProfileEntity, onPostClick: (Int) -> Unit){
         val displayImage = post.postImages.firstOrNull()?.imageUrl ?: post.imageUrl
 
         if (post.postImages.isNotEmpty()){
-            AsyncImage(
+            BaseAsyncImage(
                 model = displayImage,
                 contentDescription = "피드 그리드 사진",
                 modifier = Modifier.fillMaxSize(),

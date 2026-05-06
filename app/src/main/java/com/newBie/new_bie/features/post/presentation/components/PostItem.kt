@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
+import com.newBie.new_bie.core.components.BaseAsyncImage
 import com.newBie.new_bie.core.managers.SupabaseManager
 import com.newBie.new_bie.core.utils.Routes
 import com.newBie.new_bie.core.utils.toKoreaLocalDateTime
@@ -101,7 +102,7 @@ fun PostItem(post : PostWithProfileEntity, navController: NavController, onDelet
         if (!post.postImages.isNullOrEmpty()) {
             LazyRow {
                 items(post.postImages) { image ->
-                    AsyncImage(
+                    BaseAsyncImage(
                         model = image.imageUrl,
                         contentDescription = null,
                         modifier = Modifier

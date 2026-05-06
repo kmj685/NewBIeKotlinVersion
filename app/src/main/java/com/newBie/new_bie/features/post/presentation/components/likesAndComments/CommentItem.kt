@@ -48,6 +48,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.newBie.new_bie.R
+import com.newBie.new_bie.core.components.BaseAsyncImage
 import com.newBie.new_bie.core.managers.SupabaseManager
 import com.newBie.new_bie.core.utils.Constants
 import com.newBie.new_bie.ui.theme.AppTextStyle
@@ -92,7 +93,7 @@ fun CommentItem(
         modifier = modifier.padding(8.dp)
     ) {
         if (imageUrl != null) {
-            AsyncImage(
+            BaseAsyncImage(
                 model = imageUrl,
                 contentDescription = "네트워크 이미지",
                 modifier = imageModifier,

@@ -52,6 +52,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
+import com.newBie.new_bie.core.components.BaseAsyncImage
 import com.newBie.new_bie.core.components.TopBarLayout
 import com.newBie.new_bie.core.utils.toKoreaLocalDateTime
 import com.newBie.new_bie.core.utils.toTimeAgo
@@ -159,7 +160,7 @@ fun PostDetailScreen(modifier: Modifier = Modifier, navController: NavController
                                     ) { page ->
                                         val url = post?.postImages[page]?.imageUrl
 
-                                        AsyncImage(
+                                        BaseAsyncImage(
                                             model = url,
                                             contentDescription = null,
                                             contentScale = ContentScale.Crop, // BoxFit.cover
@@ -249,7 +250,7 @@ fun PostDetailScreen(modifier: Modifier = Modifier, navController: NavController
                             Box(
                                 modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
                             ) {
-                                AsyncImage(
+                                BaseAsyncImage(
                                     model = currentUri,
                                     contentDescription = "확대 이미지",
                                     modifier = Modifier

@@ -68,6 +68,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
+import com.newBie.new_bie.core.components.BaseAsyncImage
 import com.newBie.new_bie.core.components.BottomTapBar
 import com.newBie.new_bie.core.components.TopBarLayout
 import com.newBie.new_bie.core.components.rememberPhotoPicker
@@ -175,7 +176,7 @@ fun PostAddScreen(modifier: Modifier = Modifier, navController: NavController, v
                                         .padding(horizontal = 10.dp), horizontalArrangement = Arrangement.spacedBy(5.dp)) {
                                         items(imageInputList){
                                             Box(contentAlignment = Alignment.TopEnd){
-                                                AsyncImage(
+                                                BaseAsyncImage(
                                                     model = it,
                                                     contentDescription = "미리보기 이미지",
                                                     modifier = Modifier
@@ -308,7 +309,7 @@ fun PostAddScreen(modifier: Modifier = Modifier, navController: NavController, v
                             Box(
                                 modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
                             ) {
-                                AsyncImage(
+                                BaseAsyncImage(
                                     model = currentUri,
                                     contentDescription = "확대 이미지",
                                     modifier = Modifier
