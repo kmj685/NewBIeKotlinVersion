@@ -11,6 +11,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -29,14 +30,19 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.NavHost
 import com.newBie.new_bie.core.managers.SupabaseManager
 import com.newBie.new_bie.core.utils.Constants
+import com.newBie.new_bie.core.utils.Routes
 import com.newBie.new_bie.ui.theme.OrangeColor
 import io.github.jan.supabase.auth.auth
 
 @Composable
 fun TopBarLayout(title: String,
-                 moreVert: Boolean = false, targetId: String? = null, focusManager: FocusManager? = null) {
+                 moreVert: Boolean = false, targetId: String? = null, focusManager: FocusManager? = null,
+                 setting: Boolean = false,
+                 navController: NavController? = null) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -84,6 +90,11 @@ fun TopBarLayout(title: String,
                             }
                         )
                     }
+                }
+            }
+            if (setting && targetId == null || targetId == currentUserId){
+                IconButton(onClick = { navController?.navigate("${Routes.MY_PROFILE}/${Routes.SETTING}") }) {
+                    Icon(Icons.Default.Settings, "설정 창 이동", tint = OrangeColor)
                 }
             }
         }

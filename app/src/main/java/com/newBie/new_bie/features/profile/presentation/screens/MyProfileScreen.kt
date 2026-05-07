@@ -128,196 +128,195 @@ fun MyProfileScreen(
         viewModel.fetchTargetUser(targetUserId)
     }
 
-    SharedTransitionLayout() {
-        AnimatedContent(
-            targetState = isExpanded,
-        ) {targetExpended ->
-            if (!targetExpended){
-                Scaffold(
-                    topBar = {
-                        TopBarLayout(
-                            title = if (myProfile) {
-                                "마이페이지"
-                            } else {
-                                user?.nickName ?: ""
+    Scaffold(
+        topBar = {
+            TopBarLayout(
+                title = if (myProfile) {
+                    "마이페이지"
+                } else {
+                    user?.nickName ?: ""
+                },
+                moreVert = true,
+                targetId = targetUserId,
+                focusManager = focusManager,
+                setting = true,
+                navController = navController
+            )},
+        bottomBar = { BottomTapBar(navController = navController, pageSet = PageSet.PROFILE) },
+        containerColor = Color.Transparent
+    ) {innerPadding ->
+        SharedTransitionLayout(
+            modifier = Modifier.padding(innerPadding)
+        ) {
+            AnimatedContent(
+                targetState = isExpanded,
+            ) {targetExpended ->
+                if (!targetExpended){
+                        PullToRefreshBox(
+                            isRefreshing = isRefreshing,
+                            onRefresh = {
+                                if(!isRefreshing){
+                                    viewModel.isRefreshing.value = true
+                                    viewModel.refreshAll()
+                                }
                             },
-                            moreVert = true,
-                            targetId = targetUserId,
-                            focusManager = focusManager,
-                        )},
-                    bottomBar = { BottomTapBar(navController = navController, pageSet = PageSet.PROFILE) },
-                    containerColor = Color.Transparent
-                ) { innerPadding ->
-                    PullToRefreshBox(
-                        isRefreshing = isRefreshing,
-                        onRefresh = {
-                            if(!isRefreshing){
-                                viewModel.isRefreshing.value = true
-                                viewModel.refreshAll()
-                            }
-                        },
-                        modifier = Modifier
-                            .padding(innerPadding)
-                            .fillMaxSize()
-                            .background(BlackColor)
-                            .padding(10.dp)
-                    ){
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(BlackColor)
+                                .padding(horizontal = 10.dp)
+                        ){
 
-                        LazyColumn(modifier = Modifier.fillMaxSize()) {
+                            LazyColumn(modifier = Modifier.fillMaxSize()) {
 
-                            // 프로필 상단 영역
-                            item {
-                                Column() {
-                                    SmallProfileComponent(
-                                        modifier = Modifier.sharedElement(
-                                            rememberSharedContentState(key = "image_${user?.profileImage}"),
-                                            animatedVisibilityScope = this@AnimatedContent),
-                                        imageUrl = user?.profileImage,
-                                        nickName = user?.nickName,
-                                        introduce = user?.introduction,
-                                        userId = SupabaseManager.supabase.auth.currentUserOrNull()?.id,
-                                        onImageClick = { isExpanded = true }
-                                    )
-
-                                    Spacer(modifier = Modifier.height(20.dp))
-
-                                    Row(modifier = Modifier.fillMaxWidth(),
-                                        horizontalArrangement = Arrangement.spacedBy(30.dp, Alignment.CenterHorizontally),
-                                        verticalAlignment = Alignment.CenterVertically) {
-                                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                            Text("${user?.postCount}", color = OrangeColor, fontWeight = FontWeight.Bold, fontSize = 18.sp, textAlign = TextAlign.Center)
-                                            Spacer(modifier = Modifier.height(4.dp))
-                                            Text("게시글", color = Color.White)
-                                        }
-                                        Column(modifier = Modifier.clickable(onClick = {
-                                            val userId = user?.id
-                                            navController.navigate("${Routes.MY_PROFILE}/$userId/${Routes.FOLLOW}?initialTab=0")
-                                        }),
-                                            horizontalAlignment = Alignment.CenterHorizontally) {
-                                            Text("${user?.followerCount}", color = OrangeColor, fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                                            Spacer(modifier = Modifier.height(4.dp))
-                                            Text("팔로워", color = Color.White)
-                                        }
-                                        Column(modifier = Modifier.clickable(onClick = {
-                                            val userId = user?.id
-                                            navController.navigate("${Routes.MY_PROFILE}/$userId/${Routes.FOLLOW}?initialTab=1")
-                                        }),
-                                            horizontalAlignment = Alignment.CenterHorizontally) {
-                                            Text("${user?.followingCount}", color = OrangeColor, fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                                            Spacer(modifier = Modifier.height(4.dp))
-                                            Text("팔로잉", color = Color.White)
-                                        }
-                                    }
-
-                                    Spacer(modifier = Modifier.height(20.dp))
-
-                                    if (myProfile){
-                                        Button(modifier = Modifier.fillMaxWidth(),
-                                            shape = RoundedCornerShape(12.dp),
-                                            colors = ButtonDefaults.buttonColors(containerColor = Color.Gray),
-                                            onClick = {
-                                                navController.navigate("${Routes.MY_PROFILE}/${Routes.UPDATE_PROFILE}")
-                                            }) {
-                                            Text("프로필 수정", color = Color.White)
-                                        }
-                                    } else {
-                                        Button(modifier = Modifier.fillMaxWidth(),
-                                            shape = RoundedCornerShape(12.dp),
-                                            colors = ButtonDefaults.buttonColors(containerColor = if (isFollowing) Color.Gray else OrangeColor),
-                                            onClick = {
-                                                user?.id?.let {
-                                                    viewModel.toggleFollow(it)
-                                                }
-                                            }) {
-                                            Text(if(isFollowing) "팔로잉" else "팔로우", color = Color.White)
-                                        }
-                                    }
-
-
-                                    Spacer(modifier = Modifier.height(20.dp))
-                                }
-                            }
-
-                            // 탭바 영역 (item을 새로 만들어서 분리)
-                            item {
-                                SecondaryTabRow(
-                                    selectedTabIndex = pagerState.currentPage,
-                                    containerColor = Color.Transparent,
-                                    contentColor = OrangeColor,
-                                    indicator = { TabRowDefaults.SecondaryIndicator(
-                                        modifier = Modifier.tabIndicatorOffset(pagerState.currentPage),
-                                        color = OrangeColor
-                                    )},
-                                ) {
-                                    pagerTitle.forEachIndexed { index, iconVector ->
-                                        Tab(
-                                            selected = pagerState.currentPage == index,
-                                            unselectedContentColor = Color.White,
-                                            onClick = {
-                                                scope.launch { pagerState.animateScrollToPage(index) }
-                                            },
-                                            icon = { Icon(imageVector = iconVector, contentDescription = null) }
+                                // 프로필 상단 영역
+                                item {
+                                    Column() {
+                                        SmallProfileComponent(
+                                            modifier = Modifier.sharedElement(
+                                                rememberSharedContentState(key = "image_${user?.profileImage}"),
+                                                animatedVisibilityScope = this@AnimatedContent),
+                                            imageUrl = user?.profileImage,
+                                            nickName = user?.nickName,
+                                            introduce = user?.introduction,
+                                            userId = SupabaseManager.supabase.auth.currentUserOrNull()?.id,
+                                            onImageClick = { isExpanded = true }
                                         )
+
+                                        Spacer(modifier = Modifier.height(20.dp))
+
+                                        Row(modifier = Modifier.fillMaxWidth(),
+                                            horizontalArrangement = Arrangement.spacedBy(30.dp, Alignment.CenterHorizontally),
+                                            verticalAlignment = Alignment.CenterVertically) {
+                                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                                Text("${user?.postCount}", color = OrangeColor, fontWeight = FontWeight.Bold, fontSize = 18.sp, textAlign = TextAlign.Center)
+                                                Spacer(modifier = Modifier.height(4.dp))
+                                                Text("게시글", color = Color.White)
+                                            }
+                                            Column(modifier = Modifier.clickable(onClick = {
+                                                val userId = user?.id
+                                                navController.navigate("${Routes.MY_PROFILE}/$userId/${Routes.FOLLOW}?initialTab=0")
+                                            }),
+                                                horizontalAlignment = Alignment.CenterHorizontally) {
+                                                Text("${user?.followerCount}", color = OrangeColor, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                                                Spacer(modifier = Modifier.height(4.dp))
+                                                Text("팔로워", color = Color.White)
+                                            }
+                                            Column(modifier = Modifier.clickable(onClick = {
+                                                val userId = user?.id
+                                                navController.navigate("${Routes.MY_PROFILE}/$userId/${Routes.FOLLOW}?initialTab=1")
+                                            }),
+                                                horizontalAlignment = Alignment.CenterHorizontally) {
+                                                Text("${user?.followingCount}", color = OrangeColor, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                                                Spacer(modifier = Modifier.height(4.dp))
+                                                Text("팔로잉", color = Color.White)
+                                            }
+                                        }
+
+                                        Spacer(modifier = Modifier.height(20.dp))
+
+                                        if (myProfile){
+                                            Button(modifier = Modifier.fillMaxWidth(),
+                                                shape = RoundedCornerShape(12.dp),
+                                                colors = ButtonDefaults.buttonColors(containerColor = Color.Gray),
+                                                onClick = {
+                                                    navController.navigate("${Routes.MY_PROFILE}/${Routes.UPDATE_PROFILE}")
+                                                }) {
+                                                Text("프로필 수정", color = Color.White)
+                                            }
+                                        } else {
+                                            Button(modifier = Modifier.fillMaxWidth(),
+                                                shape = RoundedCornerShape(12.dp),
+                                                colors = ButtonDefaults.buttonColors(containerColor = if (isFollowing) Color.Gray else OrangeColor),
+                                                onClick = {
+                                                    user?.id?.let {
+                                                        viewModel.toggleFollow(it)
+                                                    }
+                                                }) {
+                                                Text(if(isFollowing) "팔로잉" else "팔로우", color = Color.White)
+                                            }
+                                        }
+                                        Spacer(modifier = Modifier.height(20.dp))
                                     }
                                 }
-                            }
+                                // 탭바 영역 (item을 새로 만들어서 분리)
+                                item {
+                                    SecondaryTabRow(
+                                        selectedTabIndex = pagerState.currentPage,
+                                        containerColor = Color.Transparent,
+                                        contentColor = OrangeColor,
+                                        indicator = { TabRowDefaults.SecondaryIndicator(
+                                            modifier = Modifier.tabIndicatorOffset(pagerState.currentPage),
+                                            color = OrangeColor
+                                        )},
+                                    ) {
+                                        pagerTitle.forEachIndexed { index, iconVector ->
+                                            Tab(
+                                                selected = pagerState.currentPage == index,
+                                                unselectedContentColor = Color.White,
+                                                onClick = {
+                                                    scope.launch { pagerState.animateScrollToPage(index) }
+                                                },
+                                                icon = { Icon(imageVector = iconVector, contentDescription = null) }
+                                            )
+                                        }
+                                    }
+                                }
+                                // 그리드 영역 (가장 중요한 부분: Column 내부가 아니라 LazyColumn의 직접 자식으로 배치)
+                                item {
+                                    HorizontalPager(
+                                        state = pagerState,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .fillParentMaxHeight(), // 부모 LazyColumn의 높이만큼 차지하게 함
+                                        verticalAlignment = Alignment.Top,
+                                        userScrollEnabled = true
 
-                            // 그리드 영역 (가장 중요한 부분: Column 내부가 아니라 LazyColumn의 직접 자식으로 배치)
-                            item {
-                                HorizontalPager(
-                                    state = pagerState,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .fillParentMaxHeight(), // 부모 LazyColumn의 높이만큼 차지하게 함
-                                    verticalAlignment = Alignment.Top,
-                                    userScrollEnabled = true
-
-                                ) { page ->
-                                    when(page){
-                                        0 -> UserFeedGridScreen(
-                                            posts = post,
-                                            onPostClick = { navController.navigate("${Routes.POST}/${it}") },
-                                            onLoadMore = { viewModel.fetchMorePosts() }
-                                        )
+                                    ) { page ->
+                                        when(page){
+                                            0 -> UserFeedGridScreen(
+                                                posts = post,
+                                                onPostClick = { navController.navigate("${Routes.POST}/${it}") },
+                                                onLoadMore = { viewModel.fetchMorePosts() }
+                                            )
+                                        }
                                     }
                                 }
                             }
                         }
-                    }
-                }
-            } else{
-
-                Box(modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.Black.copy(0.3f)),
-                    contentAlignment = Alignment.Center){
-                    BaseAsyncImage(
-                        model = user?.profileImage,
-                        contentDescription = "프로필 확대 이미지",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .size(250.dp)
-                            .sharedElement(
-                                rememberSharedContentState(key = "image_${user?.profileImage}"),
-                                animatedVisibilityScope = this@AnimatedContent
+                    } else{
+                        Box(modifier = Modifier
+                            .fillMaxSize()
+                            .background(Color.Black.copy(0.7f)),
+                            contentAlignment = Alignment.Center){
+                            BaseAsyncImage(
+                                model = user?.profileImage,
+                                contentDescription = "프로필 확대 이미지",
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier
+                                    .size(250.dp)
+                                    .sharedElement(
+                                        rememberSharedContentState(key = "image_${user?.profileImage}"),
+                                        animatedVisibilityScope = this@AnimatedContent
+                                    )
+                                    .clip(CircleShape)
+                                    .zoomable(zoomState)
                             )
-                            .clip(CircleShape)
-                            .zoomable(zoomState)
-                    )
-                    // 닫기 버튼
-                    IconButton(
-                        onClick = { isExpanded = false },
-                        modifier = Modifier
-                            .align(Alignment.TopEnd)
-                            .padding(16.dp)
-                    ) {
-                        Icon(Icons.Default.Close, contentDescription = "닫기", tint = Color.White)
-                    }
+                            // 닫기 버튼
+                            IconButton(
+                                onClick = { isExpanded = false },
+                                modifier = Modifier
+                                    .align(Alignment.TopEnd)
+                                    .padding(16.dp)
+                            ) {
+                                Icon(Icons.Default.Close, contentDescription = "닫기", tint = Color.White)
+                            }
+                        }
+                    // 안드로이드 뒤로가기 키 설정
+                    BackHandler() { isExpanded = false }
                 }
-                // 안드로이드 뒤로가기 키 설정
-                BackHandler() { isExpanded = false }
             }
         }
     }
+
 
 }

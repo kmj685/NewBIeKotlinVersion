@@ -1,5 +1,6 @@
 package com.newBie.new_bie
 
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -20,13 +21,19 @@ import coil3.SingletonImageLoader
 import coil3.gif.AnimatedImageDecoder
 import coil3.gif.GifDecoder
 import com.newBie.new_bie.core.components.BackOnBackPressed
+import com.newBie.new_bie.core.managers.SupabaseManager
 import com.newBie.new_bie.ui.theme.BlackColor
 import com.newBie.new_bie.ui.theme.NewBieTheme
+import io.github.jan.supabase.auth.handleDeeplinks
 
 class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        
+        // 딥링크 처리 (앱이 처음 실행되면서 인텐트를 받을 때)
+        SupabaseManager.supabase.handleDeeplinks(intent)
+
         enableEdgeToEdge(
             statusBarStyle = SystemBarStyle.dark(
                 android.graphics.Color.TRANSPARENT
@@ -48,5 +55,11 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        // 딥링크 처리 (앱이 이미 실행된 상태에서 인텐트를 받을 때)
+        SupabaseManager.supabase.handleDeeplinks(intent)
     }
 }

@@ -55,7 +55,18 @@ class AuthViewModel : ViewModel() {
                 SupabaseManager.googleSignIn(activity)
             } catch (e: Exception) {
                 // 에러 처리
-                Log.d(Constants.TAG, "signInWithGoogle/ 에러 : ${e}")
+                Log.d(Constants.TAG, "signInWithGoogle/ 에러 : $e")
+            }
+        }
+    }
+
+    fun signInWithGithub() {
+        viewModelScope.launch {
+            try {
+                SupabaseManager.githubSignIn()
+            } catch (e: Exception) {
+                // 에러 처리
+                Log.d(Constants.TAG, "signInWithGithub/ 에러 : $e")
             }
         }
     }

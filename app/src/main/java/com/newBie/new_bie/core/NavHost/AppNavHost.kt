@@ -18,6 +18,7 @@ import com.newBie.new_bie.features.post.presentation.screens.PostDetailScreen
 import com.newBie.new_bie.features.post.presentation.screens.SearchScreen
 import com.newBie.new_bie.features.profile.presentation.screens.FollowScreen
 import com.newBie.new_bie.features.profile.presentation.screens.MyProfileScreen
+import com.newBie.new_bie.features.profile.presentation.screens.SettingScreen
 import com.newBie.new_bie.features.profile.presentation.screens.UpdateProfileScreen
 import com.newBie.new_bie.features.teamProject.presentation.screens.TeamProjectListScreen
 
@@ -145,7 +146,7 @@ fun AppNavHost(modifier : Modifier, navController: NavHostController, context: C
         }
 
         composable("${Routes.MY_PROFILE}/${Routes.SETTING}") {
-            /* SettingScreen() */
+            SettingScreen(navController = navController)
         }
 
         composable("${Routes.MY_PROFILE}/${Routes.SETTING}/${Routes.QUESTION}") {

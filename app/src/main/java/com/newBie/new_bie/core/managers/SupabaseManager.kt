@@ -13,6 +13,7 @@ import com.newBie.new_bie.features.post.data.mapper.toEntity
 import com.newBie.new_bie.features.post.domain.entities.UserEntity
 import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.auth.auth
+import io.github.jan.supabase.auth.providers.Github
 import io.github.jan.supabase.auth.providers.Google
 import io.github.jan.supabase.auth.providers.builtin.IDToken
 import io.github.jan.supabase.createSupabaseClient
@@ -32,7 +33,12 @@ object SupabaseManager {
         supabaseUrl = SupabaseInitial.URL,
         supabaseKey = SupabaseInitial.ANON_KEY
     ) {
-        install(Auth)
+
+        // AndroidManifest.xml에서 설정한 딥링크 callback 주소 입력
+        install(Auth) {
+            scheme = "newbie"
+            host = "login-callback"
+        }
         install(Postgrest)
         install(Storage)
     }
@@ -70,5 +76,13 @@ object SupabaseManager {
             provider = Google
             nonce = rawNonce
         }
+    }
+
+    suspend fun githubSignIn() {
+        supabase.auth.signInWith(Github)
+    }
+
+    suspend fun logout(){
+        supabase.auth.signOut()
     }
 }
