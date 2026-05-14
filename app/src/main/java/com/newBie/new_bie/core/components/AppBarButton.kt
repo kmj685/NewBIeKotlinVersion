@@ -41,7 +41,7 @@ fun AppBarButton(pageSet: PageSet, title : String,
                  navController: NavController ) {
     val icon = when (pageSet) {
         PageSet.HOME -> Icons.Default.Home
-        PageSet.GROUP -> Icons.Default.Diversity3
+//        PageSet.GROUP -> Icons.Default.Diversity3
         PageSet.ADD_POST -> Icons.Default.Add
         PageSet.PROFILE -> Icons.Default.Person
     }
@@ -101,16 +101,16 @@ fun AppBarButton(pageSet: PageSet, title : String,
                             launchSingleTop = true
                         }
                     }
-                    PageSet.GROUP -> {
-                        navController.navigate(Routes.TEAM_PROJECT){
-                            // 기존 화면 스택들 모두 날리기
-                            popUpTo(navController.graph.startDestinationId) {
-                                inclusive = true
-                            }
-                            // 화면 하나만 나오게 처리
-                            launchSingleTop = true
-                        }
-                    }
+//                    PageSet.GROUP -> {
+//                        navController.navigate(Routes.TEAM_PROJECT){
+//                            // 기존 화면 스택들 모두 날리기
+//                            popUpTo(navController.graph.startDestinationId) {
+//                                inclusive = true
+//                            }
+//                            // 화면 하나만 나오게 처리
+//                            launchSingleTop = true
+//                        }
+//                    }
                 }
             })
             .padding(10.dp)

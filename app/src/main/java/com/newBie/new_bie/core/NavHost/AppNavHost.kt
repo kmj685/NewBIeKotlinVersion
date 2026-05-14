@@ -174,10 +174,13 @@ fun AppNavHost(modifier : Modifier, navController: NavHostController, context: C
             UpdateProfileScreen(context = context, navController = navController)
         }
 
-        composable("${Routes.TEAM_PROJECT}") {
+        composable(Routes.TEAM_PROJECT) {
             TeamProjectListScreen(navController=navController)
         }
-        composable("${Routes.CHATTING}") {
+        composable(Routes.CHATTING) {
+            /* ChattingRoomListScreen(navController=navController) */
+        }
+        composable(Routes.NOTIFICATION) {
             /* ChattingRoomListScreen(navController=navController) */
         }
     }

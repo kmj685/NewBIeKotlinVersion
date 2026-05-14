@@ -54,6 +54,7 @@ import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.newBie.new_bie.core.components.BaseAsyncImage
 import com.newBie.new_bie.core.components.TopBarLayout
+import com.newBie.new_bie.core.utils.Routes
 import com.newBie.new_bie.core.utils.toKoreaLocalDateTime
 import com.newBie.new_bie.core.utils.toTimeAgo
 import com.newBie.new_bie.features.post.domain.entities.PostImageEntity
@@ -138,7 +139,9 @@ fun PostDetailScreen(modifier: Modifier = Modifier, navController: NavController
                                     nickName = user?.nickName ?: "",
                                     introduce = post?.createdAt?.toKoreaLocalDateTime()?.toTimeAgo(),
                                     userId = user?.id ?: "",
-                                    {}
+                                    {
+                                        navController.navigate("${Routes.MY_PROFILE}/{${user?.id}}")
+                                    }
                                 )
                             }
                             Text(post?.title ?: "", style = AppTextStyle.Title, )

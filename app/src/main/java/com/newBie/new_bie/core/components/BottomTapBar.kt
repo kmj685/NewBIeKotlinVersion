@@ -25,7 +25,7 @@ fun BottomTapBar(navController: NavController, pageSet: PageSet) {
             .padding(10.dp)
     ) {
         AppBarButton(PageSet.HOME, "",checkPageSet(PageSet.HOME, pageSet), navController)
-        AppBarButton(PageSet.GROUP, "",checkPageSet(PageSet.GROUP, pageSet), navController)
+//        AppBarButton(PageSet.GROUP, "",checkPageSet(PageSet.GROUP, pageSet), navController)
         AppBarButton(PageSet.ADD_POST, "",checkPageSet(PageSet.ADD_POST, pageSet), navController)
         AppBarButton(PageSet.PROFILE, "",checkPageSet(PageSet.PROFILE, pageSet), navController)
     }

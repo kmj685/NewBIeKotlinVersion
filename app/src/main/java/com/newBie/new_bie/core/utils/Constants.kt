@@ -49,11 +49,12 @@ object Routes {
     const val TEAM_PROJECT = "teamProject"
     const val CHATTING = "chatting"
 
+    const val NOTIFICATION = "notification"
 }
 
 
 enum class PageSet {
-    HOME, PROFILE, ADD_POST, GROUP
+    HOME, PROFILE, ADD_POST
 }
 
 enum class PageType{

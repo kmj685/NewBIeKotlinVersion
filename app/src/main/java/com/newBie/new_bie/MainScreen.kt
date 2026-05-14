@@ -1,5 +1,6 @@
 package com.newBie.new_bie
 
+import android.content.Intent
 import android.os.Build
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -22,7 +23,7 @@ import io.github.jan.supabase.auth.status.SessionStatus
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun MainScreen(modifier: Modifier = Modifier) {
+fun MainScreen(modifier: Modifier = Modifier, notificationIntent: Intent? = null) {
     val navController = rememberNavController()
     val context = LocalContext.current
 
@@ -131,6 +132,35 @@ fun MainScreen(modifier: Modifier = Modifier) {
                 }
             }
         }
+    }
+
+    // 알림 클릭으로 받은 intent 처리 — MainScreen 내부의 진짜 navController 사용
+    LaunchedEffect(notificationIntent) {
+
+        supabase.auth.sessionStatus.collect { status ->
+            if(status is SessionStatus.Authenticated){
+                // 일단 기본 화면(HOME)으로 이동
+                navController.navigate(Routes.HOME){
+                    popUpTo(navController.graph.startDestinationId) {inclusive = true}
+                }
+            }
+
+            // 그 다음 해당 화면으로 추가 이동
+            val postId = notificationIntent?.getStringExtra("postId")
+            val followerId = notificationIntent?.getStringExtra("followerId")
+
+            if (!postId.isNullOrEmpty()) {
+                navController.navigate("${Routes.POST}/${postId}") {
+                    launchSingleTop = true
+                }
+            }
+            if (!followerId.isNullOrEmpty()) {
+                navController.navigate("${Routes.MY_PROFILE}/${followerId}") {
+                    launchSingleTop = true
+                }
+            }
+        }
+
     }
 
     AppNavHost(modifier = modifier.fillMaxSize(), navController = navController, context = context)
