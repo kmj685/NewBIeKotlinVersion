@@ -11,7 +11,6 @@ import com.newBie.new_bie.core.utils.Constants.TAG
 import com.newBie.new_bie.features.post.data.repositories.PostRepositoryImpl
 import com.newBie.new_bie.features.post.domain.entities.CategoryTypeEntity
 import com.newBie.new_bie.features.post.domain.repositories.PostRepository
-import com.newBie.new_bie.features.profile.presentation.viewModels.MyProfileViewModel
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.storage.storage
 import kotlinx.coroutines.flow.MutableSharedFlow

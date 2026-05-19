@@ -3,7 +3,9 @@ package com.newBie.new_bie.features.profile.presentation.viewModels
 import android.util.Log
 import androidx.compose.ui.unit.Constraints
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.CreationExtras
 import com.bumptech.glide.integration.compose.placeholder
 import com.newBie.new_bie.core.managers.SupabaseManager
 import com.newBie.new_bie.core.utils.Constants
@@ -26,7 +28,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class MyProfileViewModel : ViewModel() {
+class MyProfileViewModel(private val targetUserId: String?) : ViewModel() {
         private val repository : PostRepository = PostRepositoryImpl()
         private val profileRepository : ProfileRepository = ProfileRepositoryImpl()
 
@@ -35,7 +37,7 @@ class MyProfileViewModel : ViewModel() {
     val user: StateFlow<UserEntity?> = _user
 
     // 다른 유저
-    private val _targetUserId = MutableStateFlow<String?>(null)
+    private val _targetUserId = MutableStateFlow<String?>(targetUserId)
 
     // 게시글 목록
     private val _posts = MutableStateFlow<List<PostWithProfileEntity>>(emptyList())
@@ -255,5 +257,17 @@ class MyProfileViewModel : ViewModel() {
                 _isFollowing.value = false
             }
         }
+    }
+}
+
+class MyProfileViewModelFactory(
+    private val targetUserId: String?
+) : ViewModelProvider.Factory {
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
+        if (modelClass.isAssignableFrom(MyProfileViewModel::class.java)) {
+            return MyProfileViewModel(targetUserId) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

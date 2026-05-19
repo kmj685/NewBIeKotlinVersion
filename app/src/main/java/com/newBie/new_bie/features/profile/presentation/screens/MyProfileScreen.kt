@@ -38,6 +38,7 @@ import androidx.compose.material.icons.filled.GridOn
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -47,6 +48,7 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -90,6 +92,7 @@ import com.newBie.new_bie.core.utils.Routes
 import com.newBie.new_bie.features.post.presentation.components.SmallProfileComponent
 import com.newBie.new_bie.features.post.presentation.screens.HomeScreen
 import com.newBie.new_bie.features.profile.presentation.viewModels.MyProfileViewModel
+import com.newBie.new_bie.features.profile.presentation.viewModels.MyProfileViewModelFactory
 import com.newBie.new_bie.ui.theme.BlackColor
 import com.newBie.new_bie.ui.theme.OrangeColor
 import io.github.jan.supabase.auth.auth
@@ -102,7 +105,9 @@ fun MyProfileScreen(
     modifier: Modifier = Modifier,
     navController: NavController,
     targetUserId: String? = null,
-    viewModel: MyProfileViewModel = viewModel<MyProfileViewModel>()
+    viewModel: MyProfileViewModel = viewModel(
+        factory = MyProfileViewModelFactory(targetUserId)
+    )
 ){
     val isRefreshing by viewModel.isRefreshing.collectAsState()
     val user by viewModel.user.collectAsState()
@@ -124,9 +129,6 @@ fun MyProfileScreen(
 
     val focusManager = LocalFocusManager.current
 
-    LaunchedEffect(targetUserId) {
-        viewModel.fetchTargetUser(targetUserId)
-    }
 
     Scaffold(
         topBar = {
@@ -278,6 +280,34 @@ fun MyProfileScreen(
                                                 onPostClick = { navController.navigate("${Routes.POST}/${it}") },
                                                 onLoadMore = { viewModel.fetchMorePosts() }
                                             )
+                                            1 -> Box(
+                                                modifier = Modifier
+                                                    .fillParentMaxSize(),
+                                                contentAlignment = Alignment.TopCenter) {
+                                                Text("일지 coming soon...", color = OrangeColor, fontSize = 30.sp,
+                                                    modifier = Modifier.padding(top = 200.dp))
+                                            }
+                                            2 -> Column(
+                                                modifier = Modifier
+                                                    .fillParentMaxSize(),
+                                                horizontalAlignment = Alignment.CenterHorizontally) {
+                                                Button(
+                                                    onClick = {},
+                                                    shape = RoundedCornerShape(12.dp),
+                                                    modifier = Modifier.fillMaxWidth(),
+                                                    colors = ButtonDefaults.buttonColors(
+                                                        containerColor = OrangeColor,
+                                                        contentColor = Color.White
+                                                    )
+                                                ) {
+                                                    Text("방명록 작성", fontWeight = FontWeight.Bold)
+                                                }
+                                                UserFeedGridScreen(
+                                                    posts = post,
+                                                    onPostClick = { navController.navigate("${Routes.POST}/${it}") },
+                                                    onLoadMore = { viewModel.fetchMorePosts() }
+                                                )
+                                            }
                                         }
                                     }
                                 }
@@ -317,6 +347,4 @@ fun MyProfileScreen(
             }
         }
     }
-
-
 }
