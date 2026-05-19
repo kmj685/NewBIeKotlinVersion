@@ -106,6 +106,7 @@ fun MyProfileScreen(
     navController: NavController,
     targetUserId: String? = null,
     viewModel: MyProfileViewModel = viewModel(
+        // 이렇게 팩토리 연결
         factory = MyProfileViewModelFactory(targetUserId)
     )
 ){

@@ -263,11 +263,17 @@ class MyProfileViewModel(private val targetUserId: String?) : ViewModel() {
 class MyProfileViewModelFactory(
     private val targetUserId: String?
 ) : ViewModelProvider.Factory {
-    @Suppress("UNCHECKED_CAST")
+    @Suppress("UNCHECKED_CAST") //컴파일러 경고를 끄는 어노테이션
+    // create 뷰모델을 생성할 때
+    // <T : ViewModel> 어떤 뷰모델이던 제네릭으로 다 찍어낼 수 있다.
+    // modelClass: Class<T> 지금 안드로이드가 나한테 무슨 뷰모델을 만들어달라고 요청한건지 정보가 이 매개변수로 들어옴
     override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
+        // modelClass.isAssignableFrom: MyProfileViewModel이 뷰모델이 맞는지 확인
         if (modelClass.isAssignableFrom(MyProfileViewModel::class.java)) {
+            // MyProfileViewModel이 뷰모델이 맞다면 targetUserId를 넣어서 뷰모델을 수동으로 생성
             return MyProfileViewModel(targetUserId) as T
         }
+        // MyProfileViewModel이 뷰모델이 아니라면 오류났다고 던져라
         throw IllegalArgumentException("Unknown ViewModel class")
     }
 }
