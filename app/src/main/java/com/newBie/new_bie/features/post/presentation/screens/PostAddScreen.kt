@@ -130,6 +130,7 @@ fun PostAddScreen(modifier: Modifier = Modifier, navController: NavController, v
             TopBarLayout(
                 title = "게시물 작성",
                 focusManager = focusManager,
+                navController = navController
             )
         },
     ) {innerPadding ->

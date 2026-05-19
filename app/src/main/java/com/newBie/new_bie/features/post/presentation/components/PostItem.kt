@@ -89,7 +89,7 @@ fun PostItem(post : PostWithProfileEntity, navController: NavController, onDelet
         }
         Spacer(modifier = Modifier.height(8.dp))
 
-        // 🔹 제목
+        //  제목
         Text(
             text = post.title ?: "제목 없음",
             style = MaterialTheme.typography.headlineMedium,
@@ -98,8 +98,8 @@ fun PostItem(post : PostWithProfileEntity, navController: NavController, onDelet
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // 🔹 이미지 리스트
-        if (!post.postImages.isNullOrEmpty()) {
+        //  이미지 리스트
+        if (post.postImages.isNotEmpty()) {
             LazyRow {
                 items(post.postImages) { image ->
                     BaseAsyncImage(
@@ -117,7 +117,7 @@ fun PostItem(post : PostWithProfileEntity, navController: NavController, onDelet
             Spacer(modifier = Modifier.height(15.dp))
         }
 
-        // 🔹 내용
+        //  내용
         Text(
             text = post.content ?: "내용 없음",
             maxLines = 3,
@@ -128,8 +128,8 @@ fun PostItem(post : PostWithProfileEntity, navController: NavController, onDelet
 
         Spacer(modifier = Modifier.height(8.dp))
 
-//         🔹 카테고리
-        if (!post.categories.isNullOrEmpty()) {
+//          카테고리
+        if (post.categories.isNotEmpty()) {
             LazyRow {
                 items(post.categories) { category ->
                     Box(
@@ -153,7 +153,7 @@ fun PostItem(post : PostWithProfileEntity, navController: NavController, onDelet
             Spacer(modifier = Modifier.height(8.dp))
         }
 
-        // 🔹 좋아요 + 댓글
+        //  좋아요 + 댓글
         Row(modifier = Modifier
             .fillMaxWidth()
             .padding(end = 8.dp),
@@ -166,7 +166,7 @@ fun PostItem(post : PostWithProfileEntity, navController: NavController, onDelet
                     imageVector =
                         Icons.Default.Favorite,
                     contentDescription = null,
-                    tint = if (post.isLiked == true) Color.Red else Color.White
+                    tint = if (post.isLiked) Color.Red else Color.White
                 )
 
                 Spacer(modifier = Modifier.width(4.dp))

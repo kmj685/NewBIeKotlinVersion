@@ -12,6 +12,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.newBie.new_bie.core.utils.Routes
 import com.newBie.new_bie.features.auth.presentation.screens.LoginScreen
+import com.newBie.new_bie.features.notification.presentation.screens.NotificationsScreen
 import com.newBie.new_bie.features.post.presentation.screens.HomeScreen
 import com.newBie.new_bie.features.post.presentation.screens.PostAddScreen
 import com.newBie.new_bie.features.post.presentation.screens.PostDetailScreen
@@ -181,7 +182,7 @@ fun AppNavHost(modifier : Modifier, navController: NavHostController, context: C
             /* ChattingRoomListScreen(navController=navController) */
         }
         composable(Routes.NOTIFICATION) {
-            /* ChattingRoomListScreen(navController=navController) */
+            NotificationsScreen(navController = navController)
         }
     }
 }

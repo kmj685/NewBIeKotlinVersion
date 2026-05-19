@@ -5,15 +5,13 @@ plugins {
 
     // Add the Google services Gradle plugin
     id("com.google.gms.google-services")
-
-//    id("io.realm.kotlin")
+    id("com.google.devtools.ksp")
+    id("com.google.dagger.hilt.android")
 }
 
 android {
     namespace = "com.newBie.new_bie"
-    compileSdk {
-        version = release(36)
-    }
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.newBie.new_bie"
@@ -35,8 +33,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     buildFeatures {
         compose = true
@@ -90,10 +88,8 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
 
     //뷰모델
-    // view model
-    val lifecycle_version = "2.5.1"
+    val lifecycle_version = "2.8.7"
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version")
-    // ViewModel utilities for Compose
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycle_version")
 
 //    implementation("io.realm.kotlin:library-base:3.0.0")
@@ -157,5 +153,13 @@ dependencies {
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-firestore")
     implementation("com.google.firebase:firebase-messaging")
+
+    // 코드 생성기 (Moshi KSP)
+    ksp("com.squareup.moshi:moshi-kotlin-codegen:1.15.2")
+
+    implementation("com.google.dagger:hilt-android:2.59.2")
+    ksp("com.google.dagger:hilt-android-compiler:2.59.2")
+    // Compose에서 hiltViewModel() 함수를 사용하기 위한 라이브러리
+    implementation("androidx.hilt:hilt-navigation-compose:1.3.0")
 
 }

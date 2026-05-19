@@ -24,6 +24,7 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ChatBubble
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Comment
 import androidx.compose.material.icons.filled.Favorite
@@ -60,18 +61,22 @@ import com.newBie.new_bie.core.utils.toTimeAgo
 import com.newBie.new_bie.features.post.domain.entities.PostImageEntity
 import com.newBie.new_bie.features.post.domain.entities.PostUserEntity
 import com.newBie.new_bie.features.post.presentation.components.SmallProfileComponent
-import com.newBie.new_bie.features.post.presentation.components.likesAndComments.CommentBottomSheetPostDetail
+import com.newBie.new_bie.features.post.presentation.components.likesAndComments.CommentBottomSheet
+import com.newBie.new_bie.features.post.presentation.interfaces.CommentBottomSheetViewModel
 import com.newBie.new_bie.features.post.presentation.viewModels.HomeViewModel
 import com.newBie.new_bie.features.post.presentation.viewModels.PostDetailViewModel
 import com.newBie.new_bie.ui.theme.AppTextStyle
-import io.github.jan.supabase.realtime.Column
 import net.engawapg.lib.zoomable.rememberZoomState
 import net.engawapg.lib.zoomable.zoomable
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PostDetailScreen(modifier: Modifier = Modifier, navController: NavController,viewModel : PostDetailViewModel = viewModel<PostDetailViewModel>(), id: Int) {
+fun PostDetailScreen(
+    modifier: Modifier = Modifier,
+    navController: NavController,
+    viewModel : PostDetailViewModel = viewModel<PostDetailViewModel>(),
+    id: Int) {
 
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -106,6 +111,7 @@ fun PostDetailScreen(modifier: Modifier = Modifier, navController: NavController
             TopBarLayout(
                 title = "게시물",
                 focusManager = focusManager,
+                navController = navController
             )
         },
     ) { innerPadding ->
@@ -193,7 +199,7 @@ fun PostDetailScreen(modifier: Modifier = Modifier, navController: NavController
                                     imageVector = if (post?.isLiked == true)
                                         Icons.Default.Favorite
                                     else
-                                        Icons.Default.FavoriteBorder,
+                                        Icons.Default.Favorite,
                                     contentDescription = null,
                                     tint = if (post?.isLiked == true) Color.Red else Color.White
                                 )
@@ -213,7 +219,7 @@ fun PostDetailScreen(modifier: Modifier = Modifier, navController: NavController
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Icon(
-                                    imageVector = Icons.Default.Comment,
+                                    imageVector = Icons.Default.ChatBubble,
                                     contentDescription = null,
                                     tint = Color.White
                                 )
@@ -227,7 +233,12 @@ fun PostDetailScreen(modifier: Modifier = Modifier, navController: NavController
                             }
                         }
                         if (showSheet) {
-                            CommentBottomSheetPostDetail(viewModel=viewModel, screenHeight = screenHeight, sheetState = sheetState, onDismiss = {showSheet = false})
+                            CommentBottomSheet(
+                                viewModel= viewModel,
+                                screenHeight = screenHeight,
+                                sheetState = sheetState,
+                                onDismiss = {showSheet = false}
+                            )
                         }
 
                     }

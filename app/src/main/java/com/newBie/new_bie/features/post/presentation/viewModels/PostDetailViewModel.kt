@@ -10,18 +10,21 @@ import com.newBie.new_bie.features.post.domain.entities.CommentWithProfileEntity
 import com.newBie.new_bie.features.post.domain.entities.PostImageEntity
 import com.newBie.new_bie.features.post.domain.entities.PostWithProfileEntity
 import com.newBie.new_bie.features.post.domain.repositories.PostRepository
+import com.newBie.new_bie.features.post.presentation.interfaces.CommentBottomSheetViewModel
 import io.github.jan.supabase.auth.auth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
-class PostDetailViewModel: ViewModel() {
+class PostDetailViewModel : ViewModel(), CommentBottomSheetViewModel {
     private val repository : PostRepository = PostRepositoryImpl()
     var post : MutableStateFlow<PostWithProfileEntity?> = MutableStateFlow(null)
+    override var selectPostId : MutableStateFlow<Int?> = MutableStateFlow(null)
 
-    var comments : MutableStateFlow<List<CommentWithProfileEntity>> = MutableStateFlow<List<CommentWithProfileEntity>>(listOf())
-    val selectCommentId: MutableStateFlow<Int?> = MutableStateFlow(null)
-    var userCommentInput: MutableStateFlow<String> = MutableStateFlow("")
-    val editUserCommentInput: MutableStateFlow<String> = MutableStateFlow("")
+    override var comments : MutableStateFlow<List<CommentWithProfileEntity>> = MutableStateFlow<List<CommentWithProfileEntity>>(listOf())
+    override val selectCommentId: MutableStateFlow<Int?> = MutableStateFlow(null)
+    override var userCommentInput: MutableStateFlow<String> = MutableStateFlow("")
+    override val editUserCommentInput: MutableStateFlow<String> = MutableStateFlow("")
+
 
     var images : MutableStateFlow<List<PostImageEntity>> = MutableStateFlow(listOf())
     fun fetchPost(id : Int) {
@@ -94,11 +97,11 @@ class PostDetailViewModel: ViewModel() {
         }
     }
 
-    fun updateUserInput(input: String){
+    override fun updateUserInput(input: String){
         userCommentInput.value=input
     }
 
-    fun updateEditUserInput(input: String) {
+    override fun updateEditUserInput(input: String) {
         editUserCommentInput.value=input
     }
     fun fetchComments() {
@@ -114,7 +117,7 @@ class PostDetailViewModel: ViewModel() {
         }
     }
 
-    fun insertComment() {
+    override fun insertComment() {
         Log.d(Constants.TAG, "insertComment 호출됨 ")
         viewModelScope.launch {
             val postId = post.value?.id
@@ -137,7 +140,7 @@ class PostDetailViewModel: ViewModel() {
         }
     }
 
-    fun deleteComment(id: Int,authorId: String) {
+    override fun deleteComment(id: Int,authorId: String) {
         viewModelScope.launch {
             try{
                 val postId = post.value?.id
@@ -159,12 +162,12 @@ class PostDetailViewModel: ViewModel() {
         }
 
     }
-    fun onSelectComment(commentId: Int, content: String) {
+    override fun onSelectComment(commentId: Int, content: String) {
         selectCommentId.value=commentId
         editUserCommentInput.value=content
     }
 
-    fun editComment(authorId: String) {
+    override fun editComment(authorId: String) {
         viewModelScope.launch {
             val commentId = selectCommentId.value
             val userId =
@@ -185,9 +188,17 @@ class PostDetailViewModel: ViewModel() {
         fetchComments()
     }
 
-    fun onCancel() {
+    override fun onCancel() {
         editUserCommentInput.value = ""
         selectCommentId.value = null
+    }
+
+    override fun unSelectPostId() {
+        selectPostId.value = null
+        comments.value = listOf()
+        userCommentInput.value=""
+        editUserCommentInput.value=""
+        selectCommentId.value=null
     }
 
 }

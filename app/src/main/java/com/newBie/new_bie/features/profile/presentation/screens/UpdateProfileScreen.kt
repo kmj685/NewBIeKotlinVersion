@@ -96,7 +96,7 @@ fun UpdateProfileScreen(viewModel: UpdateProfileViewModel = viewModel<UpdateProf
     }
     Scaffold(
         containerColor = Color.Transparent,
-        topBar = { TopBarLayout("프로필 수정") }
+        topBar = { TopBarLayout("프로필 수정", navController = navController) }
     ) {innerPadding ->
         Column(modifier = Modifier
             .padding(innerPadding)

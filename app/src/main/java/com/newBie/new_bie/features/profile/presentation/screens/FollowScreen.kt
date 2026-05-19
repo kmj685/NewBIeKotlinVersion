@@ -56,7 +56,7 @@ fun FollowScreen(modifier: Modifier = Modifier, navController: NavController, ta
 
     Scaffold(
         topBar = {
-            TopBarLayout("${user?.nickName}")},
+            TopBarLayout("${user?.nickName}", navController = navController)},
         containerColor = Color.Transparent) {innerPadding ->
         Box(modifier = Modifier
             .padding(innerPadding)

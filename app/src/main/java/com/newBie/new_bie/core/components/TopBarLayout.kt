@@ -42,20 +42,19 @@ import io.github.jan.supabase.auth.auth
 fun TopBarLayout(title: String,
                  moreVert: Boolean = false, targetId: String? = null, focusManager: FocusManager? = null,
                  setting: Boolean = false,
-                 navController: NavController? = null) {
+                 navController: NavController) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .statusBarsPadding()
             .padding(horizontal = 10.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(title, color = OrangeColor, fontSize = 22.sp, fontWeight = FontWeight.Bold)
+        Text(title, color = OrangeColor, fontSize = 30.sp, fontWeight = FontWeight.Bold)
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(onClick = { /* 알림 */ }) {
+            IconButton(onClick = { navController.navigate(Routes.NOTIFICATION) }) {
                 Icon(Icons.Default.Notifications, contentDescription = "알림", tint = OrangeColor)
             }
             var expanded by remember { mutableStateOf(false) }

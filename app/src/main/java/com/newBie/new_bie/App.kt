@@ -5,7 +5,9 @@ import coil3.ImageLoader
 import coil3.PlatformContext
 import coil3.SingletonImageLoader
 import com.newBie.new_bie.core.managers.CoilManager
+import dagger.hilt.android.HiltAndroidApp
 
+@HiltAndroidApp // 힐트가 앱 전체의 의존성 생명주기를 관리하도록 선언
 class App : Application(), SingletonImageLoader.Factory {
     companion object {
         private var _instance: App? = null

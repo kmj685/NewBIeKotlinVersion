@@ -67,6 +67,7 @@ fun PostEditScreen(modifier: Modifier = Modifier, navController: NavController, 
             TopBarLayout(
                 title = "게시물 작성",
                 focusManager = focusManager,
+                navController = navController
             )
         },
     ) {innerPadding ->

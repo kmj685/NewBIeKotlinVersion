@@ -174,7 +174,7 @@ fun HomeScreen(modifier: Modifier = Modifier, navController: NavController, view
                         .padding(10.dp)
                         .height(30.dp)
                 )
-                IconButton(onClick = { /* 알림 */ }) {
+                IconButton(onClick = { navController.navigate(Routes.NOTIFICATION) }) {
                     Icon(Icons.Default.Notifications, contentDescription = "알림", tint = OrangeColor)
                 }
             }
@@ -352,12 +352,11 @@ fun HomeScreen(modifier: Modifier = Modifier, navController: NavController, view
                     CommentBottomSheet(
                         viewModel = viewModel,
                         screenHeight = screenHeight,
-                        sheetState = sheetState
+                        sheetState = sheetState,
+                        onDismiss = { }
                     )
                 }
             }
         }
     }
-
-
 }

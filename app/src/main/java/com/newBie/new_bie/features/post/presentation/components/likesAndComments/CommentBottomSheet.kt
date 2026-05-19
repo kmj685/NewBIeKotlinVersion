@@ -52,7 +52,7 @@ import com.newBie.new_bie.ui.theme.OrangeColor
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CommentBottomSheet(viewModel : CommentBottomSheetViewModel, screenHeight: Dp , sheetState: SheetState){
+fun CommentBottomSheet(viewModel : CommentBottomSheetViewModel, screenHeight: Dp , sheetState: SheetState, onDismiss: () -> Unit){
     val commentsList by viewModel.comments.collectAsState()
     val userCommentInput by viewModel.userCommentInput.collectAsState()
     val selectedCommentId by viewModel.selectCommentId.collectAsState()
@@ -67,7 +67,10 @@ fun CommentBottomSheet(viewModel : CommentBottomSheetViewModel, screenHeight: Dp
     ModalBottomSheet(
         containerColor = BlackColor,
         contentColor = BlackColor,
-        onDismissRequest = {viewModel.unSelectPostId()},
+        onDismissRequest = {
+            viewModel.unSelectPostId()
+            onDismiss()
+        },
         sheetState = sheetState
     ) {
         Column(
@@ -79,7 +82,7 @@ fun CommentBottomSheet(viewModel : CommentBottomSheetViewModel, screenHeight: Dp
             BottomSheetTopBatTitle("댓글")
             HorizontalDivider(
                 thickness = 0.5.dp,
-                color = OrangeColor,
+                color = Color.LightGray,
                 modifier = Modifier
                     .padding(5.dp)
             )

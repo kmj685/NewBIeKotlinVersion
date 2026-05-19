@@ -37,10 +37,12 @@ import com.newBie.new_bie.core.managers.SupabaseManager.updateFcmToken
 import com.newBie.new_bie.core.utils.Routes
 import com.newBie.new_bie.ui.theme.BlackColor
 import com.newBie.new_bie.ui.theme.NewBieTheme
+import dagger.hilt.android.AndroidEntryPoint
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.auth.handleDeeplinks
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint // 힐트가 이 액티비티에 의존성을 주입할 수 있는 통로를 열어줌
 class MainActivity : ComponentActivity() {
 
     // 1. 클래스 내부 상단으로 이동

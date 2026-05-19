@@ -29,7 +29,13 @@ import io.github.jan.supabase.auth.auth
 import io.ktor.http.ContentType
 
 @Composable
-fun SmallProfileComponent(modifier: Modifier, imageUrl : String?, nickName : String?, introduce : String?, userId : String?, onImageClick : () -> Unit) {
+fun SmallProfileComponent(
+    modifier: Modifier,
+    imageUrl : String?,
+    nickName : String?,
+    introduce : String?,
+    userId : String?,
+    onImageClick : () -> Unit) {
     val imageSize = 60.dp
 
     val imageModifier = Modifier
