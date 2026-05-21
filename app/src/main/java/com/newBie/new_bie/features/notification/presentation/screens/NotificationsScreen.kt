@@ -171,7 +171,12 @@ fun NotificationsScreen(
                                 contentAlignment = alignment
                             ) {
                                 if (icon != null) {
-                                    Icon(imageVector = icon, contentDescription = null, tint = iconTintColor)
+                                    IconButton(onClick = {},
+                                        colors = IconButtonDefaults.iconButtonColors(containerColor = iconTintColor)) {
+                                        Icon(
+                                            imageVector = icon, contentDescription = null, tint = Color.White
+                                        )
+                                    }
                                 }
                             }
                         },
