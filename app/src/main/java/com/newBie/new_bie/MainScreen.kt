@@ -37,7 +37,7 @@ fun MainScreen(modifier: Modifier = Modifier, notificationIntent: Intent? = null
 
                     it.session.user?.id?.let {
                         navController.navigate(Routes.HOME) {
-                            popUpTo(navController.graph.startDestinationId) {
+                            popUpTo(Routes.LOGIN) {
                                 inclusive = true
                             }
                             launchSingleTop = true
@@ -139,9 +139,10 @@ fun MainScreen(modifier: Modifier = Modifier, notificationIntent: Intent? = null
 
         supabase.auth.sessionStatus.collect { status ->
             if(status is SessionStatus.Authenticated){
-                // 일단 기본 화면(HOME)으로 이동
+                // 일단 기본 화면(HOME)으로 이동 (스택 정리)
                 navController.navigate(Routes.HOME){
-                    popUpTo(navController.graph.startDestinationId) {inclusive = true}
+                    popUpTo(Routes.HOME) {inclusive = false}
+                    launchSingleTop = true
                 }
             }
 

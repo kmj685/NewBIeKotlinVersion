@@ -92,6 +92,8 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import com.newBie.new_bie.R
+import com.newBie.new_bie.core.components.TopBarLayout
+import com.newBie.new_bie.features.notification.presentation.viewModels.NotificationViewModel
 import com.newBie.new_bie.features.post.presentation.components.likesAndComments.CommentBottomSheet
 import com.newBie.new_bie.ui.theme.GridColor
 import io.ktor.util.collections.setValue
@@ -102,7 +104,12 @@ import kotlinx.coroutines.launch
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier, navController: NavController, viewModel : HomeViewModel = viewModel<HomeViewModel>()) {
+fun HomeScreen(
+    modifier: Modifier = Modifier,
+    navController: NavController,
+    viewModel : HomeViewModel = viewModel<HomeViewModel>(),
+    notificationViewModel: NotificationViewModel
+) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val selectPostId by viewModel.selectPostId.collectAsState()
     val commentsList by viewModel.comments.collectAsState()
@@ -125,6 +132,7 @@ fun HomeScreen(modifier: Modifier = Modifier, navController: NavController, view
     val screenHeight = configuration.screenHeightDp.dp
 
     val focusManager = LocalFocusManager.current
+    val isRead by notificationViewModel.isRead.collectAsState()
 
 
 
@@ -162,22 +170,12 @@ fun HomeScreen(modifier: Modifier = Modifier, navController: NavController, view
 
     Scaffold(
         topBar = {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.new_bie_logo),
-                    contentDescription = "홈 로고",
-                    modifier = Modifier
-                        .padding(10.dp)
-                        .height(30.dp)
-                )
-                IconButton(onClick = { navController.navigate(Routes.NOTIFICATION) }) {
-                    Icon(Icons.Default.Notifications, contentDescription = "알림", tint = OrangeColor)
-                }
-            }
+            TopBarLayout(
+                title = "",
+                isRead = isRead,
+                navController = navController,
+                logoMode = true
+            )
                  },
         bottomBar = {BottomTapBar(navController, PageSet.HOME)},
         containerColor = Color.Transparent

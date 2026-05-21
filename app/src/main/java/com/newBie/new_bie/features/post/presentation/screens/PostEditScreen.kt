@@ -36,6 +36,7 @@ import com.newBie.new_bie.core.components.BottomTapBar
 import com.newBie.new_bie.core.components.TopBarLayout
 
 import com.newBie.new_bie.core.utils.PageSet
+import com.newBie.new_bie.features.notification.presentation.viewModels.NotificationViewModel
 import com.newBie.new_bie.features.post.presentation.components.ContentTextField
 import com.newBie.new_bie.features.post.presentation.components.SelectedCategoryListLazyRow
 import com.newBie.new_bie.features.post.presentation.components.TitleTextField
@@ -48,7 +49,12 @@ import kotlin.collections.isNotEmpty
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PostEditScreen(modifier: Modifier = Modifier, navController: NavController, viewModel: PostEditViewModel = viewModel<PostEditViewModel>()){
+fun PostEditScreen(
+    modifier: Modifier = Modifier,
+    navController: NavController,
+    viewModel: PostEditViewModel = viewModel<PostEditViewModel>(),
+    notificationViewModel: NotificationViewModel
+){
     val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
     var showSheet by remember { mutableStateOf(false) }
@@ -59,6 +65,7 @@ fun PostEditScreen(modifier: Modifier = Modifier, navController: NavController, 
     val selectCategoryList by viewModel.selectCategoryList.collectAsState()
 
     val focusManager = LocalFocusManager.current
+    val isRead by notificationViewModel.isRead.collectAsState()
 
 
     Scaffold(
@@ -67,7 +74,8 @@ fun PostEditScreen(modifier: Modifier = Modifier, navController: NavController, 
             TopBarLayout(
                 title = "게시물 작성",
                 focusManager = focusManager,
-                navController = navController
+                navController = navController,
+                isRead = isRead
             )
         },
     ) {innerPadding ->

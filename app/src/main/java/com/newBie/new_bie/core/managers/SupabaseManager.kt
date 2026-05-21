@@ -22,6 +22,7 @@ import io.github.jan.supabase.auth.providers.builtin.IDToken
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.postgrest.from
+import io.github.jan.supabase.realtime.Realtime
 import java.security.MessageDigest
 import java.util.UUID
 import io.github.jan.supabase.storage.Storage
@@ -47,6 +48,7 @@ object SupabaseManager {
         }
         install(Postgrest)
         install(Storage)
+        install(Realtime)
     }
 
 

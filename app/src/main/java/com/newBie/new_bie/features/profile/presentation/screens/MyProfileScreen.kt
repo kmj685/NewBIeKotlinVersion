@@ -89,6 +89,7 @@ import com.newBie.new_bie.core.managers.SupabaseManager
 import com.newBie.new_bie.core.utils.Constants
 import com.newBie.new_bie.core.utils.PageSet
 import com.newBie.new_bie.core.utils.Routes
+import com.newBie.new_bie.features.notification.presentation.viewModels.NotificationViewModel
 import com.newBie.new_bie.features.post.presentation.components.SmallProfileComponent
 import com.newBie.new_bie.features.post.presentation.screens.HomeScreen
 import com.newBie.new_bie.features.profile.presentation.viewModels.MyProfileViewModel
@@ -108,7 +109,8 @@ fun MyProfileScreen(
     viewModel: MyProfileViewModel = viewModel(
         // 이렇게 팩토리 연결
         factory = MyProfileViewModelFactory(targetUserId)
-    )
+    ),
+    notificationViewModel: NotificationViewModel
 ){
     val isRefreshing by viewModel.isRefreshing.collectAsState()
     val user by viewModel.user.collectAsState()
@@ -130,6 +132,8 @@ fun MyProfileScreen(
 
     val focusManager = LocalFocusManager.current
 
+    val isRead by notificationViewModel.isRead.collectAsState()
+
 
     Scaffold(
         topBar = {
@@ -143,7 +147,8 @@ fun MyProfileScreen(
                 targetId = targetUserId,
                 focusManager = focusManager,
                 setting = true,
-                navController = navController
+                navController = navController,
+                isRead = isRead
             )},
         bottomBar = { BottomTapBar(navController = navController, pageSet = PageSet.PROFILE) },
         containerColor = Color.Transparent
@@ -285,7 +290,7 @@ fun MyProfileScreen(
                                                 modifier = Modifier
                                                     .fillParentMaxSize(),
                                                 contentAlignment = Alignment.TopCenter) {
-                                                Text("일지 coming soon...", color = OrangeColor, fontSize = 30.sp,
+                                                Text("일지 coming soon...", color = Color.Gray, fontSize = 30.sp,
                                                     modifier = Modifier.padding(top = 200.dp))
                                             }
                                             2 -> Column(

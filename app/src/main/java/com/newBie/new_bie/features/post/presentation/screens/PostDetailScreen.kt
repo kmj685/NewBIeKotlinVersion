@@ -58,6 +58,7 @@ import com.newBie.new_bie.core.components.TopBarLayout
 import com.newBie.new_bie.core.utils.Routes
 import com.newBie.new_bie.core.utils.toKoreaLocalDateTime
 import com.newBie.new_bie.core.utils.toTimeAgo
+import com.newBie.new_bie.features.notification.presentation.viewModels.NotificationViewModel
 import com.newBie.new_bie.features.post.domain.entities.PostImageEntity
 import com.newBie.new_bie.features.post.domain.entities.PostUserEntity
 import com.newBie.new_bie.features.post.presentation.components.SmallProfileComponent
@@ -76,6 +77,7 @@ fun PostDetailScreen(
     modifier: Modifier = Modifier,
     navController: NavController,
     viewModel : PostDetailViewModel = viewModel<PostDetailViewModel>(),
+    notificationViewModel: NotificationViewModel,
     id: Int) {
 
 
@@ -94,6 +96,7 @@ fun PostDetailScreen(
     var selectedImage by remember { mutableStateOf<PostImageEntity?>(null) }
 
     val focusManager = LocalFocusManager.current
+    val isRead by notificationViewModel.isRead.collectAsState()
 
     LaunchedEffect(Unit) {
         if (id != 0) {
@@ -111,7 +114,8 @@ fun PostDetailScreen(
             TopBarLayout(
                 title = "게시물",
                 focusManager = focusManager,
-                navController = navController
+                navController = navController,
+                isRead = isRead
             )
         },
     ) { innerPadding ->

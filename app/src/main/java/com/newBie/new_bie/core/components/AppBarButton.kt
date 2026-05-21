@@ -73,9 +73,9 @@ fun AppBarButton(pageSet: PageSet, title : String,
                 when (pageSet) {
                     PageSet.HOME -> {
                         navController.navigate(Routes.HOME){
-                            // 기존 화면 스택들 모두 날리기
-                            popUpTo(navController.graph.startDestinationId) {
-                                inclusive = true
+                            // HOME 이전의 모든 스택을 제거하되 HOME 자신은 유지하거나 재활용
+                            popUpTo(Routes.HOME) {
+                                inclusive = false
                             }
                             // 화면 하나만 나오게 처리
                             launchSingleTop = true
@@ -83,31 +83,25 @@ fun AppBarButton(pageSet: PageSet, title : String,
                     }
                     PageSet.ADD_POST -> {
                         navController.navigate(Routes.ADD){
-                            // 기존 화면 스택들 모두 날리기
-                            popUpTo(navController.graph.startDestinationId) {
-                                inclusive = true
+                            popUpTo(Routes.HOME) {
+                                inclusive = false
                             }
-                            // 화면 하나만 나오게 처리
                             launchSingleTop = true
                         }
                     }
                     PageSet.PROFILE -> {
                         navController.navigate(Routes.MY_PROFILE){
-                            // 기존 화면 스택들 모두 날리기
-                            popUpTo(navController.graph.startDestinationId) {
-                                inclusive = true
+                            popUpTo(Routes.HOME) {
+                                inclusive = false
                             }
-                            // 화면 하나만 나오게 처리
                             launchSingleTop = true
                         }
                     }
 //                    PageSet.GROUP -> {
 //                        navController.navigate(Routes.TEAM_PROJECT){
-//                            // 기존 화면 스택들 모두 날리기
-//                            popUpTo(navController.graph.startDestinationId) {
-//                                inclusive = true
+//                            popUpTo(Routes.HOME) {
+//                                inclusive = false
 //                            }
-//                            // 화면 하나만 나오게 처리
 //                            launchSingleTop = true
 //                        }
 //                    }

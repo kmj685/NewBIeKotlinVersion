@@ -105,7 +105,7 @@ dependencies {
     implementation("io.github.jan-tennert.supabase:supabase-kt")
     implementation("io.github.jan-tennert.supabase:auth-kt")
     implementation("io.github.jan-tennert.supabase:realtime-kt")
-    implementation("io.ktor:ktor-client-android:3.2.3")
+    implementation("io.ktor:ktor-client-okhttp:3.2.3") //꼭 이거로 바꿔라 implementation("io.ktor:ktor-client-android:3.2.3")로 했다가 리얼타임 계속 헤맴 ㅡㅡ
     implementation("io.github.jan-tennert.supabase:storage-kt:VERSION")
 
     implementation("io.github.jan-tennert.supabase:auth-kt:3.2.2")

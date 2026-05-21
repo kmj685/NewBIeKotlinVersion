@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.newBie.new_bie.core.components.TopBarLayout
+import com.newBie.new_bie.features.notification.presentation.viewModels.NotificationViewModel
 import com.newBie.new_bie.features.profile.presentation.components.FollowItem
 import com.newBie.new_bie.features.profile.presentation.viewModels.FollowViewModel
 import com.newBie.new_bie.ui.theme.BlackColor
@@ -33,7 +34,13 @@ import com.newBie.new_bie.ui.theme.OrangeColor
 import kotlinx.coroutines.launch
 
 @Composable
-fun FollowScreen(modifier: Modifier = Modifier, navController: NavController, targetUserId: String? = null, initialTab: Int?, viewModel: FollowViewModel = viewModel<FollowViewModel>()){
+fun FollowScreen(
+    modifier: Modifier = Modifier,
+    navController: NavController,
+    targetUserId: String? = null,
+    initialTab: Int?,
+    viewModel: FollowViewModel = viewModel<FollowViewModel>(),
+    notificationViewModel: NotificationViewModel){
 
     val pagerTitle: List<String> = listOf("팔로워", "팔로잉")
     val pagerState = rememberPagerState(pageCount = {pagerTitle.size})
@@ -42,6 +49,7 @@ fun FollowScreen(modifier: Modifier = Modifier, navController: NavController, ta
     val followerList by viewModel.followerList.collectAsState()
     val followingList by viewModel.followingList.collectAsState()
     val isFollowing by viewModel.isFollowing.collectAsState()
+    val isRead by notificationViewModel.isRead.collectAsState()
 
 
     LaunchedEffect(targetUserId) {
@@ -56,7 +64,7 @@ fun FollowScreen(modifier: Modifier = Modifier, navController: NavController, ta
 
     Scaffold(
         topBar = {
-            TopBarLayout("${user?.nickName}", navController = navController)},
+            TopBarLayout("${user?.nickName}", navController = navController, isRead = isRead)},
         containerColor = Color.Transparent) {innerPadding ->
         Box(modifier = Modifier
             .padding(innerPadding)

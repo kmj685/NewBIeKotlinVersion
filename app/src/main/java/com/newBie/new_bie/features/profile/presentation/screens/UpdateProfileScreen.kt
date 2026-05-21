@@ -66,6 +66,7 @@ import com.newBie.new_bie.core.components.TopBarLayout
 import com.newBie.new_bie.core.components.rememberPhotoPicker
 import com.newBie.new_bie.core.components.rememberSinglePhotoPicker
 import com.newBie.new_bie.core.utils.Routes
+import com.newBie.new_bie.features.notification.presentation.viewModels.NotificationViewModel
 import com.newBie.new_bie.features.profile.presentation.components.UpdateProfileOutlinedTextFiled
 import com.newBie.new_bie.features.profile.presentation.viewModels.UpdateProfileViewModel
 import com.newBie.new_bie.ui.theme.BlackColor
@@ -73,7 +74,11 @@ import com.newBie.new_bie.ui.theme.OrangeColor
 import org.slf4j.MDC.clear
 
 @Composable
-fun UpdateProfileScreen(viewModel: UpdateProfileViewModel = viewModel<UpdateProfileViewModel>(), context: Context, navController: NavController){
+fun UpdateProfileScreen(
+    viewModel: UpdateProfileViewModel = viewModel<UpdateProfileViewModel>(),
+    notificationViewModel: NotificationViewModel,
+    context: Context,
+    navController: NavController){
 
     val focusManager = LocalFocusManager.current
     val user by viewModel.user.collectAsState()
@@ -83,6 +88,8 @@ fun UpdateProfileScreen(viewModel: UpdateProfileViewModel = viewModel<UpdateProf
     val imageInput by viewModel.imageInput.collectAsState()
     val isImageDeleted by viewModel.isImageDeleted.collectAsState()
     val isSaving by viewModel.isSaving.collectAsState()
+    val isRead by notificationViewModel.isRead.collectAsState()
+
 
     // 업데이트에 성공했다면 UserProfile 페이지로 이동하고 스택 없애기
     LaunchedEffect(Unit) {
@@ -96,7 +103,7 @@ fun UpdateProfileScreen(viewModel: UpdateProfileViewModel = viewModel<UpdateProf
     }
     Scaffold(
         containerColor = Color.Transparent,
-        topBar = { TopBarLayout("프로필 수정", navController = navController) }
+        topBar = { TopBarLayout("프로필 수정", navController = navController, isRead = isRead) }
     ) {innerPadding ->
         Column(modifier = Modifier
             .padding(innerPadding)

@@ -40,7 +40,6 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.newBie.new_bie.core.components.TopBarLayout
 import com.newBie.new_bie.core.utils.Routes
 import com.newBie.new_bie.features.notification.presentation.components.NotificationItems
 import com.newBie.new_bie.features.notification.presentation.viewModels.NotificationViewModel
@@ -51,7 +50,7 @@ import com.newBie.new_bie.ui.theme.OrangeColor
 @Composable
 fun NotificationsScreen(
     modifier: Modifier = Modifier,
-    viewModel: NotificationViewModel = hiltViewModel(), // hiltViewModel()을 사용
+    viewModel: NotificationViewModel,
     navController: NavController) {
 
     val isRefreshing by viewModel.isRefreshing.collectAsState()

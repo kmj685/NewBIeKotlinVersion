@@ -65,6 +65,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
@@ -75,6 +76,7 @@ import com.newBie.new_bie.core.components.rememberPhotoPicker
 import com.newBie.new_bie.core.utils.Constants.TAG
 import com.newBie.new_bie.core.utils.PageSet
 import com.newBie.new_bie.core.utils.Routes
+import com.newBie.new_bie.features.notification.presentation.viewModels.NotificationViewModel
 import com.newBie.new_bie.features.post.presentation.components.ContentTextField
 import com.newBie.new_bie.features.post.presentation.components.SelectedCategoryListLazyRow
 import com.newBie.new_bie.features.post.presentation.components.TitleTextField
@@ -89,7 +91,12 @@ import net.engawapg.lib.zoomable.zoomable
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PostAddScreen(modifier: Modifier = Modifier, navController: NavController, viewModel: PostAddViewModel = viewModel<PostAddViewModel>(), context: Context){
+fun PostAddScreen(
+    modifier: Modifier = Modifier,
+    navController: NavController,
+    viewModel: PostAddViewModel = viewModel<PostAddViewModel>(),
+    notificationViewModel: NotificationViewModel,
+    context: Context){
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true) //바텀 모달 시트 높이만큼 올라오게 만드는 설정
     val scope = rememberCoroutineScope()
     var showSheet by remember { mutableStateOf(false) }
@@ -113,6 +120,8 @@ fun PostAddScreen(modifier: Modifier = Modifier, navController: NavController, v
     // 포스트 등록 인디케이터를 위한 플래그 값
     val isPosting by viewModel.isPosting.collectAsState()
 
+    val isRead by notificationViewModel.isRead.collectAsState()
+
     // 등록에 성공했다면 홈 화면으로 이동하고 스택 없애기
     LaunchedEffect(Unit) {
         viewModel.postSuccess.collect { isSuccess ->
@@ -130,7 +139,8 @@ fun PostAddScreen(modifier: Modifier = Modifier, navController: NavController, v
             TopBarLayout(
                 title = "게시물 작성",
                 focusManager = focusManager,
-                navController = navController
+                navController = navController,
+                isRead = isRead
             )
         },
     ) {innerPadding ->

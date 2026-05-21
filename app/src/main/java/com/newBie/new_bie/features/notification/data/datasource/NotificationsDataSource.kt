@@ -6,6 +6,7 @@ import com.newBie.new_bie.core.utils.Constants
 import com.newBie.new_bie.features.notification.data.dto.NotificationsDto
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.query.Columns
+import io.github.jan.supabase.postgrest.query.Order
 import javax.inject.Inject
 
 class NotificationsDataSource @Inject constructor(){
@@ -19,7 +20,9 @@ class NotificationsDataSource @Inject constructor(){
                     columns = Columns.raw(
                         "id, receiver_id, type, target_id, is_read, created_at, sender_id:users!notifications_sender_id_fkey(*)"
                     )
-                )
+                ){
+                    order(column = "created_at", order = Order.DESCENDING)
+                }
                 .decodeList<NotificationsDto>()
         } catch (e: Exception) {
             Log.e(Constants.TAG, "fetchNotificationsList: ${e.message}")

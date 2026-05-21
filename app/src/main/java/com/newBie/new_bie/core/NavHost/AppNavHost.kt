@@ -5,6 +5,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -13,6 +14,7 @@ import androidx.navigation.navArgument
 import com.newBie.new_bie.core.utils.Routes
 import com.newBie.new_bie.features.auth.presentation.screens.LoginScreen
 import com.newBie.new_bie.features.notification.presentation.screens.NotificationsScreen
+import com.newBie.new_bie.features.notification.presentation.viewModels.NotificationViewModel
 import com.newBie.new_bie.features.post.presentation.screens.HomeScreen
 import com.newBie.new_bie.features.post.presentation.screens.PostAddScreen
 import com.newBie.new_bie.features.post.presentation.screens.PostDetailScreen
@@ -26,6 +28,8 @@ import com.newBie.new_bie.features.teamProject.presentation.screens.TeamProjectL
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AppNavHost(modifier : Modifier, navController: NavHostController, context: Context) {
+
+    val notificationViewModel: NotificationViewModel = hiltViewModel()
 
     NavHost(
         modifier = modifier,
@@ -65,7 +69,7 @@ fun AppNavHost(modifier : Modifier, navController: NavHostController, context: C
             )
         ) { backStackEntry ->
             val id = backStackEntry.arguments?.getInt("id") ?: 0
-            PostDetailScreen(navController = navController, id = id)
+            PostDetailScreen(navController = navController, id = id, notificationViewModel = notificationViewModel)
         }
 
         composable(
@@ -81,7 +85,7 @@ fun AppNavHost(modifier : Modifier, navController: NavHostController, context: C
 
         // -------- ShellRoute 대응 (BottomNav 영역) --------
         composable(Routes.HOME) {
-            HomeScreen(navController = navController)
+            HomeScreen(navController = navController, notificationViewModel = notificationViewModel)
         }
 
         composable("${Routes.HOME}/${Routes.SEARCH}?query={query}",
@@ -98,7 +102,7 @@ fun AppNavHost(modifier : Modifier, navController: NavHostController, context: C
         }
 
         composable(Routes.ADD) {
-            PostAddScreen(navController = navController, context = context)
+            PostAddScreen(navController = navController, context = context, notificationViewModel = notificationViewModel)
         }
 
         composable(Routes.JOURNAL) {
@@ -106,7 +110,7 @@ fun AppNavHost(modifier : Modifier, navController: NavHostController, context: C
         }
 
         composable(Routes.MY_PROFILE) {
-            MyProfileScreen(navController = navController)
+            MyProfileScreen(navController = navController, notificationViewModel = notificationViewModel)
         }
 
         composable(
@@ -121,7 +125,7 @@ fun AppNavHost(modifier : Modifier, navController: NavHostController, context: C
         ) {backStackEntry ->
             val userId = backStackEntry.arguments?.getString("userId")
 
-            MyProfileScreen(navController = navController, targetUserId = userId)
+            MyProfileScreen(navController = navController, targetUserId = userId, notificationViewModel = notificationViewModel)
         }
 
         composable(
@@ -143,11 +147,11 @@ fun AppNavHost(modifier : Modifier, navController: NavHostController, context: C
             val initialTab = backStackEntry.arguments?.getInt("initialTab")
             println("NavHose initialTab: $initialTab")
 
-            FollowScreen(navController = navController, targetUserId = userId, initialTab = initialTab)
+            FollowScreen(navController = navController, targetUserId = userId, initialTab = initialTab, notificationViewModel = notificationViewModel)
         }
 
         composable("${Routes.MY_PROFILE}/${Routes.SETTING}") {
-            SettingScreen(navController = navController)
+            SettingScreen(navController = navController, notificationViewModel = notificationViewModel)
         }
 
         composable("${Routes.MY_PROFILE}/${Routes.SETTING}/${Routes.QUESTION}") {
@@ -172,7 +176,7 @@ fun AppNavHost(modifier : Modifier, navController: NavHostController, context: C
         }
 
         composable("${Routes.MY_PROFILE}/${Routes.UPDATE_PROFILE}") {
-            UpdateProfileScreen(context = context, navController = navController)
+            UpdateProfileScreen(context = context, navController = navController, notificationViewModel = notificationViewModel)
         }
 
         composable(Routes.TEAM_PROJECT) {
@@ -182,7 +186,7 @@ fun AppNavHost(modifier : Modifier, navController: NavHostController, context: C
             /* ChattingRoomListScreen(navController=navController) */
         }
         composable(Routes.NOTIFICATION) {
-            NotificationsScreen(navController = navController)
+            NotificationsScreen(navController = navController, viewModel = notificationViewModel)
         }
     }
 }
