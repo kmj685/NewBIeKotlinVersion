@@ -19,7 +19,6 @@ fun rememberPhotoPicker(
         // photo picker.
         if (uris.isNotEmpty()) {
             onImageSelected(uris)
-
         } else {
             Log.d("PhotoPicker", "No media selected")
         }
@@ -45,8 +44,8 @@ fun rememberSinglePhotoPicker(
             Log.d("PhotoPicker", "No media selected")
         }
     }
-    val mimeType = "image/gif"
     return {
-        launcher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.SingleMimeType(mimeType)))
+        launcher.launch(PickVisualMediaRequest(
+            ActivityResultContracts.PickVisualMedia.ImageAndVideo))
     }
 }
