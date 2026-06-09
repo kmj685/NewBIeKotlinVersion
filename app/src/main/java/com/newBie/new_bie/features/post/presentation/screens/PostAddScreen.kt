@@ -1,13 +1,8 @@
 package com.newBie.new_bie.features.post.presentation.screens
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
-import android.util.Log
 import androidx.activity.compose.BackHandler
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.PickVisualMediaRequest
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.foundation.background
@@ -23,19 +18,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddPhotoAlternate
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Label
-import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.Photo
 import androidx.compose.material3.BottomSheetDefaults.DragHandle
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
@@ -58,33 +50,26 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.FocusManager
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import coil3.compose.AsyncImage
 import com.newBie.new_bie.core.components.BaseAsyncImage
-import com.newBie.new_bie.core.components.BottomTapBar
 import com.newBie.new_bie.core.components.TopBarLayout
 import com.newBie.new_bie.core.components.rememberPhotoPicker
-import com.newBie.new_bie.core.utils.Constants.TAG
-import com.newBie.new_bie.core.utils.PageSet
 import com.newBie.new_bie.core.utils.Routes
 import com.newBie.new_bie.features.notification.presentation.viewModels.NotificationViewModel
 import com.newBie.new_bie.features.post.presentation.components.ContentTextField
 import com.newBie.new_bie.features.post.presentation.components.SelectedCategoryListLazyRow
 import com.newBie.new_bie.features.post.presentation.components.TitleTextField
 import com.newBie.new_bie.features.post.presentation.components.buttons.ImageDeleteButton
-import com.newBie.new_bie.features.post.presentation.components.buttons.PostEditCategoryBtn
+import com.newBie.new_bie.features.post.presentation.components.buttons.PostCategoryBtn
 import com.newBie.new_bie.features.post.presentation.components.buttons.PostEditScreenActionButton
 import com.newBie.new_bie.features.post.presentation.viewModels.PostAddViewModel
 import com.newBie.new_bie.ui.theme.BlackColor
+import com.newBie.new_bie.ui.theme.GreenColor
 import com.newBie.new_bie.ui.theme.OrangeColor
 import net.engawapg.lib.zoomable.rememberZoomState
 import net.engawapg.lib.zoomable.zoomable
@@ -215,13 +200,23 @@ fun PostAddScreen(
                             Row(modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.spacedBy(10.dp)
                             ) {
-                                PostEditScreenActionButton(Icons.Default.Photo, "사진 추가", {
-                                    pickMultipleMedia()
-                                })
-                                PostEditScreenActionButton(Icons.Default.Label, "카테고리", {
-                                    viewModel.openBottomSheetCopyCategoriesList()
-                                    showSheet = true
-                                })
+                                PostEditScreenActionButton(
+                                    modifier = Modifier.weight(1f),
+                                    Icons.Default.AddPhotoAlternate,
+                                    "사진 추가",
+                                    Color.Unspecified,
+                                    onClick = pickMultipleMedia
+                                )
+                                PostEditScreenActionButton(
+                                    modifier = Modifier.weight(1f),
+                                    icon =Icons.Default.Label,
+                                    contentDescription = "태그 추가",
+                                    color = GreenColor,
+                                    onClick = {
+                                        viewModel.openBottomSheetCopyCategoriesList()
+                                        showSheet = true
+                                    }
+                                )
                             }
                             Button(onClick = {
                                 viewModel.insertPost(context = context)
@@ -276,7 +271,7 @@ fun PostAddScreen(
                                     }
                                     Button(modifier = Modifier.weight(0.5f),
                                         colors = ButtonColors(
-                                            containerColor = OrangeColor,
+                                            containerColor = GreenColor,
                                             contentColor = Color.White,
                                             disabledContainerColor = Color.DarkGray,
                                             disabledContentColor = Color.White
@@ -284,13 +279,15 @@ fun PostAddScreen(
                                         onClick = {
                                             viewModel.confirmSelection()
                                             showSheet = false
-                                        }) {
+                                        },
+                                        enabled = bottomSheetSelectedCategories.isNotEmpty()
+                                    ){
                                         Text("완료")
                                     }
                                 }
                                 LazyColumn() {
                                     items(categoryList){ item ->
-                                        PostEditCategoryBtn(
+                                        PostCategoryBtn(
                                             item,
                                             bottomSheetSelectedCategories.contains(item),
                                             {viewModel.toggleCategory(it)}

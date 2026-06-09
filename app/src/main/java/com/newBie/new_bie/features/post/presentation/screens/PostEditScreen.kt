@@ -13,8 +13,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddPhotoAlternate
 import androidx.compose.material.icons.filled.Label
-import androidx.compose.material.icons.filled.Photo
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
@@ -32,15 +32,14 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.newBie.new_bie.core.components.BottomTapBar
 import com.newBie.new_bie.core.components.TopBarLayout
+import com.newBie.new_bie.core.components.rememberPhotoPicker
 
-import com.newBie.new_bie.core.utils.PageSet
 import com.newBie.new_bie.features.notification.presentation.viewModels.NotificationViewModel
 import com.newBie.new_bie.features.post.presentation.components.ContentTextField
 import com.newBie.new_bie.features.post.presentation.components.SelectedCategoryListLazyRow
 import com.newBie.new_bie.features.post.presentation.components.TitleTextField
-import com.newBie.new_bie.features.post.presentation.components.buttons.PostEditCategoryBtn
+import com.newBie.new_bie.features.post.presentation.components.buttons.PostCategoryBtn
 import com.newBie.new_bie.features.post.presentation.components.buttons.PostEditScreenActionButton
 import com.newBie.new_bie.features.post.presentation.components.buttons.PostUpdateBtn
 import com.newBie.new_bie.features.post.presentation.viewModels.PostEditViewModel
@@ -66,6 +65,10 @@ fun PostEditScreen(
 
     val focusManager = LocalFocusManager.current
     val isRead by notificationViewModel.isRead.collectAsState()
+
+    val pickMultipleMedia = rememberPhotoPicker(10){
+        viewModel.getImage(it)
+    }
 
 
     Scaffold(
@@ -103,8 +106,22 @@ fun PostEditScreen(
                     Row(modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp, horizontal = 10.dp),
                         horizontalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
-                        PostEditScreenActionButton(Icons.Default.Photo, "사진 추가", {})
-                        PostEditScreenActionButton(Icons.Default.Label, "카테고리", {showSheet = true})
+                        PostEditScreenActionButton(
+                            modifier = Modifier.weight(1f),
+                            Icons.Default.AddPhotoAlternate,
+                            "사진 추가",
+                            Color.Unspecified,
+                            onClick = pickMultipleMedia
+                        )
+                        PostEditScreenActionButton(
+                            modifier = Modifier.weight(1f),
+                            icon =Icons.Default.Label,
+                            contentDescription = "태그 추가",
+                            color = Color.DarkGray,
+                            onClick = {
+                                showSheet = true
+                            }
+                        )
                     }
                     if (selectCategoryList.isNotEmpty()) {
                         SelectedCategoryListLazyRow(selectCategoryList, {viewModel.unselectCategory(it)})
@@ -120,7 +137,7 @@ fun PostEditScreen(
                     ) {
                         LazyColumn() {
                             items(categoryList){ item ->
-                                PostEditCategoryBtn(
+                                PostCategoryBtn(
                                     item,
                                     selectCategoryList.contains(item),
                                 )

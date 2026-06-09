@@ -11,6 +11,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddPhotoAlternate
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.SegmentedButtonDefaults.Icon
 import androidx.compose.material3.Text
@@ -25,19 +28,18 @@ import androidx.compose.ui.unit.sp
 import kotlinx.datetime.Month
 
 @Composable
-fun PostEditScreenActionButton (icon: ImageVector, title : String, onClick : () -> Unit = {}) {
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(space = 8.dp, alignment = Alignment.CenterHorizontally),
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .clip(RoundedCornerShape(50))
-            .background(color = Color.White)
-            .border(width = 1.dp, color = Color.White, shape = RoundedCornerShape(50))
-            .clickable(onClick = {onClick.invoke()})
-            .padding(horizontal = 12.dp, vertical = 8.dp)
-
+fun PostEditScreenActionButton (modifier: Modifier, icon: ImageVector, contentDescription : String, color: Color, onClick : () -> Unit = {}) {
+    Button (
+        onClick = {onClick.invoke()},
+        colors = ButtonDefaults.buttonColors(containerColor = color),
+        modifier = modifier
     ) {
-        Icon(imageVector = icon, contentDescription = null, tint = Color.DarkGray, modifier = Modifier.size(16.dp))
-        Text(title, color = Color.DarkGray, fontSize = 16.sp)
+        Icon(
+            imageVector = icon,
+            contentDescription = contentDescription,
+            tint = Color.White,
+            modifier = Modifier
+                .size(30.dp)
+        )
     }
 }
