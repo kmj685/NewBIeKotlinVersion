@@ -1,15 +1,10 @@
 package com.newBie.new_bie.features.profile.presentation.screens
 
-import android.graphics.drawable.Icon
-import android.os.Build
-import android.os.Build.VERSION.SDK_INT
-import android.util.Log
+import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.SharedTransitionLayout
-import androidx.compose.animation.core.animate
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,79 +16,63 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.PagerDefaults
-import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Diversity3
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.GridOn
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ElevatedButton
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SecondaryTabRow
-import androidx.compose.material3.SegmentedButtonDefaults.Icon
 import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.Modifier.Companion
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavController
-import coil3.ImageLoader
-import coil3.compose.AsyncImage
-import coil3.gif.AnimatedImageDecoder
-import coil3.gif.GifDecoder
-import com.cloudinary.transformation.resize.Crop
 import com.newBie.new_bie.core.components.BaseAsyncImage
 import com.newBie.new_bie.core.components.BottomTapBar
 import com.newBie.new_bie.core.components.TopBarLayout
 import com.newBie.new_bie.core.managers.SupabaseManager
-import com.newBie.new_bie.core.utils.Constants
 import com.newBie.new_bie.core.utils.PageSet
 import com.newBie.new_bie.core.utils.Routes
 import com.newBie.new_bie.features.notification.presentation.viewModels.NotificationViewModel
 import com.newBie.new_bie.features.post.presentation.components.SmallProfileComponent
-import com.newBie.new_bie.features.post.presentation.screens.HomeScreen
+import com.newBie.new_bie.features.profile.presentation.components.AddGuestbookBottomSheet
+import com.newBie.new_bie.features.profile.presentation.components.UserFeedGridItem
+import com.newBie.new_bie.features.profile.presentation.components.UserGuestbookListItem
+import com.newBie.new_bie.features.profile.presentation.viewModels.AddGuestbooksBottomSheetViewModel
 import com.newBie.new_bie.features.profile.presentation.viewModels.MyProfileViewModel
-import com.newBie.new_bie.features.profile.presentation.viewModels.MyProfileViewModelFactory
 import com.newBie.new_bie.ui.theme.BlackColor
 import com.newBie.new_bie.ui.theme.OrangeColor
 import io.github.jan.supabase.auth.auth
@@ -101,15 +80,15 @@ import kotlinx.coroutines.launch
 import net.engawapg.lib.zoomable.rememberZoomState
 import net.engawapg.lib.zoomable.zoomable
 
+@SuppressLint("ConfigurationScreenWidthHeight")
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyProfileScreen(
     modifier: Modifier = Modifier,
     navController: NavController,
     targetUserId: String? = null,
-    viewModel: MyProfileViewModel = viewModel(
-        // 이렇게 팩토리 연결
-        factory = MyProfileViewModelFactory(targetUserId)
-    ),
+    viewModel: MyProfileViewModel = hiltViewModel(),
+    addGuestbooksBottomSheetViewModel: AddGuestbooksBottomSheetViewModel = hiltViewModel(),
     notificationViewModel: NotificationViewModel
 ){
     val isRefreshing by viewModel.isRefreshing.collectAsState()
@@ -117,7 +96,7 @@ fun MyProfileScreen(
     val post by viewModel.posts.collectAsState()
 
     // 페이저 상태는 그대로 유지합니다.
-    val pagerTitle : List<ImageVector> = listOf(Icons.Default.GridOn, Icons.Default.Edit, Icons.Default.Diversity3)
+    val pagerTitle : List<ImageVector> = listOf(Icons.Default.GridOn, Icons.Default.Edit, Icons.AutoMirrored.Filled.MenuBook)
     val pagerState = rememberPagerState(pageCount = { pagerTitle.size })
     val scope = rememberCoroutineScope()
 
@@ -134,6 +113,23 @@ fun MyProfileScreen(
 
     val isRead by notificationViewModel.isRead.collectAsState()
 
+    val guestbooks by viewModel.guestbooks.collectAsState()
+
+    // 방명록 작성 BottomModalSheet 플래그 값
+    var bottomModalSheetFlag by remember { mutableStateOf(false) }
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val configuration = LocalConfiguration.current
+    val screenHeight = configuration.screenHeightDp.dp
+
+    // 등록에 성공했다면 ModalBottomSheet 내리기
+    LaunchedEffect(Unit) {
+        addGuestbooksBottomSheetViewModel.guestbookSaveSuccess.collect { isSuccess ->
+            if(isSuccess) {
+                bottomModalSheetFlag = false
+                viewModel.refreshAll()
+            }
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -281,7 +277,7 @@ fun MyProfileScreen(
 
                                     ) { page ->
                                         when(page){
-                                            0 -> UserFeedGridScreen(
+                                            0 -> UserFeedGridItem(
                                                 posts = post,
                                                 onPostClick = { navController.navigate("${Routes.POST}/${it}") },
                                                 onLoadMore = { viewModel.fetchMorePosts() }
@@ -297,26 +293,38 @@ fun MyProfileScreen(
                                                 modifier = Modifier
                                                     .fillParentMaxSize(),
                                                 horizontalAlignment = Alignment.CenterHorizontally) {
-                                                Button(
-                                                    onClick = {},
-                                                    shape = RoundedCornerShape(12.dp),
-                                                    modifier = Modifier.fillMaxWidth(),
-                                                    colors = ButtonDefaults.buttonColors(
-                                                        containerColor = OrangeColor,
-                                                        contentColor = Color.White
-                                                    )
-                                                ) {
-                                                    Text("방명록 작성", fontWeight = FontWeight.Bold)
+                                                if(!myProfile){
+                                                    Button(
+                                                        onClick = {
+                                                            bottomModalSheetFlag = true
+                                                        },
+                                                        shape = RoundedCornerShape(12.dp),
+                                                        modifier = Modifier.fillMaxWidth(),
+                                                        colors = ButtonDefaults.buttonColors(
+                                                            containerColor = OrangeColor,
+                                                            contentColor = Color.White
+                                                        )
+                                                    ) {
+                                                        Text("방명록 작성", fontWeight = FontWeight.Bold)
+                                                    }
                                                 }
-                                                UserFeedGridScreen(
-                                                    posts = post,
-                                                    onPostClick = { navController.navigate("${Routes.POST}/${it}") },
-                                                    onLoadMore = { viewModel.fetchMorePosts() }
+                                                UserGuestbookListItem(
+                                                    onLoadMore = { viewModel.fetchMoreGuestbooks() },
+                                                    guestbooks = guestbooks,
+                                                    onClick = { navController.navigate("${Routes.GUESTBOOKS}/${it}")}
                                                 )
                                             }
                                         }
                                     }
                                 }
+                            }
+                            if (bottomModalSheetFlag) {
+                                AddGuestbookBottomSheet(
+                                    viewModel= addGuestbooksBottomSheetViewModel,
+                                    screenHeight = screenHeight,
+                                    sheetState = sheetState,
+                                    onDismiss = {bottomModalSheetFlag = false}
+                                )
                             }
                         }
                     } else{

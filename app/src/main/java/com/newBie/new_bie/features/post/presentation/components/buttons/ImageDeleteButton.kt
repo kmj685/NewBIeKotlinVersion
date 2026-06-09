@@ -25,14 +25,14 @@ import com.newBie.new_bie.features.post.domain.entities.PostImageEntity
 fun ImageDeleteButton(onClick: () -> Unit){
     Box(modifier = Modifier
         .clip(CircleShape)
-        .background(Color.White)
+        .background(Color.Red)
         .clickable(onClick = {onClick.invoke()})
         .padding(5.dp)
         .size(15.dp),
         contentAlignment = Alignment.Center){
         Icon(
             imageVector = Icons.Rounded.Close,
-            tint = Color.DarkGray,
+            tint = Color.White,
             contentDescription = "이미지 삭제버튼",
         )
     }

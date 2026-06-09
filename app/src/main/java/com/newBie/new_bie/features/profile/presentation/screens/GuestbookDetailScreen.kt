@@ -1,6 +1,6 @@
-package com.newBie.new_bie.features.post.presentation.screens
+package com.newBie.new_bie.features.profile.presentation.screens
 
-import android.net.Uri
+import android.annotation.SuppressLint
 import android.os.Build
 import androidx.activity.compose.BackHandler
 import androidx.annotation.RequiresApi
@@ -8,8 +8,6 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.rememberScrollableState
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,17 +17,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChatBubble
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Comment
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -37,7 +29,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -50,9 +41,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavController
-import coil3.compose.AsyncImage
 import com.newBie.new_bie.core.components.BaseAsyncImage
 import com.newBie.new_bie.core.components.TopBarLayout
 import com.newBie.new_bie.core.utils.Routes
@@ -60,33 +50,28 @@ import com.newBie.new_bie.core.utils.toKoreaLocalDateTime
 import com.newBie.new_bie.core.utils.toTimeAgo
 import com.newBie.new_bie.features.notification.presentation.viewModels.NotificationViewModel
 import com.newBie.new_bie.features.post.domain.entities.PostImageEntity
-import com.newBie.new_bie.features.post.domain.entities.PostUserEntity
 import com.newBie.new_bie.features.post.presentation.components.SmallProfileComponent
-import com.newBie.new_bie.features.post.presentation.components.likesAndComments.CommentBottomSheet
-import com.newBie.new_bie.features.post.presentation.interfaces.CommentBottomSheetViewModel
-import com.newBie.new_bie.features.post.presentation.viewModels.HomeViewModel
-import com.newBie.new_bie.features.post.presentation.viewModels.PostDetailViewModel
+import com.newBie.new_bie.features.profile.presentation.components.GuestBooksCommentsBottomSheet
+import com.newBie.new_bie.features.profile.presentation.viewModels.GuestbooksCommentsBottomSheetViewModel
+import com.newBie.new_bie.features.profile.presentation.viewModels.GuestbooksDetailViewModel
 import com.newBie.new_bie.ui.theme.AppTextStyle
 import net.engawapg.lib.zoomable.rememberZoomState
 import net.engawapg.lib.zoomable.zoomable
 
+@SuppressLint("ConfigurationScreenWidthHeight")
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PostDetailScreen(
+fun GuestbookDetailScreen(
     modifier: Modifier = Modifier,
     navController: NavController,
-    viewModel : PostDetailViewModel = viewModel<PostDetailViewModel>(),
-    notificationViewModel: NotificationViewModel,
-    id: Int) {
+    viewModel : GuestbooksDetailViewModel = hiltViewModel(),
+    guestbooksCommentsViewModel: GuestbooksCommentsBottomSheetViewModel = hiltViewModel(),
+    notificationViewModel: NotificationViewModel) {
 
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showSheet by remember { mutableStateOf(false) }
-    val post by viewModel.post.collectAsState()
-    val images by viewModel.images.collectAsState()
-    val user: PostUserEntity? = post?.user
-
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp.dp
 
@@ -98,21 +83,19 @@ fun PostDetailScreen(
     val focusManager = LocalFocusManager.current
     val isRead by notificationViewModel.isRead.collectAsState()
 
-    LaunchedEffect(Unit) {
-        if (id != 0) {
-            viewModel.fetchPost(id)
-        }
-    }
-    LaunchedEffect(post) {
-        viewModel.fetchComments()
-    }
+    val guestbook by viewModel.guestbooks.collectAsState()
+
+
+//    LaunchedEffect(post) {
+//        viewModel.fetchComments()
+//    }
 
 
     Scaffold(
         containerColor = Color.Transparent,
         topBar = {
             TopBarLayout(
-                title = "게시물",
+                title = "방명록",
                 focusManager = focusManager,
                 navController = navController,
                 isRead = isRead
@@ -145,82 +128,53 @@ fun PostDetailScreen(
                             ) {
                                 SmallProfileComponent(
                                     modifier = Modifier.weight(1f),
-                                    imageUrl = user?.profileImage ?: "",
-                                    nickName = user?.nickName ?: "",
-                                    introduce = post?.createdAt?.toKoreaLocalDateTime()?.toTimeAgo(),
-                                    userId = user?.id ?: "",
+                                    imageUrl = guestbook?.senderId?.profileImage ?: "",
+                                    nickName = guestbook?.senderId?.nickName ?: "",
+                                    introduce = guestbook?.createdAt?.toKoreaLocalDateTime()?.toTimeAgo(),
+                                    userId = guestbook?.senderId?.id ?: "",
                                     {
-                                        navController.navigate("${Routes.MY_PROFILE}/${user?.id}")
+                                        navController.navigate("${Routes.MY_PROFILE}/{${guestbook?.senderId?.id}}")
                                     }
                                 )
                             }
-                            Text(post?.title ?: "", style = AppTextStyle.Title, )
+                            Text(guestbook?.title ?: "", style = AppTextStyle.Title, )
 
                             Spacer(modifier = Modifier.height(20.dp))
 
-                            if (post?.postImages?.isNotEmpty() == true && post != null){
-                                val pagerState = rememberPagerState(
-                                    pageCount = { post?.postImages?.size ?: 0 }
-                                )
+                            if (guestbook?.imageUrl?.isNotEmpty() == true){
 
                                 Box(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .height(500.dp)
                                 ) {
-                                    HorizontalPager(
-                                        state = pagerState
-                                    ) { page ->
-                                        val url = post?.postImages[page]?.imageUrl
-
                                         BaseAsyncImage(
-                                            model = url,
+                                            model = guestbook?.imageUrl,
                                             contentDescription = null,
                                             contentScale = ContentScale.Crop, // BoxFit.cover
                                             modifier = Modifier
                                                 .fillMaxSize()
                                                 .clickable(
                                                     onClick = {
-                                                        selectedImage = post?.postImages[page]
                                                         isExpanded = true
                                                     }
                                                 )
                                         )
-                                    }
+
                                 }
                             }
                             Spacer(modifier = Modifier.height(20.dp))
 
-                            Text(post?.content ?: "", style = AppTextStyle.Content, )
+                            Text(guestbook?.content ?: "", style = AppTextStyle.Content, )
 
                         }
                         Row(modifier = Modifier.fillMaxWidth().padding(10.dp)) {
-                            Row(
-                                modifier = Modifier.clickable(onClick = {viewModel.likeToggle()}),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Icon(
-                                    imageVector = if (post?.isLiked == true)
-                                        Icons.Default.Favorite
-                                    else
-                                        Icons.Default.Favorite,
-                                    contentDescription = null,
-                                    tint = if (post?.isLiked == true) Color.Red else Color.White
-                                )
-
-                                Spacer(modifier = Modifier.width(4.dp))
-
-                                Text(
-                                    text = "${post?.likesCount ?: 0}",
-                                    color = Color.White
-                                )
-                            }
 
                             Spacer(modifier = Modifier.width(16.dp))
 
                             Row(
                                 modifier = Modifier.clickable(onClick = {
-                                    viewModel.fetchComments()
+                                    guestbooksCommentsViewModel.getGuestbooksComments()
                                     showSheet = true
                                 }),
                                 verticalAlignment = Alignment.CenterVertically
@@ -234,14 +188,14 @@ fun PostDetailScreen(
                                 Spacer(modifier = Modifier.width(4.dp))
 
                                 Text(
-                                    text = "${post?.commentsCount ?: 0}",
+                                    text = "${guestbook?.commentsCount ?: 0}",
                                     color = Color.White
                                 )
                             }
                         }
                         if (showSheet) {
-                            CommentBottomSheet(
-                                viewModel= viewModel,
+                            GuestBooksCommentsBottomSheet(
+                                viewModel= guestbooksCommentsViewModel,
                                 screenHeight = screenHeight,
                                 sheetState = sheetState,
                                 onDismiss = {showSheet = false}
@@ -250,22 +204,12 @@ fun PostDetailScreen(
 
                     }
                 } else {
-                    // imageInputList에서 클릭한 사진의 인덱스를 찾아 초기 페이지로 설정
-                    val pagerState = rememberPagerState(
-
-                        initialPage = images.indexOf(selectedImage),
-                        pageCount = { images.size }
-                    )
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
                             .background(Color.Black)
-                    ) {
-                        HorizontalPager(
-                            state = pagerState,
-                            modifier = Modifier.fillMaxSize()
-                        ) {page ->
-                            val currentUri = images[page].imageUrl
+                    ) { ->
+                            val currentUri = guestbook?.imageUrl
                             val zoomState = rememberZoomState()
 
                             Box(
@@ -283,7 +227,7 @@ fun PostDetailScreen(
                                         .zoomable(zoomState)
                                 )
                             }
-                        }
+
                         // 닫기 버튼
                         IconButton(
                             onClick = { isExpanded = false },

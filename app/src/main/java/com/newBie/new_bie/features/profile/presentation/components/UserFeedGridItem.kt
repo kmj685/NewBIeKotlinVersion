@@ -1,4 +1,4 @@
-package com.newBie.new_bie.features.profile.presentation.screens
+package com.newBie.new_bie.features.profile.presentation.components
 
 import android.util.Log
 import androidx.compose.foundation.background
@@ -6,13 +6,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Layers
@@ -29,18 +26,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil3.compose.AsyncImage
 import com.newBie.new_bie.core.components.BaseAsyncImage
 import com.newBie.new_bie.core.utils.Constants.TAG
-import com.newBie.new_bie.features.post.domain.entities.PostEntity
-import com.newBie.new_bie.features.post.domain.entities.PostImageEntity
 import com.newBie.new_bie.features.post.domain.entities.PostWithProfileEntity
 import com.newBie.new_bie.ui.theme.GridColor
 
 @Composable
-fun UserFeedGridScreen(posts: List<PostWithProfileEntity>,
-                       onPostClick: (Int) -> Unit = {},
-                       onLoadMore: () -> Unit) {
+fun UserFeedGridItem(posts: List<PostWithProfileEntity>,
+                     onPostClick: (Int) -> Unit = {},
+                     onLoadMore: () -> Unit) {
     val gridState = rememberLazyGridState()
 
     // 스크롤 감지 로직

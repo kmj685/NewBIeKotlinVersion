@@ -50,6 +50,7 @@ object Routes {
     const val CHATTING = "chatting"
 
     const val NOTIFICATION = "notification"
+    const val GUESTBOOKS = "guestbooks"
 }
 
 

@@ -3,24 +3,28 @@ package com.newBie.new_bie.features.profile.data.datasources
 import android.util.Log
 import com.newBie.new_bie.core.managers.SupabaseManager
 import com.newBie.new_bie.core.utils.Constants
+import com.newBie.new_bie.features.post.data.dto.PostWithProfileDto
 import com.newBie.new_bie.features.post.data.dto.UserDto
 import com.newBie.new_bie.features.post.data.mapper.toEntity
+import com.newBie.new_bie.features.post.domain.entities.PostWithProfileEntity
 import com.newBie.new_bie.features.post.domain.entities.UserEntity
 import com.newBie.new_bie.features.profile.data.dto.FollowDto
 import com.newBie.new_bie.features.profile.domain.entities.FollowEntity
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.query.Columns
+import io.github.jan.supabase.postgrest.query.Order
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
+import javax.inject.Inject
 
-class ProfileDatasource {
+class ProfileDatasource @Inject constructor(){
 
     private val _supabase = SupabaseManager.supabase
 
     // 팔로워 리스트 fetch
     suspend fun fetchFollowerList(
         userId: String
-    ): List<FollowEntity> {
+    ): List<FollowDto> {
         return try {
             _supabase.from("follow")
                 .select(columns = Columns.raw(
@@ -35,7 +39,7 @@ class ProfileDatasource {
                     filter {
                         eq("following_id", userId)
                     }
-            }.decodeList<FollowDto>().map { it.toEntity() }
+            }.decodeList<FollowDto>()
         } catch (e: Exception) {
             Log.e(Constants.TAG, "follow list: ${e.message}", )
             emptyList()
@@ -45,7 +49,7 @@ class ProfileDatasource {
     // 팔로잉 리스트 fetch
     suspend fun fetchFollowingList(
         userId: String
-    ): List<FollowEntity> {
+    ): List<FollowDto> {
         return try {
             _supabase.from("follow")
                 .select(columns = Columns.raw(
@@ -60,7 +64,7 @@ class ProfileDatasource {
                     filter {
                         eq("follower_id", userId)
                     }
-                }.decodeList<FollowDto>().map { it.toEntity() }
+                }.decodeList<FollowDto>()
         } catch (e: Exception) {
             Log.e(Constants.TAG, "follow list: ${e.message}", )
             emptyList()
@@ -143,6 +147,41 @@ class ProfileDatasource {
         } catch (e: Exception) {
             Log.e(Constants.TAG, "fetchUser: ${e.message}", )
             null
+        }
+    }
+
+    // 특정 유저 게시글
+    suspend fun fetchUserPosts(
+        range: String,
+        userId: String
+    ): List<PostWithProfileEntity> {
+        return try{
+            // "0-5" 문자열을 각각 0과 5이라는 숫자로 쪼개는 작업
+            val parts = range.split("-")
+            val fromIndex = parts.getOrNull(0)?.toLongOrNull() ?: 0L
+            val toIndex = parts.getOrNull(1)?.toLongOrNull() ?: 5L
+
+            val dtoList = _supabase.from("posts").select(
+                columns = Columns.raw(
+                    """
+                        *,
+                        post_images(*)
+                    """.trimIndent()
+                )
+            ) {
+                filter {
+                    eq("author_id", userId)
+                }
+                range(from = fromIndex, to = toIndex)
+                order(column = "created_at", order = Order.DESCENDING)
+
+            }.decodeList<PostWithProfileDto>()
+
+            dtoList.map { it.toEntity() }
+
+        } catch (e: Exception){
+            Log.e(Constants.TAG, "fetchUserPosts: ${e.message}", )
+            emptyList()
         }
     }
 }

@@ -140,7 +140,7 @@ class PostDetailViewModel : ViewModel(), CommentBottomSheetViewModel {
         }
     }
 
-    override fun deleteComment(id: Int,authorId: String) {
+    override fun deleteComment(id: Int, authorId: String) {
         viewModelScope.launch {
             try{
                 val postId = post.value?.id

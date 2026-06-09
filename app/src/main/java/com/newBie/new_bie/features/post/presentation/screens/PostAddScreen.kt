@@ -144,7 +144,8 @@ fun PostAddScreen(
             )
         },
     ) {innerPadding ->
-        SharedTransitionLayout(modifier = Modifier
+        SharedTransitionLayout(
+            modifier = Modifier
             .padding(
                 top = innerPadding.calculateTopPadding(), // 상단만 적용
             )
@@ -358,6 +359,4 @@ fun PostAddScreen(
             }
         }
     }
-
-
 }

@@ -20,6 +20,7 @@ import com.newBie.new_bie.features.post.presentation.screens.PostAddScreen
 import com.newBie.new_bie.features.post.presentation.screens.PostDetailScreen
 import com.newBie.new_bie.features.post.presentation.screens.SearchScreen
 import com.newBie.new_bie.features.profile.presentation.screens.FollowScreen
+import com.newBie.new_bie.features.profile.presentation.screens.GuestbookDetailScreen
 import com.newBie.new_bie.features.profile.presentation.screens.MyProfileScreen
 import com.newBie.new_bie.features.profile.presentation.screens.SettingScreen
 import com.newBie.new_bie.features.profile.presentation.screens.UpdateProfileScreen
@@ -177,6 +178,15 @@ fun AppNavHost(modifier : Modifier, navController: NavHostController, context: C
 
         composable("${Routes.MY_PROFILE}/${Routes.UPDATE_PROFILE}") {
             UpdateProfileScreen(context = context, navController = navController, notificationViewModel = notificationViewModel)
+        }
+
+        composable(
+            route = "${Routes.GUESTBOOKS}/{guestbookId}",
+            arguments = listOf(
+                navArgument("guestbookId") { type = NavType.IntType }
+            )
+        ){
+            GuestbookDetailScreen(navController = navController, notificationViewModel = notificationViewModel)
         }
 
         composable(Routes.TEAM_PROJECT) {

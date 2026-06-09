@@ -28,12 +28,12 @@ object PhotoPickerManager {
 
             val fileName = "private/${pathName}_${userId}_${System.currentTimeMillis()}_$index.$extension"
 
-            // supabase storage의 "images"에 httpL//로 바꿨던 주소를 업로드하는 작업
+            // supabase storage의 "images"에 http://로 바꿨던 주소를 업로드하는 작업
             SupabaseManager.supabase.storage.from("images").upload(
                 path = fileName,
                 data = bytes,
                 options = {
-                    upsert = false //이미 같은 이름의 파일이 있으면 false = 실퍃시켜라 true = 덮어쓰기"
+                    upsert = false //이미 같은 이름의 파일이 있으면 false = 실행시켜라 true = 덮어쓰기"
                 }
             )
             // 업로드했던 이미지의 주소를 가져오는 작업 -> 이제 밑에 보면 images에 넣어줘야지 사진이 올라가니까
@@ -52,12 +52,14 @@ object PhotoPickerManager {
 
         if (uri == null) return null
 
+        // 여기서 여러장 코드를 참고해서 사용하고 있어서 경로나 uriToByteArray 등을 사용하고 있음
         val url = uploadImages(
             context = context,
             uriList = listOf(uri),
             userId = userId,
             pathName = pathName
         )
+        // 그리고 첫번재 것만 사용하는거니까 한 장으로 됨.
         return url.firstOrNull()
     }
 

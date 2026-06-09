@@ -55,7 +55,9 @@ fun TopBarLayout(title: String,
 
     if (logoMode) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 10.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -63,7 +65,6 @@ fun TopBarLayout(title: String,
                 painter = painterResource(id = R.drawable.new_bie_logo),
                 contentDescription = "홈 로고",
                 modifier = Modifier
-                    .padding(10.dp)
                     .height(30.dp)
             )
             Box(

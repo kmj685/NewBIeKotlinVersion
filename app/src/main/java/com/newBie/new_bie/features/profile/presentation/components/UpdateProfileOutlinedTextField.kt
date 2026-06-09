@@ -1,5 +1,6 @@
 package com.newBie.new_bie.features.profile.presentation.components
 
+import android.annotation.SuppressLint
 import android.opengl.Matrix.length
 import android.text.TextUtils.replace
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,8 +24,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
 import com.newBie.new_bie.ui.theme.OrangeColor
 
+@SuppressLint("SuspiciousIndentation")
 @Composable
-fun UpdateProfileOutlinedTextFiled(state: TextFieldState, labelText: String, placeholderText: String, isNicknameField: Boolean = false){
+fun UpdateProfileOutlinedTextFiled(
+    state: TextFieldState,
+    labelText: String,
+    placeholderText: String,
+    isNicknameField: Boolean = false){
     var isFocused by remember { mutableStateOf(false) }
     val hasSpace = isNicknameField && state.text.toString().contains(" ")
 

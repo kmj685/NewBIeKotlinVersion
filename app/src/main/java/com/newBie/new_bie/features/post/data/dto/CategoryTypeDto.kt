@@ -5,9 +5,9 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 
+@Serializable
 
 data class CategoryTypeDto(
     val id: Int,
-    @SerializedName("type_title")
-    val typeTitle: String
+    @SerializedName("type_title") @SerialName("type_title") val typeTitle: String
 )

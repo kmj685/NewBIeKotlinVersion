@@ -5,32 +5,38 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.newBie.new_bie.core.managers.SupabaseManager
 import com.newBie.new_bie.core.utils.Constants
+import com.newBie.new_bie.core.utils.Constants.TAG
 import com.newBie.new_bie.features.post.domain.entities.UserEntity
 import com.newBie.new_bie.features.profile.data.repositories.ProfileRepositoryImpl
 import com.newBie.new_bie.features.profile.domain.entities.FollowEntity
 import com.newBie.new_bie.features.profile.domain.repositories.ProfileRepository
-import com.newBie.new_bie.features.profile.domain.usecase.CheckFollowStatusUseCase
-import com.newBie.new_bie.features.profile.domain.usecase.FollowUserUseCase
-import com.newBie.new_bie.features.profile.domain.usecase.GetFollowerListUseCase
-import com.newBie.new_bie.features.profile.domain.usecase.GetFollowingListUseCase
-import com.newBie.new_bie.features.profile.domain.usecase.GetUserUseCase
-import com.newBie.new_bie.features.profile.domain.usecase.UnfollowUserUseCase
+import com.newBie.new_bie.features.profile.domain.usecase.followUseCase.CheckFollowStatusUseCase
+import com.newBie.new_bie.features.profile.domain.usecase.followUseCase.FollowUserUseCase
+import com.newBie.new_bie.features.profile.domain.usecase.followUseCase.GetFollowerListUseCase
+import com.newBie.new_bie.features.profile.domain.usecase.followUseCase.GetFollowingListUseCase
+import com.newBie.new_bie.features.profile.domain.usecase.followUseCase.GetMyFollowingIdsUseCase
+import com.newBie.new_bie.features.profile.domain.usecase.followUseCase.GetUserUseCase
+import com.newBie.new_bie.features.profile.domain.usecase.followUseCase.UnfollowUserUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.jan.supabase.auth.auth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class FollowViewModel : ViewModel() {
-    private val _repository: ProfileRepository = ProfileRepositoryImpl()
-
+@HiltViewModel
+class FollowViewModel @Inject constructor(
     // UseCase 정의
-    private val getFollowerListUseCase = GetFollowerListUseCase(_repository)
-    private val getFollowingListUseCase = GetFollowingListUseCase(_repository)
-    private val getFetchUserUseCase = GetUserUseCase(_repository)
-    private val followUserUseCase = FollowUserUseCase(_repository)
-    private val unfollowUserUseCase = UnfollowUserUseCase(_repository)
-    private val checkFollowStatusUseCase = CheckFollowStatusUseCase(_repository)
+    private val getFollowerListUseCase: GetFollowerListUseCase,
+    private val getFollowingListUseCase: GetFollowingListUseCase,
+    private val getFetchUserUseCase: GetUserUseCase,
+    private val followUserUseCase: FollowUserUseCase,
+    private val unfollowUserUseCase: UnfollowUserUseCase,
+    private val checkFollowStatusUseCase: CheckFollowStatusUseCase,
+    private val getMyFollowingIdsUseCase: GetMyFollowingIdsUseCase
+): ViewModel() {
+
 
     private val _user = MutableStateFlow<UserEntity?>(null)
     val user = _user.asStateFlow()
@@ -58,7 +64,7 @@ class FollowViewModel : ViewModel() {
         result.onSuccess { list ->
             // 핵심: 내 팔로잉 ID 리스트를 한 번만 가져옴 (N+1 문제 해결)
             val myFollowingIds = if (myId != null) {
-                _repository.getMyFollowingIds(myId)
+                getMyFollowingIdsUseCase(myId).getOrDefault(emptyList())
             } else emptyList()
 
             val mappedList = list.map { item ->
@@ -122,13 +128,17 @@ class FollowViewModel : ViewModel() {
 
     fun loadData(targetUserId: String?) {
         viewModelScope.launch {
-            val userId = targetUserId ?: SupabaseManager.supabase.auth.currentUserOrNull()?.id ?: return@launch
+           try {
+               val userId = targetUserId ?: SupabaseManager.supabase.auth.currentUserOrNull()?.id ?: return@launch
 
-            _targetUserId.value = userId
+               _targetUserId.value = userId
 
-            fetchUser()
-            fetchFollowerList()
-            fetchFollowingList()
+               fetchUser()
+               fetchFollowerList()
+               fetchFollowingList()
+           } catch (e: Exception){
+               Log.e(TAG, "loadData: ${e.message}", )
+           }
         }
     }
 

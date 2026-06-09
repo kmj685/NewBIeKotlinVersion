@@ -11,7 +11,7 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 @Suppress("UNUSED_PARAMETER") // 안 쓰는 파라미터라고 경고 주지 말라는 어노테이션
-abstract class NotificationModule {
+abstract class NotificationModule { //abstract class 추상클래스를 쓰는 이유: 미완성인 추상클래스를 hilt가 나중에 알아서 갖다 쓰기 떄문에
     @Binds
     @Singleton
     @Suppress("UNUSED_PARAMETER")
