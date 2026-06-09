@@ -168,7 +168,7 @@ class PostEditViewModel : ViewModel() {
                     emptyList()
                 }
 
-                // 🔗 기존 서버 주소와 새로 업로드된 주소를 합쳐 최종 데이터 리스트 생성
+                // 기존 서버 주소와 새로 업로드된 주소를 합쳐 최종 데이터 리스트 생성
                 val finalImageUrls = existingUrls + newUploadedUrls
 
                 if (currentPostId == null) {
@@ -181,7 +181,7 @@ class PostEditViewModel : ViewModel() {
                         categories = selectCategoryIds
                     )
                 } else {
-                    // 2) 💡 기존 게시글 수정 상태일 때 (Repository에 updatePost가 구현되어 있어야 합니다)
+                    // 2) 기존 게시글 수정 상태일 때 (Repository에 updatePost가 구현되어 있어야 합니다)
                     repository.updatePost(
                         postId = currentPostId!!,
                         title = titleInputTxt.value,
