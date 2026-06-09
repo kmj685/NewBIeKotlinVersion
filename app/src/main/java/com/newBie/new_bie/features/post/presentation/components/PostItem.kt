@@ -49,6 +49,7 @@ import com.newBie.new_bie.core.utils.Routes
 import com.newBie.new_bie.core.utils.toKoreaLocalDateTime
 import com.newBie.new_bie.core.utils.toTimeAgo
 import com.newBie.new_bie.features.post.domain.entities.PostWithProfileEntity
+import com.newBie.new_bie.ui.theme.GreenColor
 import com.newBie.new_bie.ui.theme.GridColor
 import com.newBie.new_bie.ui.theme.OrangeColor
 import io.github.jan.supabase.auth.auth
@@ -136,7 +137,7 @@ fun PostItem(post : PostWithProfileEntity, navController: NavController, onDelet
                         modifier = Modifier
                             .padding(end = 8.dp)
                             .clip(RoundedCornerShape(10.dp))
-                            .background(OrangeColor)
+                            .background(GreenColor)
                             .padding(horizontal = 12.dp, vertical = 6.dp)
                     ) {
                         Text(

@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.newBie.new_bie.features.post.domain.entities.CategoryTypeEntity
 import com.newBie.new_bie.ui.theme.BlackColor
+import com.newBie.new_bie.ui.theme.GreenColor
 import com.newBie.new_bie.ui.theme.OrangeColor
 
 @Composable
@@ -24,7 +25,7 @@ fun SelectedCategoryBtn(category: CategoryTypeEntity, onClick : (CategoryTypeEnt
         contentAlignment = Alignment.Center,
         modifier = Modifier
             .clip(RoundedCornerShape(30))
-            .background(OrangeColor)
+            .background(GreenColor)
             .clickable(onClick = {onClick.invoke(category)})
             .padding(vertical = 5.dp, horizontal = 10.dp)
     ) {

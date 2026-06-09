@@ -42,6 +42,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -55,6 +56,7 @@ import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.newBie.new_bie.core.components.BaseAsyncImage
 import com.newBie.new_bie.core.components.TopBarLayout
+import com.newBie.new_bie.core.managers.SupabaseManager
 import com.newBie.new_bie.core.utils.Routes
 import com.newBie.new_bie.core.utils.toKoreaLocalDateTime
 import com.newBie.new_bie.core.utils.toTimeAgo
@@ -62,11 +64,14 @@ import com.newBie.new_bie.features.notification.presentation.viewModels.Notifica
 import com.newBie.new_bie.features.post.domain.entities.PostImageEntity
 import com.newBie.new_bie.features.post.domain.entities.PostUserEntity
 import com.newBie.new_bie.features.post.presentation.components.SmallProfileComponent
+import com.newBie.new_bie.features.post.presentation.components.buttons.PostMoreVertButton
 import com.newBie.new_bie.features.post.presentation.components.likesAndComments.CommentBottomSheet
 import com.newBie.new_bie.features.post.presentation.interfaces.CommentBottomSheetViewModel
 import com.newBie.new_bie.features.post.presentation.viewModels.HomeViewModel
 import com.newBie.new_bie.features.post.presentation.viewModels.PostDetailViewModel
 import com.newBie.new_bie.ui.theme.AppTextStyle
+import io.github.jan.supabase.auth.auth
+import kotlinx.coroutines.launch
 import net.engawapg.lib.zoomable.rememberZoomState
 import net.engawapg.lib.zoomable.zoomable
 
@@ -86,6 +91,7 @@ fun PostDetailScreen(
     val post by viewModel.post.collectAsState()
     val images by viewModel.images.collectAsState()
     val user: PostUserEntity? = post?.user
+    val currentUserId = SupabaseManager.supabase.auth.currentUserOrNull()?.id ?: ""
 
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp.dp
@@ -97,6 +103,8 @@ fun PostDetailScreen(
 
     val focusManager = LocalFocusManager.current
     val isRead by notificationViewModel.isRead.collectAsState()
+
+    val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
         if (id != 0) {
@@ -141,7 +149,8 @@ fun PostDetailScreen(
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(8.dp)
+                                    .padding(8.dp),
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
                                 SmallProfileComponent(
                                     modifier = Modifier.weight(1f),
@@ -151,6 +160,21 @@ fun PostDetailScreen(
                                     userId = user?.id ?: "",
                                     {
                                         navController.navigate("${Routes.MY_PROFILE}/${user?.id}")
+                                    }
+                                )
+                                PostMoreVertButton(
+                                    targetId = user?.id ?: "",
+                                    currentId = currentUserId,
+                                    updateClick = {navController.navigate("${Routes.POST}/${post?.id}/${Routes.POST_EDIT}")},
+                                    deletedClick = {
+                                        coroutineScope.launch {
+                                            val isSuccess = viewModel.deletePost(id)
+                                            if (isSuccess){
+                                                navController.previousBackStackEntry?.savedStateHandle?.set("need_refresh", true)
+                                                navController.popBackStack() // 이전 화면으로 이동
+                                            }
+                                        }
+
                                     }
                                 )
                             }

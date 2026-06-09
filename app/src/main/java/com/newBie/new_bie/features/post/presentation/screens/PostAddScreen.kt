@@ -111,12 +111,11 @@ fun PostAddScreen(
     LaunchedEffect(Unit) {
         viewModel.postSuccess.collect { isSuccess ->
             if(isSuccess) {
-                navController.navigate(Routes.HOME){
-                    popUpTo(Routes.HOME) { inclusive = true }
-                }
+                navController.popBackStack()
             }
         }
     }
+
 
     Scaffold(
         containerColor = Color.Transparent,

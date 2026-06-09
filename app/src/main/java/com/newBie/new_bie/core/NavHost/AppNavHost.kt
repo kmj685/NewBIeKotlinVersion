@@ -18,6 +18,7 @@ import com.newBie.new_bie.features.notification.presentation.viewModels.Notifica
 import com.newBie.new_bie.features.post.presentation.screens.HomeScreen
 import com.newBie.new_bie.features.post.presentation.screens.PostAddScreen
 import com.newBie.new_bie.features.post.presentation.screens.PostDetailScreen
+import com.newBie.new_bie.features.post.presentation.screens.PostEditScreen
 import com.newBie.new_bie.features.post.presentation.screens.SearchScreen
 import com.newBie.new_bie.features.profile.presentation.screens.FollowScreen
 import com.newBie.new_bie.features.profile.presentation.screens.GuestbookDetailScreen
@@ -80,7 +81,7 @@ fun AppNavHost(modifier : Modifier, navController: NavHostController, context: C
             )
         ) { backStackEntry ->
             val id = backStackEntry.arguments?.getInt("id") ?: 0
-            /* PostEditScreen(postId) */
+            PostEditScreen(navController = navController, notificationViewModel = notificationViewModel, id = id, context = context)
         }
 
 

@@ -121,6 +121,11 @@ fun MyProfileScreen(
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp.dp
 
+    // 게시물 수정하면 자동으로 refresh
+    val savedStateHandle = navController.currentBackStackEntry?.savedStateHandle
+    val needRefresh by savedStateHandle?.getStateFlow("need_refresh", false)?.collectAsState()
+        ?:remember { mutableStateOf(false) }
+
     // 등록에 성공했다면 ModalBottomSheet 내리기
     LaunchedEffect(Unit) {
         addGuestbooksBottomSheetViewModel.guestbookSaveSuccess.collect { isSuccess ->
@@ -128,6 +133,12 @@ fun MyProfileScreen(
                 bottomModalSheetFlag = false
                 viewModel.refreshAll()
             }
+        }
+    }
+    LaunchedEffect(needRefresh) {
+        if (needRefresh){
+            viewModel.refreshAll()
+            savedStateHandle?.set("need_refresh", false)
         }
     }
 

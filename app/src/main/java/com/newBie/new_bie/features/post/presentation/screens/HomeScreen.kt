@@ -107,7 +107,10 @@ fun HomeScreen(
     val focusManager = LocalFocusManager.current
     val isRead by notificationViewModel.isRead.collectAsState()
 
-
+    // 게시물 수정하면 자동으로 refresh
+    val savedStateHandle = navController.currentBackStackEntry?.savedStateHandle
+    val needRefresh by savedStateHandle?.getStateFlow("need_refresh", false)?.collectAsState()
+        ?:remember { mutableStateOf(false) }
 
     LaunchedEffect(listState) {
         launch {
@@ -132,6 +135,12 @@ fun HomeScreen(
                         focusManager.clearFocus()
                     }
                 }
+        }
+    }
+    LaunchedEffect(needRefresh) {
+        if (needRefresh){
+            viewModel.refresh()
+            savedStateHandle?.set("need_refresh", false)
         }
     }
 

@@ -29,7 +29,7 @@ class PostDetailViewModel : ViewModel(), CommentBottomSheetViewModel {
     var images : MutableStateFlow<List<PostImageEntity>> = MutableStateFlow(listOf())
     fun fetchPost(id : Int) {
         viewModelScope.launch {
-            val result =repository.fetchPostItem(id)
+            val result = repository.fetchPostItem(id)
             if (result == null)return@launch
             post.value = result
             images.value = result.postImages
@@ -201,4 +201,14 @@ class PostDetailViewModel : ViewModel(), CommentBottomSheetViewModel {
         selectCommentId.value=null
     }
 
+    // 홈 화면으로 이동시 refresh하려고 반환 값을 Boolean으로 반환 받음 -> 이거로 navController의 savedStateHandle(키와 값) 처리해서 HomeScreen에서 LaunchedEffect 처리 할 것
+    suspend fun deletePost(id: Int): Boolean{
+        return try {
+            repository.deletePost(postId = id)
+            true
+        } catch (e: Exception) {
+            Log.e(Constants.TAG, "deletePost: ${e.message}", )
+            false
+        }
+    }
 }
