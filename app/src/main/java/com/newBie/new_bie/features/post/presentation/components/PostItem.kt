@@ -121,7 +121,7 @@ fun PostItem(post : PostWithProfileEntity, navController: NavController, onDelet
         //  내용
         Text(
             text = post.content ?: "내용 없음",
-            maxLines = 3,
+            maxLines = 2,
             overflow = TextOverflow.Ellipsis,
             color = Color.White,
             style = MaterialTheme.typography.bodyMedium

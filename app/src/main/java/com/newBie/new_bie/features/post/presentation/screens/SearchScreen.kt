@@ -62,7 +62,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.newBie.new_bie.core.components.BottomTapBar
 import com.newBie.new_bie.core.utils.Constants
+import com.newBie.new_bie.core.utils.PageSet
 import com.newBie.new_bie.core.utils.Routes
 import com.newBie.new_bie.core.utils.toKoreaLocalDateTime
 import com.newBie.new_bie.core.utils.toTimeAgo
@@ -176,7 +178,8 @@ fun SearchScreen(modifier: Modifier = Modifier, navController: NavController,vie
                     }
                 }
             }
-        }
+        },
+        containerColor = Color.Transparent
     ) { paddingValues ->
         HorizontalPager(
             state = pagerState,
@@ -242,7 +245,9 @@ fun SearchAllView(viewModel: SearchResultViewModel, navController: NavController
                     item {
                         Button(
                             onClick = { viewModel.onTabSelected(2) },
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 10.dp),
                             colors = ButtonDefaults.buttonColors(containerColor = OrangeColor)
                         ) {
                             Text("유저 검색결과 더보기", color = Color.White)
@@ -269,9 +274,12 @@ fun SearchAllView(viewModel: SearchResultViewModel, navController: NavController
                     item {
                         Button(
                             onClick = { viewModel.onTabSelected(1) },
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 10.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = OrangeColor)
                         ) {
-                            Text("게시물 검색결과 더보기")
+                            Text("게시물 검색결과 더보기", color = Color.White)
                         }
                     }
                 }
