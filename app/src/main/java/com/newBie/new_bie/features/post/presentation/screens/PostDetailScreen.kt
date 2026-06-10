@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -190,7 +191,6 @@ fun PostDetailScreen(
                                 Box(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .height(500.dp)
                                 ) {
                                     HorizontalPager(
                                         state = pagerState
@@ -202,7 +202,7 @@ fun PostDetailScreen(
                                             contentDescription = null,
                                             contentScale = ContentScale.Crop, // BoxFit.cover
                                             modifier = Modifier
-                                                .fillMaxSize()
+                                                .fillMaxWidth()
                                                 .clickable(
                                                     onClick = {
                                                         selectedImage = post?.postImages[page]
@@ -293,11 +293,13 @@ fun PostDetailScreen(
                             val zoomState = rememberZoomState()
 
                             Box(
-                                modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
                             ) {
                                 BaseAsyncImage(
                                     model = currentUri,
                                     contentDescription = "확대 이미지",
+                                    contentScale = ContentScale.Fit,
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .sharedElement(

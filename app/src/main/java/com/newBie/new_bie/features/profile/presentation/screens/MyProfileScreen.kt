@@ -197,7 +197,7 @@ fun MyProfileScreen(
                                             onImageClick = { isExpanded = true }
                                         )
 
-                                        Spacer(modifier = Modifier.height(20.dp))
+//                                        Spacer(modifier = Modifier.height(20.dp))
 
                                         Row(modifier = Modifier.fillMaxWidth(),
                                             horizontalArrangement = Arrangement.spacedBy(30.dp, Alignment.CenterHorizontally),

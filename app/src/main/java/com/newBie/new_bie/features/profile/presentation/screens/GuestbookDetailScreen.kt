@@ -218,6 +218,7 @@ fun GuestbookDetailScreen(
                                 BaseAsyncImage(
                                     model = currentUri,
                                     contentDescription = "확대 이미지",
+                                    contentScale = ContentScale.Fit,
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .sharedElement(
