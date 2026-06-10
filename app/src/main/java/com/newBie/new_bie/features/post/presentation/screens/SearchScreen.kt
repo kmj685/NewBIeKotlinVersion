@@ -1,6 +1,7 @@
 package com.newBie.new_bie.features.post.presentation.screens
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -61,6 +62,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.newBie.new_bie.core.utils.Constants
 import com.newBie.new_bie.core.utils.Routes
 import com.newBie.new_bie.core.utils.toKoreaLocalDateTime
 import com.newBie.new_bie.core.utils.toTimeAgo
@@ -107,8 +109,8 @@ fun SearchScreen(modifier: Modifier = Modifier, navController: NavController,vie
     }
 
     // ViewModel의 selectedTab과 PagerState 동기화
-    LaunchedEffect(pagerState.currentPage) {
-        viewModel.onTabSelected(pagerState.currentPage)
+    LaunchedEffect(pagerState.settledPage) {
+        viewModel.onTabSelected(pagerState.settledPage)
     }
 
     LaunchedEffect(selectedTab) {
@@ -150,7 +152,7 @@ fun SearchScreen(modifier: Modifier = Modifier, navController: NavController,vie
 
                 // TabBar (전체, 게시글, 사용자)
                 TabRow(
-                    selectedTabIndex = selectedTab,
+                    selectedTabIndex = pagerState.currentPage,
                     containerColor = BlackColor,
                     contentColor = OrangeColor, // 테마에 정의된 색상 사용
                     indicator = { tabPositions ->
@@ -163,7 +165,7 @@ fun SearchScreen(modifier: Modifier = Modifier, navController: NavController,vie
                     val tabs = listOf("전체", "게시글", "사용자")
                     tabs.forEachIndexed { index, title ->
                         Tab(
-                            selected = selectedTab == index,
+                            selected = pagerState.currentPage == index,
                             onClick = {
                                 coroutineScope.launch { pagerState.animateScrollToPage(index) }
                             },
@@ -212,7 +214,8 @@ fun SearchAllView(viewModel: SearchResultViewModel, navController: NavController
     } else {
         Box(
             modifier = Modifier
-            .fillMaxSize().background(BlackColor)
+                .fillMaxSize()
+                .background(BlackColor)
         ){
             LazyColumn(modifier = Modifier
                 .fillMaxSize()
@@ -222,13 +225,17 @@ fun SearchAllView(viewModel: SearchResultViewModel, navController: NavController
                     item { Text("유저 : ${users.size}명", fontWeight = FontWeight.Bold, color = Color.White) }
                     items(users) { user -> // 전체보기에서는 일부만 표시 (Flutter 로직 대응)
                         SmallProfileComponent(
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    navController.navigate("${Routes.MY_PROFILE}/${user.id}")
+                                },
                             imageUrl = user.profileImage, // 엔티티 필드명에 맞게 조정
                             nickName = user.nickName ?: "",
                             introduce = user.introduction,
                             userId = user.id,
                             onImageClick = {
-                                navController.navigate("user_profile/${user.id}")
+                                navController.navigate("${Routes.MY_PROFILE}/${user.id}")
                             }
                         )
                     }
@@ -292,7 +299,9 @@ fun SearchPostView(viewModel: SearchResultViewModel, navController: NavControlle
     if (posts.isEmpty()) {
         EmptyResultView()
     } else {
-        LazyColumn(state = listState, modifier = Modifier.fillMaxSize().background(BlackColor)) {
+        LazyColumn(state = listState, modifier = Modifier
+            .fillMaxSize()
+            .background(BlackColor)) {
             itemsIndexed(posts) { index, post ->
                 PostItem(
                     post = post,
@@ -325,7 +334,9 @@ fun SearchUserView(viewModel: SearchResultViewModel, navController: NavControlle
     if (users.isEmpty()) {
         EmptyResultView()
     } else {
-        LazyColumn(state = listState, modifier = Modifier.fillMaxSize().background(BlackColor)) {
+        LazyColumn(state = listState, modifier = Modifier
+            .fillMaxSize()
+            .background(BlackColor)) {
             items(users) { user ->
                 SmallProfileComponent(
                     modifier = Modifier.fillMaxWidth(),
@@ -344,7 +355,9 @@ fun SearchUserView(viewModel: SearchResultViewModel, navController: NavControlle
 
 @Composable
 fun EmptyResultView() {
-    Box(modifier = Modifier.fillMaxSize().background(BlackColor), contentAlignment = Alignment.Center) {
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .background(BlackColor), contentAlignment = Alignment.Center) {
         Text("검색 결과가 없습니다.", fontSize = 20.sp, color = Color.White)
     }
 }

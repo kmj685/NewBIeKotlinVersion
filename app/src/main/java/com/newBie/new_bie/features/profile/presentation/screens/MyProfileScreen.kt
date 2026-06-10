@@ -181,7 +181,8 @@ fun MyProfileScreen(
                                 .padding(horizontal = 10.dp)
                         ){
 
-                            LazyColumn(modifier = Modifier.fillMaxSize()) {
+                            LazyColumn(modifier = Modifier
+                                .fillMaxSize()) {
 
                                 // 프로필 상단 영역
                                 item {

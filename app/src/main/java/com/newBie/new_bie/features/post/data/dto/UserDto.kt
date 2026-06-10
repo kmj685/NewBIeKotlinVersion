@@ -8,14 +8,14 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class UserDto(
     val id: String,
-    @SerialName("profile_image") val profileImage: String?,
-    @SerialName("nick_name") val nickName: String?,
+    @SerializedName("profile_image") @SerialName("profile_image") val profileImage: String?,
+    @SerializedName("nick_name") @SerialName("nick_name") val nickName: String?,
     val introduction: String?,
-    @SerialName("created_at") val createdAt: String,
-    @SerialName("unregister_at") val unregisterAt: String?,
-    @SerialName("post_count") val postCount: Int,
-    @SerialName("following_count") val followingCount: Int,
-    @SerialName("follower_count") val followerCount: Int,
+    @SerializedName("created_at") @SerialName("created_at") val createdAt: String,
+    @SerializedName("unregister_at") @SerialName("unregister_at") val unregisterAt: String?,
+    @SerializedName("post_count") @SerialName("post_count") val postCount: Int,
+    @SerializedName("following_count") @SerialName("following_count") val followingCount: Int,
+    @SerializedName("follower_count") @SerialName("follower_count") val followerCount: Int,
     val email: String?,
-    @SerialName("is_blocked") val isBlocked: Boolean
+    @SerializedName("is_blocked") @SerialName("is_blocked") val isBlocked: Boolean
 )
