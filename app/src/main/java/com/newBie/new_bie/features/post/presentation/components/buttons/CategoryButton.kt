@@ -34,6 +34,7 @@ fun CategoryButton(title : String, selectedCategory : String, onSelect : () -> U
             color = GreenColor,
             width = 1.dp,
         ),
+        //
         onClick = {onSelect.invoke()},
         ) {
         Text(title, color = Color.White)
