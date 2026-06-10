@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
@@ -21,6 +23,24 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // 1. local.properties 파일 읽어오기
+        val properties = Properties().apply {
+            val propertiesFile = rootProject.file("local.properties")
+            if (propertiesFile.exists()) {
+                load(propertiesFile.inputStream())
+            }
+        }
+
+        // 2. 파일에서 읽어온 문자열을 코드가 인식할 수 있는 실제 String 값("" 포함)으로 가공
+        val supabaseUrl = properties.getProperty("URL") ?: ""
+        val supabaseAnonKey = properties.getProperty("ANON_KEY") ?: ""
+        val googleClientId = properties.getProperty("GOOGLE_WEB_CLIENT_ID") ?: ""
+
+        // 3. BuildConfig에 안전하게 주입
+        buildConfigField("String", "URL", "\"$supabaseUrl\"")
+        buildConfigField("String", "ANON_KEY", "\"$supabaseAnonKey\"")
+        buildConfigField("String", "GOOGLE_WEB_CLIENT_ID", "\"$googleClientId\"")
     }
 
     buildTypes {
@@ -38,6 +58,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 

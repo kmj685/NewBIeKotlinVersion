@@ -186,16 +186,18 @@ fun NotificationsScreen(
                                 imageUrl = item.senderId.profileImage,
                                 followingPostingUserName = item.senderId.nickName,
                                 followerUserName = item.senderId.nickName,
+                                guestbooksSenderUserName = item.senderId.nickName,
                                 type = item.type,
                                 isRead = item.isRead,
                                 onClick = {
                                     viewModel.readNotification(item.id)
-                                    if (item.targetId.toIntOrNull() != null) { // toIntOrNull: 숫자가 아니라면 null로 반환
-                                        navController.navigate("${Routes.POST}/${item.targetId.toIntOrNull()}")
-                                    } else {
-                                        navController.navigate("${Routes.MY_PROFILE}/${item.targetId}")
+
+                                    when(item.type){
+                                        "NEW_POST" -> navController.navigate("${Routes.POST}/${item.targetId.toIntOrNull()}")
+                                        "NEW_FOLLOWER" -> navController.navigate("${Routes.MY_PROFILE}/${item.targetId}")
+                                        "NEW_GUESTBOOK" -> navController.navigate("${Routes.GUESTBOOKS}/${item.targetId.toIntOrNull()}")
                                     }
-                                }
+                                },
                             )
                         }
                     )

@@ -45,6 +45,7 @@ class FirebaseMessagingService : FirebaseMessagingService() {
         // 1. 데이터 추출
         val postId = remoteMessage.data["postId"]
         val followerId = remoteMessage.data["followerId"]
+        val guestbookId= remoteMessage.data["guestbookId"]
         val type = remoteMessage.data["type"]
 
         Log.d("FCM_LOG", "받은 데이터 - postId: $postId, followerId: $followerId")
@@ -60,6 +61,7 @@ class FirebaseMessagingService : FirebaseMessagingService() {
             // 이동할 화면에 전달할 '택배 물건'들을 인텐트 주머니에 넣습니다.
             putExtra("postId", postId)
             putExtra("followerId", followerId)
+            putExtra("guestbookId", guestbookId)
             putExtra("type", type)
         }
 

@@ -36,6 +36,7 @@ fun NotificationItems(
     type: String,
     followingPostingUserName : String?,
     followerUserName : String?,
+    guestbooksSenderUserName: String?,
     isRead : Boolean,
     onClick : () -> Unit
     ) {
@@ -88,10 +89,13 @@ fun NotificationItems(
                 .heightIn(min = 60.dp)
         ) {
             if (type == "NEW_POST"){
-                Text("${followingPostingUserName}님이 새 게시글을 올렸습니다.", color = Color.White, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                Text("${followingPostingUserName ?: "이름없음"}님이 새 게시글을 올렸습니다.", color = Color.White, maxLines = 2, overflow = TextOverflow.Ellipsis)
             }
             if (type == "NEW_FOLLOWER"){
-                Text("${followerUserName}님이 회원님을 팔로우하기 시작했습니다.", color = Color.White, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                Text("${followerUserName ?: "이름없음"}님이 팔로우하기 시작했습니다.", color = Color.White, maxLines = 2, overflow = TextOverflow.Ellipsis)
+            }
+            if (type == "NEW_GUESTBOOK"){
+                Text("${guestbooksSenderUserName ?: "이름없음"}님이 방명록을 남겼습니다.", color = Color.White, maxLines = 2, overflow = TextOverflow.Ellipsis)
             }
         }
     }

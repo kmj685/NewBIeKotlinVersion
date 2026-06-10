@@ -19,6 +19,8 @@ import com.newBie.new_bie.core.managers.SupabaseManager.supabase
 import com.newBie.new_bie.core.utils.Routes
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.auth.status.SessionStatus
+import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.flow.first
 
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -149,15 +151,27 @@ fun MainScreen(modifier: Modifier = Modifier, notificationIntent: Intent? = null
             // 그 다음 해당 화면으로 추가 이동
             val postId = notificationIntent?.getStringExtra("postId")
             val followerId = notificationIntent?.getStringExtra("followerId")
+            val guestbookId = notificationIntent?.getStringExtra("guestbookId")
 
-            if (!postId.isNullOrEmpty()) {
-                navController.navigate("${Routes.POST}/${postId}") {
-                    launchSingleTop = true
-                }
-            }
-            if (!followerId.isNullOrEmpty()) {
-                navController.navigate("${Routes.MY_PROFILE}/${followerId}") {
-                    launchSingleTop = true
+            // 2. 알림 데이터가 하나라도 있을 때만 라우팅 로직을 시작합니다.
+            if (!postId.isNullOrEmpty() || !followerId.isNullOrEmpty() || !guestbookId.isNullOrEmpty()) {
+
+                // 🔥 중요: 유저가 '인증(Authenticated)' 상태가 될 때까지 기다립니다. (이미 로그인 상태면 즉시 통과)
+                supabase.auth.sessionStatus
+                    .filterIsInstance<SessionStatus.Authenticated>()
+                    .first()
+
+                // 4. 데이터 목적지에 맞게 최종 화면으로 이동시킵니다.
+                when {
+                    !postId.isNullOrEmpty() -> {
+                        navController.navigate("${Routes.POST}/${postId}") { launchSingleTop = true }
+                    }
+                    !followerId.isNullOrEmpty() -> {
+                        navController.navigate("${Routes.MY_PROFILE}/${followerId}") { launchSingleTop = true }
+                    }
+                    !guestbookId.isNullOrEmpty() -> {
+                        navController.navigate("${Routes.GUESTBOOKS}/${guestbookId}") { launchSingleTop = true }
+                    }
                 }
             }
         }

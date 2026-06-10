@@ -1,23 +1,22 @@
 package com.newBie.new_bie.core.utils
 
-import com.newBie.new_bie.core.managers.SupabaseManager.supabase
-import io.github.jan.supabase.auth.auth
+import com.newBie.new_bie.BuildConfig
 
 object Constants {
     val TAG : String = "로그"
 }
 
 object SupabaseInitial {
-    const val URL : String = "https://syfgficcejjgtvpmtkzx.supabase.co"
-    const val ANON_KEY : String = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5ZmdmaWNjZWpqZ3R2cG10a3p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIwNTUwNjksImV4cCI6MjA3NzYzMTA2OX0.Ng9atODZnfRocZPtnIb74s6PLeIJ2HqqSaatj1HbRsc"
-    const val GOOGLE_WEB_CLIENT_ID : String = "970264997757-ageb9icp3uccibddetg0q1q1coeiiklm.apps.googleusercontent.com"
+    val URL : String = BuildConfig.URL
+    val ANON_KEY : String = BuildConfig.ANON_KEY
+    val GOOGLE_WEB_CLIENT_ID : String = BuildConfig.GOOGLE_WEB_CLIENT_ID
 }
 
 object API {
-    const val SUPABASE_BASE_URL : String ="https://syfgficcejjgtvpmtkzx.supabase.co/functions/v1/post-function/"
+    val SUPABASE_BASE_URL : String = "${BuildConfig.URL}/functions/v1/post-function/"
 
-    const val AUTHORIZATION : String = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5ZmdmaWNjZWpqZ3R2cG10a3p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIwNTUwNjksImV4cCI6MjA3NzYzMTA2OX0.Ng9atODZnfRocZPtnIb74s6PLeIJ2HqqSaatj1HbRsc"
-    const val CONTENT_TYPE : String = "application/json"
+    val AUTHORIZATION : String = "Bearer ${BuildConfig.ANON_KEY}"
+    val CONTENT_TYPE : String = "application/json"
 }
 
 object Routes {
