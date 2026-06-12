@@ -23,6 +23,7 @@
 | 홈 / 피드 | 마이 프로필 | 게시글 포스팅 | 방명록 | 실시간 알림 |
 | :---: | :---: | :---: | :---: | :---: |
 | <img src="./images/home.gif" alt="home" width="180"/> | <img src="./images/myProfile.gif" alt="myProfile" width="180"/> | <img src="./images/addPost.gif" alt="addPost" width="180"/> | <img src="./images/addGuestbooks.gif" alt="addGuestbooks" width="180"/> | <img src="./images/alarm.gif" alt="alarm" width="180"/> |
+
 *(추후 실제 앱 스크린샷으로 교체 예정)*
 
 <br/>
