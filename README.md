@@ -24,8 +24,6 @@
 |:-------------------------:| :---: | :---: | :---: | :---: |
 | <img src="images/home.png" alt="home" width="200"> | <img src="images/myProfile.png" alt="home" width="200"> | <img src="images/addPost.png" alt="home" width="200"> | <img src="images/addGuestbooks.png" alt="home" width="200"> | <img src="images/alarm.png" alt="home" width="200"> |
 
-<img src="images/alarm.png" alt="home" width="200">
-*(추후 실제 앱 스크린샷으로 교체 예정)*
 
 <br/>
 
