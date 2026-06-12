@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="./images/newbie_graphics_image.png" alt="App Logo" width="100%"/>
+  <img src="https://github.com/user-attachments/assets/b02711f0-c8a4-4d88-8fbe-d603b2820458" alt="App Logo" width="100%"/>
 
 # /:new_bie
 
