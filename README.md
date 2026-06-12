@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="./iamges/newbie_graphics_image.png" alt="App Logo" width="100%"/>
+  <img src="images/newbie_graphics_image.png" alt="App Logo" width="100%"/>
 
 # /:new_bie
 
@@ -18,11 +18,11 @@
 
 <br/>
 
-## 📸 스크린샷 (Screenshots)
+## 스크린샷 (Screenshots)
 
-|                        홈 / 피드                         | 마이 프로필 | 게시글 포스팅 | 방명록 | 실시간 알림 |
+| 홈 / 피드 | 마이 프로필 | 게시글 포스팅 | 방명록 | 실시간 알림 |
 |:-----------------------------------------------------:| :---: | :---: | :---: | :---: |
-| <img src="./images/home.png" alt="home" width="180"/> | <img src="./images/myProfile.png" alt="myProfile" width="180"/> | <img src="./images/addPost.png" alt="addPost" width="180"/> | <img src="./images/addGuestbooks.png" alt="addGuestbooks" width="180"/> | <img src="./images/alarm.png" alt="alarm" width="180"/> |
+| <img src="images/home.png" alt="Home" width="200"> | <img src="images/myProfile.png" alt="Profile" width="200"> | <img src="images/addPost.png" alt="Add Post" width="200"> | <img src="images/addGuestbooks.png" alt="Add Guestbook" width="200"> | <img src="images/alarm.png" alt="alarm" width="200"/> |
 
 *(추후 실제 앱 스크린샷으로 교체 예정)*
 
