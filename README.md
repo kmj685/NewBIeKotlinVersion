@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="./iamges/newbie_graphics_image.png" alt="App Logo" width="100%"/>
+  <img src="./images/newbie_graphics_image.png" alt="App Logo" width="100%"/>
 
 # /:new_bie
 
