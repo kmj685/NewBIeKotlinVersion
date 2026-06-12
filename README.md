@@ -22,9 +22,8 @@
 
 | 홈 / 피드 | 마이 프로필 | 게시글 포스팅 | 방명록 | 실시간 알림 |
 |:-----------------------------------------------------:| :---: | :---: | :---: | :---: |
-| <img src="images/home.png" alt="Home" width="200"> | <img src="images/myProfile.png" alt="Profile" width="200"> | <img src="images/addPost.png" alt="Add Post" width="200"> | <img src="images/addGuestbooks.png" alt="Add Guestbook" width="200"> | <img src="images/alarm.png" alt="alarm" width="200"/> |
+| <img alt="Home" src="images/home.png" width="200"/> | <img alt="Profile" src="images/myProfile.png" width="200"/> | <img alt="Add Post" src="images/addPost.png" width="200"/> | <img alt="Add Guestbook" src="images/addGuestbooks.png" width="200"/> | <img alt="alarm" src="images/alarm.png" width="200"/> |
 
-*(추후 실제 앱 스크린샷으로 교체 예정)*
 
 <br/>
 
