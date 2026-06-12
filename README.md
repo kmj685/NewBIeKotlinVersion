@@ -19,9 +19,9 @@
 <br/>
 
 ## 스크린샷 (Screenshots)
-| 홈 / 피드 | 마이 프로필 | 팀 프로젝트 매칭 | 실시간 채팅 |
-| :---: | :---: | :---: | :---: |
-| <img src="https://via.placeholder.com/250x500.png?text=Home" width="200"> | <img src="https://via.placeholder.com/250x500.png?text=Profile" width="200"> | <img src="https://via.placeholder.com/250x500.png?text=Team+Project" width="200"> | <img src="https://via.placeholder.com/250x500.png?text=Chat" width="200"> |
+|                 홈 / 피드                 |                   마이 프로필                   |                 게시글 포스팅                  |                      방명록                       |                                 실시간 알림 |
+|:--------------------------------------:|:------------------------------------------:|:----------------------------------------:|:----------------------------------------------:|---------------------------------------:|
+| <img src="./images/home" width="200"/> | <img src="./images/myProfile" width="200"> | <img src="./iamges/addPost" width="200"> | <img src="./images/addGuestbooks" width="200"> | <img src="./images/alarm" width="200"> |
 
 *(추후 실제 앱 스크린샷으로 교체 예정)*
 
