@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.newBie.new_bie.core.managers.SupabaseManager
+import com.newBie.new_bie.core.utils.BottomSheetType
 import com.newBie.new_bie.core.utils.Constants
 import com.newBie.new_bie.features.post.data.repositories.PostRepositoryImpl
 import com.newBie.new_bie.features.post.domain.entities.CommentWithProfileEntity
@@ -12,7 +13,6 @@ import com.newBie.new_bie.features.post.domain.entities.PostWithProfileEntity
 import com.newBie.new_bie.features.post.domain.entities.UserEntity
 import com.newBie.new_bie.features.post.domain.repositories.PostRepository
 import com.newBie.new_bie.features.post.presentation.interfaces.CommentBottomSheetViewModel
-import com.newBie.new_bie.features.post.presentation.viewModels.HomeViewModel.BottomSheetType
 import io.github.jan.supabase.auth.auth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
@@ -21,7 +21,6 @@ import kotlin.math.log
 
 class SearchResultViewModel : ViewModel(), CommentBottomSheetViewModel {
 
-    enum class BottomSheetType { COMMENT, LIKES }
     var bottomSheetType: MutableStateFlow<BottomSheetType?> = MutableStateFlow(null)
     val repository: PostRepository = PostRepositoryImpl()
     val posts = MutableStateFlow<List<PostWithProfileEntity>>(listOf())

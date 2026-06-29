@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.newBie.new_bie.core.managers.SupabaseManager
+import com.newBie.new_bie.core.utils.BottomSheetType
 import com.newBie.new_bie.core.utils.Constants
 import com.newBie.new_bie.features.post.data.repositories.PostRepositoryImpl
 import com.newBie.new_bie.features.post.domain.entities.CommentWithProfileEntity
@@ -26,6 +27,7 @@ class PostDetailViewModel : ViewModel(), CommentBottomSheetViewModel {
     override val selectCommentId: MutableStateFlow<Int?> = MutableStateFlow(null)
     override var userCommentInput: MutableStateFlow<String> = MutableStateFlow("")
     override val editUserCommentInput: MutableStateFlow<String> = MutableStateFlow("")
+    var bottomSheetType: MutableStateFlow<BottomSheetType?> = MutableStateFlow(null)
 
 
     var images : MutableStateFlow<List<PostImageEntity>> = MutableStateFlow(listOf())
@@ -106,13 +108,34 @@ class PostDetailViewModel : ViewModel(), CommentBottomSheetViewModel {
     override fun updateEditUserInput(input: String) {
         editUserCommentInput.value=input
     }
-    fun fetchComments() {
+
+    // 좋아요 유저 리스트
+    fun fetchLikeUsers(id: Int){
         viewModelScope.launch {
             try {
-                val id = post.value?.id
-                if (id == null) return@launch
-                val commentsList: List<CommentWithProfileEntity> = repository.fetchComments(id)
-                comments.value = commentsList
+                selectPostId.value = id
+                bottomSheetType.value = BottomSheetType.LIKES
+
+                selectPostId.value?.let { it ->
+                    val likeUser: List<LikesEntity> = repository.fetchLikeUsers(it)
+                    likeUserList.value = likeUser
+                }
+            } catch (e: Exception) {
+                Log.d(Constants.TAG, "fetchComments Faile: $e")
+            }
+        }
+    }
+
+    fun fetchComments(id: Int) {
+        viewModelScope.launch {
+            try {
+                selectPostId.value = id
+                bottomSheetType.value = BottomSheetType.COMMENT
+
+                selectPostId.value?.let { it ->
+                    val commentsList: List<CommentWithProfileEntity> = repository.fetchComments(it)
+                    comments.value = commentsList
+                }
             } catch (e: Exception) {
                 Log.d(Constants.TAG, "fetchComments Faile: $e")
             }
@@ -137,7 +160,7 @@ class PostDetailViewModel : ViewModel(), CommentBottomSheetViewModel {
                 return@launch
             }
             userCommentInput.value=""
-            fetchComments()
+            fetchComments(postId)
             Log.d(Constants.TAG, "insertComment 처리 후처리 ")
         }
     }
@@ -187,7 +210,7 @@ class PostDetailViewModel : ViewModel(), CommentBottomSheetViewModel {
         }
         selectCommentId.value=null
         editUserCommentInput.value=""
-        fetchComments()
+        selectPostId.value?.let { fetchComments(it) }
     }
 
     override fun onCancel() {

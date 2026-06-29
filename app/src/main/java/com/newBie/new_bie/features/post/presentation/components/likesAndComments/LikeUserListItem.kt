@@ -85,7 +85,7 @@ fun LikeUserListItem(
     Row(
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.Top,
-        modifier = modifier.padding(vertical = 16.dp, horizontal = 32.dp)
+        modifier = modifier.padding(8.dp)
     ) {
         if (imageUrl != null) {
             BaseAsyncImage(
@@ -127,11 +127,13 @@ fun LikeUserListItem(
                 }
                 Text(timeData,
                     style = AppTextStyle.Date,
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(end = 8.dp),
                     textAlign = TextAlign.End
                 )
             }
-                Text(introduce ?: "", color = Color.LightGray)
+            Text(introduce ?: "", color = Color.LightGray)
         }
     }
 }

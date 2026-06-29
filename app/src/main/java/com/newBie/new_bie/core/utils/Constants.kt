@@ -64,4 +64,6 @@ enum class PageType{
 enum class OrderByType{
     NEW_FIRST, OLD_FIRST, LIKES_FIRST
 }
-
+ enum class BottomSheetType{
+     COMMENT, LIKES
+ }

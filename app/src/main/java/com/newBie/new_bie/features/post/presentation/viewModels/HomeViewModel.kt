@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.newBie.new_bie.core.managers.SupabaseManager
+import com.newBie.new_bie.core.utils.BottomSheetType
 import com.newBie.new_bie.core.utils.Constants
 import com.newBie.new_bie.core.utils.OrderByType
 import com.newBie.new_bie.core.utils.PageType
@@ -21,7 +22,6 @@ import kotlinx.coroutines.launch
 
 class HomeViewModel : ViewModel(), CommentBottomSheetViewModel {
 
-    enum class BottomSheetType { COMMENT, LIKES }
     var bottomSheetType: MutableStateFlow<BottomSheetType?> = MutableStateFlow(null)
     private val repository : PostRepository = PostRepositoryImpl()
     val pageType : PageType = PageType.HOME

@@ -58,6 +58,7 @@ import coil3.compose.AsyncImage
 import com.newBie.new_bie.core.components.BaseAsyncImage
 import com.newBie.new_bie.core.components.TopBarLayout
 import com.newBie.new_bie.core.managers.SupabaseManager
+import com.newBie.new_bie.core.utils.BottomSheetType
 import com.newBie.new_bie.core.utils.Routes
 import com.newBie.new_bie.core.utils.toKoreaLocalDateTime
 import com.newBie.new_bie.core.utils.toTimeAgo
@@ -67,6 +68,7 @@ import com.newBie.new_bie.features.post.domain.entities.PostUserEntity
 import com.newBie.new_bie.features.post.presentation.components.SmallProfileComponent
 import com.newBie.new_bie.features.post.presentation.components.buttons.PostMoreVertButton
 import com.newBie.new_bie.features.post.presentation.components.likesAndComments.CommentBottomSheet
+import com.newBie.new_bie.features.post.presentation.components.likesAndComments.LikeUserListBottomSheet
 import com.newBie.new_bie.features.post.presentation.interfaces.CommentBottomSheetViewModel
 import com.newBie.new_bie.features.post.presentation.viewModels.HomeViewModel
 import com.newBie.new_bie.features.post.presentation.viewModels.PostDetailViewModel
@@ -86,9 +88,10 @@ fun PostDetailScreen(
     notificationViewModel: NotificationViewModel,
     id: Int) {
 
-
+    val bottomSheetType by viewModel.bottomSheetType.collectAsState()
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showSheet by remember { mutableStateOf(false) }
+    val selectPostId by viewModel.selectPostId.collectAsState()
     val post by viewModel.post.collectAsState()
     val images by viewModel.images.collectAsState()
     val user: PostUserEntity? = post?.user
@@ -111,9 +114,6 @@ fun PostDetailScreen(
         if (id != 0) {
             viewModel.fetchPost(id)
         }
-    }
-    LaunchedEffect(post) {
-        viewModel.fetchComments()
     }
 
 
@@ -220,10 +220,10 @@ fun PostDetailScreen(
                         }
                         Row(modifier = Modifier.fillMaxWidth().padding(10.dp)) {
                             Row(
-                                modifier = Modifier.clickable(onClick = {viewModel.likeToggle()}),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Icon(
+                                    modifier = Modifier.clickable(onClick = {viewModel.likeToggle()}),
                                     imageVector = if (post?.isLiked == true)
                                         Icons.Default.Favorite
                                     else
@@ -235,6 +235,7 @@ fun PostDetailScreen(
                                 Spacer(modifier = Modifier.width(4.dp))
 
                                 Text(
+                                    modifier = Modifier.clickable(onClick = {viewModel.fetchLikeUsers(post?.id ?:0)}),
                                     text = "${post?.likesCount ?: 0}",
                                     color = Color.White
                                 )
@@ -244,8 +245,7 @@ fun PostDetailScreen(
 
                             Row(
                                 modifier = Modifier.clickable(onClick = {
-                                    viewModel.fetchComments()
-                                    showSheet = true
+                                    viewModel.fetchComments(post?.id ?: 0)
                                 }),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
@@ -263,14 +263,28 @@ fun PostDetailScreen(
                                 )
                             }
                         }
-                        if (showSheet) {
-                            CommentBottomSheet(
-                                viewModel= viewModel,
-                                screenHeight = screenHeight,
-                                sheetState = sheetState,
-                                onDismiss = {showSheet = false},
-                                navController = navController
-                            )
+                        if (selectPostId != null) {
+                            when(bottomSheetType){
+                                BottomSheetType.COMMENT -> {
+                                    CommentBottomSheet(
+                                        viewModel= viewModel,
+                                        screenHeight = screenHeight,
+                                        sheetState = sheetState,
+                                        onDismiss = {},
+                                        navController = navController
+                                    )
+                                }
+                                BottomSheetType.LIKES -> {
+                                    LikeUserListBottomSheet(
+                                        viewModel= viewModel,
+                                        screenHeight = screenHeight,
+                                        sheetState = sheetState,
+                                        onDismiss = {},
+                                        navController = navController
+                                    )
+                                }
+                                null -> {}
+                            }
                         }
 
                     }

@@ -67,10 +67,10 @@ import com.newBie.new_bie.ui.theme.OrangeColor
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalFocusManager
 import com.newBie.new_bie.core.components.TopBarLayout
+import com.newBie.new_bie.core.utils.BottomSheetType
 import com.newBie.new_bie.features.notification.presentation.viewModels.NotificationViewModel
 import com.newBie.new_bie.features.post.presentation.components.likesAndComments.CommentBottomSheet
 import com.newBie.new_bie.features.post.presentation.components.likesAndComments.LikeUserListBottomSheet
-import com.newBie.new_bie.features.post.presentation.viewModels.HomeViewModel.BottomSheetType
 import com.newBie.new_bie.ui.theme.GridColor
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch

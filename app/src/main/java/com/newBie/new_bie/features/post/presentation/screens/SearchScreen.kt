@@ -63,6 +63,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.newBie.new_bie.core.components.BottomTapBar
+import com.newBie.new_bie.core.utils.BottomSheetType
 import com.newBie.new_bie.core.utils.Constants
 import com.newBie.new_bie.core.utils.PageSet
 import com.newBie.new_bie.core.utils.Routes
@@ -198,7 +199,7 @@ fun SearchScreen(modifier: Modifier = Modifier, navController: NavController,vie
         }
         if (selectPostId != null){
             when(bottomSheetType){
-                SearchResultViewModel.BottomSheetType.COMMENT -> {
+                BottomSheetType.COMMENT -> {
                     CommentBottomSheet(
                         viewModel = viewModel,
                         screenHeight=screenHeight,
@@ -206,7 +207,7 @@ fun SearchScreen(modifier: Modifier = Modifier, navController: NavController,vie
                         onDismiss = {},
                         navController = navController)
                 }
-                SearchResultViewModel.BottomSheetType.LIKES -> {
+                BottomSheetType.LIKES -> {
                     LikeUserListBottomSheet(
                         viewModel = viewModel,
                         screenHeight = screenHeight,
