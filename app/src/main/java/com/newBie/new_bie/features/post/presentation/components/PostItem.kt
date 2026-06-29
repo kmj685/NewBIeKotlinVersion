@@ -56,7 +56,14 @@ import io.github.jan.supabase.auth.auth
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun PostItem(post : PostWithProfileEntity, navController: NavController, onDelete : () -> Unit, onLike : () -> Unit, onClick : (Int) -> Unit = {}, onComments: () -> Unit = {}) {
+fun PostItem(
+    post : PostWithProfileEntity,
+    navController: NavController,
+    onDelete : () -> Unit,
+    onLike : () -> Unit,
+    onLikeCountClick: () -> Unit ={},
+    onClick : (Int) -> Unit = {},
+    onComments: () -> Unit = {}) {
 
     val currentUserId = SupabaseManager.supabase.auth.currentUserOrNull()?.id
     Column(
@@ -160,10 +167,10 @@ fun PostItem(post : PostWithProfileEntity, navController: NavController, onDelet
             .padding(end = 8.dp),
             horizontalArrangement = Arrangement.End) {
             Row(
-                modifier = Modifier.clickable { onLike() },
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
+                    modifier = Modifier.clickable { onLike() },
                     imageVector =
                         Icons.Default.Favorite,
                     contentDescription = null,
@@ -173,6 +180,7 @@ fun PostItem(post : PostWithProfileEntity, navController: NavController, onDelet
                 Spacer(modifier = Modifier.width(4.dp))
 
                 Text(
+                    modifier = Modifier.clickable{ onLikeCountClick() },
                     text = "${post.likesCount}",
                     color = Color.White
                 )

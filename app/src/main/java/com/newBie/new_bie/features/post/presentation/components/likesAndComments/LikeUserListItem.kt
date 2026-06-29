@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -47,6 +48,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -60,24 +62,14 @@ import com.newBie.new_bie.ui.theme.OrangeColor
 import io.github.jan.supabase.auth.auth
 
 @Composable
-fun CommentItem(
+fun LikeUserListItem(
     modifier: Modifier,
     imageUrl : String?,
-    commentId: Int,
     nickName : String,
     timeData : String,
     introduce : String?,
     userId : String?,
     onImageClick : () -> Unit,
-    onSelect:()-> Unit,
-    onDelete: ()-> Unit={},
-    selectedId: Int?,
-    onUpdateInput:(String) -> Unit = {},
-    userInput: String,
-    onCancel: () -> Unit,
-    onUpdate:()-> Unit,
-    focusManager: FocusManager,
-    focusRequester: FocusRequester,
 ) {
     val imageSize = 40.dp
     val currentUserId = SupabaseManager.supabase.auth.currentUserOrNull()?.id
@@ -93,7 +85,7 @@ fun CommentItem(
     Row(
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.Top,
-        modifier = modifier.padding(8.dp)
+        modifier = modifier.padding(vertical = 16.dp, horizontal = 32.dp)
     ) {
         if (imageUrl != null) {
             BaseAsyncImage(
@@ -120,7 +112,8 @@ fun CommentItem(
 
             Row(
                 horizontalArrangement = Arrangement.spacedBy(3.dp),
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
             ){
                 Text(nickName, color = OrangeColor)
                 if (userId == masterId){
@@ -132,97 +125,13 @@ fun CommentItem(
                             .padding(horizontal = 2.dp)
                     )
                 }
-                Spacer(modifier = Modifier.width(5.dp))
-                Text(timeData, style = AppTextStyle.Date)
+                Text(timeData,
+                    style = AppTextStyle.Date,
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.End
+                )
             }
-
-            if (selectedId == commentId) {
-                Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                    OutlinedTextField(
-                        value = userInput,
-                        onValueChange = { onUpdateInput.invoke(it) },
-                        modifier = Modifier.weight(1f).focusRequester(focusRequester),
-                        textStyle = TextStyle(color = Color.White),
-                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
-                        keyboardActions = KeyboardActions(
-                            onSend = {
-                                if (userInput.isNotBlank()) {
-                                    onUpdate.invoke()
-                                    focusManager.clearFocus(true)
-                                }
-                            }
-                        ),
-
-                    )
-                    Column() {
-                        IconButton(onClick = {
-                            onUpdate.invoke()
-                            focusManager.clearFocus(true)
-                        }) {
-                            Icon(Icons.Filled.CheckCircle, contentDescription = null, tint = OrangeColor)
-                        }
-                        IconButton(onClick = {
-                            onCancel.invoke()
-                            focusManager.clearFocus(true)
-                        }) {
-                            Icon(Icons.Filled.Cancel, contentDescription = null, tint = Color.Gray)
-                        }
-                    }
-
-                }
-            } else{
-                Text(introduce ?: "", color = Color.White)
-            }
-        }
-        var expanded by remember { mutableStateOf(false) }
-        if (selectedId == null){
-            Box {
-                IconButton(onClick = { expanded = !expanded }) {
-                    Icon(
-                        Icons.Default.MoreVert,
-                        contentDescription = "More options",
-                        tint = OrangeColor
-                    )
-                }
-                if (userId == currentUserId) {
-                    DropdownMenu(
-                        expanded = expanded,
-                        onDismissRequest = { expanded = false }
-                    ) {
-                        DropdownMenuItem(
-                            text = { Text("수정") },
-                            onClick = {
-                                expanded=false
-                                onSelect()
-                            }
-                        )
-                        DropdownMenuItem(
-                            text = { Text("삭제") },
-                            onClick = {
-                                expanded=false
-                                onDelete.invoke()
-                            }
-                        )
-                    }
-                } else {
-                    Log.d(Constants.TAG, "currentId: ${currentUserId}")
-                    Log.d(Constants.TAG, "userId: ${userId} ")
-                    DropdownMenu(
-                        expanded = expanded,
-                        onDismissRequest = { expanded = false }
-                    ) {
-                        DropdownMenuItem(
-                            text = { Text("신고") },
-                            onClick = { /* Do something... */ }
-                        )
-                        DropdownMenuItem(
-                            text = { Text("차단") },
-                            onClick = { /* Do something... */ }
-                        )
-                    }
-                }
-
-            }
+                Text(introduce ?: "", color = Color.LightGray)
         }
     }
 }

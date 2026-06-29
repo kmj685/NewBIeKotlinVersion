@@ -152,6 +152,12 @@ class PostRepositoryImpl : PostRepository {
         )
     }
 
+    override suspend fun fetchLikeUsers(postId: Int): List<LikesEntity> {
+        return datasource.fetchLikeUserList(
+            postId = postId
+        )
+    }
+
     override suspend fun fetchUser(userId: String): UserEntity? {
         return datasource.fetchUser(userId)
     }

@@ -69,6 +69,8 @@ import androidx.compose.ui.platform.LocalFocusManager
 import com.newBie.new_bie.core.components.TopBarLayout
 import com.newBie.new_bie.features.notification.presentation.viewModels.NotificationViewModel
 import com.newBie.new_bie.features.post.presentation.components.likesAndComments.CommentBottomSheet
+import com.newBie.new_bie.features.post.presentation.components.likesAndComments.LikeUserListBottomSheet
+import com.newBie.new_bie.features.post.presentation.viewModels.HomeViewModel.BottomSheetType
 import com.newBie.new_bie.ui.theme.GridColor
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
@@ -85,6 +87,7 @@ fun HomeScreen(
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val selectPostId by viewModel.selectPostId.collectAsState()
+    val bottomSheetType by viewModel.bottomSheetType.collectAsState()
     val commentsList by viewModel.comments.collectAsState()
 
     var userInput by remember { mutableStateOf("") }
@@ -165,7 +168,7 @@ fun HomeScreen(
         Box(modifier = modifier
             .padding(innerPadding)
             .fillMaxSize()
-            .pointerInput(Unit){
+            .pointerInput(Unit) {
                 detectTapGestures(onTap = {
                     focusManager.clearFocus()
                 })
@@ -318,6 +321,7 @@ fun HomeScreen(
                                     onLike = { viewModel.likeToggle(index, post.id) },
                                     onDelete = { viewModel.deletePost(post.id) },
                                     onClick = { navController.navigate("${Routes.POST}/${it}") },
+                                    onLikeCountClick = { viewModel.fetchLikeUsers(post.id)},
                                     onComments = { viewModel.fetchComments(post.id) },
                                     navController = navController
                                 )
@@ -329,13 +333,28 @@ fun HomeScreen(
 
                 }
                 if (selectPostId != null) {
-                    CommentBottomSheet(
-                        viewModel = viewModel,
-                        screenHeight = screenHeight,
-                        sheetState = sheetState,
-                        onDismiss = {},
-                        navController = navController
-                    )
+                    when (bottomSheetType) {
+                        BottomSheetType.COMMENT -> {
+                            CommentBottomSheet(
+                                viewModel = viewModel,
+                                screenHeight = screenHeight,
+                                sheetState = sheetState,
+                                onDismiss = {},
+                                navController = navController
+                            )
+                        }
+                        BottomSheetType.LIKES -> {
+                            LikeUserListBottomSheet(
+                                viewModel = viewModel,
+                                screenHeight = screenHeight,
+                                sheetState = sheetState,
+                                onDismiss = {},
+                                navController = navController
+                            )
+                        }
+                        null -> {}
+                    }
+
                 }
             }
         }

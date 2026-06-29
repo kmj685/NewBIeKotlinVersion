@@ -72,6 +72,7 @@ import com.newBie.new_bie.features.post.presentation.components.PostItem
 import com.newBie.new_bie.features.post.presentation.components.SmallProfileComponent
 import com.newBie.new_bie.features.post.presentation.components.likesAndComments.CommentBottomSheet
 import com.newBie.new_bie.features.post.presentation.components.likesAndComments.CommentItem
+import com.newBie.new_bie.features.post.presentation.components.likesAndComments.LikeUserListBottomSheet
 import com.newBie.new_bie.features.post.presentation.viewModels.SearchResultViewModel
 import com.newBie.new_bie.ui.theme.BlackColor
 import com.newBie.new_bie.ui.theme.OrangeColor
@@ -102,6 +103,7 @@ fun SearchScreen(modifier: Modifier = Modifier, navController: NavController,vie
     val focusRequester = remember { FocusRequester() }
     // 포커스 매니저는 포커스를 해제할 때 사용됨(여기서는)
     val focusManager = LocalFocusManager.current
+    val bottomSheetType by viewModel.bottomSheetType.collectAsState()
 
     // 🔥 [추가] 처음 진입 시 검색어가 있다면 검색 실행
     LaunchedEffect(Unit) {
@@ -195,12 +197,26 @@ fun SearchScreen(modifier: Modifier = Modifier, navController: NavController,vie
             }
         }
         if (selectPostId != null){
-            CommentBottomSheet(
-                viewModel = viewModel,
-                screenHeight=screenHeight,
-                sheetState=sheetState,
-                onDismiss = {},
-                navController = navController)
+            when(bottomSheetType){
+                SearchResultViewModel.BottomSheetType.COMMENT -> {
+                    CommentBottomSheet(
+                        viewModel = viewModel,
+                        screenHeight=screenHeight,
+                        sheetState=sheetState,
+                        onDismiss = {},
+                        navController = navController)
+                }
+                SearchResultViewModel.BottomSheetType.LIKES -> {
+                    LikeUserListBottomSheet(
+                        viewModel = viewModel,
+                        screenHeight = screenHeight,
+                        sheetState = sheetState,
+                        onDismiss = {},
+                        navController = navController
+                    )
+                }
+                null -> {}
+            }
         }
 
     }
@@ -273,7 +289,8 @@ fun SearchAllView(viewModel: SearchResultViewModel, navController: NavController
                             onDelete = { viewModel.deletePost(post.id) },
                             onClick = { navController.navigate("${Routes.POST}/${it}") },
                             onComments = { viewModel.fetchComments(post.id) },
-                            navController = navController
+                            navController = navController,
+                            onLikeCountClick = {viewModel.fetchLikeUsers(post.id)}
                         )
                     }
                     item {
@@ -322,7 +339,8 @@ fun SearchPostView(viewModel: SearchResultViewModel, navController: NavControlle
                     onDelete = { viewModel.deletePost(post.id) },
                     onClick = {navController.navigate("${Routes.POST}/${it}")},
                     onComments = {viewModel.fetchComments(post.id)},
-                    navController = navController
+                    navController = navController,
+                    onLikeCountClick = {viewModel.fetchLikeUsers(post.id)}
                 )
             }
         }
@@ -358,7 +376,7 @@ fun SearchUserView(viewModel: SearchResultViewModel, navController: NavControlle
                     introduce = user.introduction,
                     userId = user.id,
                     onImageClick = {
-                        navController.navigate("user_profile/${user.id}")
+                        navController.navigate("${Routes.MY_PROFILE}/${user.id}")
                     }
                 )
             }

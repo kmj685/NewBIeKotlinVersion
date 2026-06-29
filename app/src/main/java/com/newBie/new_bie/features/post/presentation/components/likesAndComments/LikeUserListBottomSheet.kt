@@ -56,8 +56,8 @@ import kotlinx.coroutines.launch
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CommentBottomSheet(viewModel : CommentBottomSheetViewModel, screenHeight: Dp , sheetState: SheetState, onDismiss: () -> Unit, navController: NavController){
-    val commentsList by viewModel.comments.collectAsState()
+fun LikeUserListBottomSheet(viewModel : CommentBottomSheetViewModel, screenHeight: Dp , sheetState: SheetState, onDismiss: () -> Unit, navController: NavController){
+    val likeUserList by viewModel.likeUserList.collectAsState()
     val userCommentInput by viewModel.userCommentInput.collectAsState()
     val selectedCommentId by viewModel.selectCommentId.collectAsState()
     val editUserCommentInput by viewModel.editUserCommentInput.collectAsState()
@@ -86,14 +86,14 @@ fun CommentBottomSheet(viewModel : CommentBottomSheetViewModel, screenHeight: Dp
                 .heightIn(min = screenHeight * 0.6f, max = screenHeight * 0.6f),
             horizontalAlignment = Alignment.CenterHorizontally
         ){
-            BottomSheetTopBatTitle("댓글")
+            BottomSheetTopBatTitle("좋아요")
 //            HorizontalDivider(
 //                thickness = 0.5.dp,
 //                color = Color.LightGray,
 //                modifier = Modifier
 //                    .padding(5.dp)
 //            )
-            if (commentsList.isEmpty()) {
+            if (likeUserList.isEmpty()) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -101,49 +101,30 @@ fun CommentBottomSheet(viewModel : CommentBottomSheetViewModel, screenHeight: Dp
                         .weight(1f),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("댓글이 없습니다.", fontSize = 20.sp, color = Color.Gray)
+                    Text("좋아요가 없습니다.", fontSize = 20.sp, color = Color.Gray)
                 }
             } else {
                 LazyColumn(modifier= Modifier
                     .fillMaxWidth()
                     .weight(1f)) {
-                    items(commentsList) { item ->
-                        CommentItem(
+                    items(likeUserList) { item ->
+                        LikeUserListItem(
                             modifier = Modifier.fillMaxWidth(),
-                            imageUrl = item.user.profileImage,
-                            commentId = item.id,
-                            nickName = item.user.nickName?:"",
+                            imageUrl = item.userId.profileImage,
+                            nickName = item.userId.nickName ?:"",
                             timeData = item.createdAt.toKoreaLocalDateTime().toTimeAgo(),
-                            introduce = item.content,
-                            userId = item.user.id,
+                            introduce = item.userId.introduction,
+                            userId = item.userId.id,
                             onImageClick = { scope.launch {
                                 sheetState.hide()
                             }.invokeOnCompletion {
                                 viewModel.unSelectPostId()
                                 onDismiss()
-                                navController.navigate("${Routes.MY_PROFILE}/${item.user.id}")
-                            } },
-                            selectedId = selectedCommentId,
-                            onSelect = {viewModel.onSelectComment(commentId = item.id, content = item.content?:"")},
-                            onUpdateInput = {viewModel.updateEditUserInput(it)},
-                            userInput = editUserCommentInput,
-                            onCancel = {viewModel.onCancel()},
-                            onUpdate = {
-                                item.user.id.let{
-                                    viewModel.editComment(it)
-                                }
-                            },
-                            onDelete = {viewModel.deleteComment(item.id, item.user.id)},
-                            focusManager = focusManager,
-                            focusRequester = editCommentFocusRequester
+                                navController.navigate("${Routes.MY_PROFILE}/${item.userId.id}")
+                            }},
                         )
                     }
                 }
-            }
-            Row(
-
-            ) {
-                CommentBottomSheetTextField(userCommentInput = userCommentInput, onValueChange = {viewModel.updateUserInput(it)}, onSend = {viewModel.insertComment()}, focusRequester = addCommentFocusRequester, focusManager= focusManager)
             }
         }
 

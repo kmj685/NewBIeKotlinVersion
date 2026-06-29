@@ -133,7 +133,7 @@ fun GuestbookDetailScreen(
                                     introduce = guestbook?.createdAt?.toKoreaLocalDateTime()?.toTimeAgo(),
                                     userId = guestbook?.senderId?.id ?: "",
                                     {
-                                        navController.navigate("${Routes.MY_PROFILE}/{${guestbook?.senderId?.id}}")
+                                        navController.navigate("${Routes.MY_PROFILE}/${guestbook?.senderId?.id}")
                                     }
                                 )
                             }

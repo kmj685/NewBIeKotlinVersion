@@ -7,10 +7,12 @@ import com.newBie.new_bie.core.managers.SupabaseManager
 import com.newBie.new_bie.core.utils.Constants
 import com.newBie.new_bie.features.post.data.repositories.PostRepositoryImpl
 import com.newBie.new_bie.features.post.domain.entities.CommentWithProfileEntity
+import com.newBie.new_bie.features.post.domain.entities.LikesEntity
 import com.newBie.new_bie.features.post.domain.entities.PostWithProfileEntity
 import com.newBie.new_bie.features.post.domain.entities.UserEntity
 import com.newBie.new_bie.features.post.domain.repositories.PostRepository
 import com.newBie.new_bie.features.post.presentation.interfaces.CommentBottomSheetViewModel
+import com.newBie.new_bie.features.post.presentation.viewModels.HomeViewModel.BottomSheetType
 import io.github.jan.supabase.auth.auth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
@@ -19,6 +21,8 @@ import kotlin.math.log
 
 class SearchResultViewModel : ViewModel(), CommentBottomSheetViewModel {
 
+    enum class BottomSheetType { COMMENT, LIKES }
+    var bottomSheetType: MutableStateFlow<BottomSheetType?> = MutableStateFlow(null)
     val repository: PostRepository = PostRepositoryImpl()
     val posts = MutableStateFlow<List<PostWithProfileEntity>>(listOf())
     val users = MutableStateFlow<List<UserEntity>>(listOf())
@@ -27,6 +31,7 @@ class SearchResultViewModel : ViewModel(), CommentBottomSheetViewModel {
     val selectedTab = MutableStateFlow<Int>(0)
 
     override var comments : MutableStateFlow<List<CommentWithProfileEntity>> = MutableStateFlow<List<CommentWithProfileEntity>>(listOf())
+    override val likeUserList: MutableStateFlow<List<LikesEntity>> = MutableStateFlow(listOf())
     override var selectPostId : MutableStateFlow<Int?> = MutableStateFlow(null)
     override val selectCommentId: MutableStateFlow<Int?> = MutableStateFlow(null)
 
@@ -66,7 +71,7 @@ class SearchResultViewModel : ViewModel(), CommentBottomSheetViewModel {
 
     // 유저 더 가져오기 (Paging)
     fun fetchMoreUsers() {
-        if (isUserLoading) return
+        if (isUserLoading || keyword.value.isBlank()) return
         viewModelScope.launch {
             isUserLoading = true
             userCurrentPage++
@@ -86,7 +91,7 @@ class SearchResultViewModel : ViewModel(), CommentBottomSheetViewModel {
 
     // 게시물 더 가져오기 (Paging)
     fun fetchMorePosts() {
-        if (isPostLoading) return
+        if (isPostLoading || keyword.value.isBlank()) return
         viewModelScope.launch {
             isPostLoading = true
             postCurrentPage++
@@ -145,12 +150,29 @@ class SearchResultViewModel : ViewModel(), CommentBottomSheetViewModel {
             }
         }
     }
+    // 좋아요 유저 리스트
+    fun fetchLikeUsers(id: Int){
+        viewModelScope.launch {
+            try {
+                selectPostId.value = id
+                bottomSheetType.value = BottomSheetType.LIKES
+
+                selectPostId.value?.let { it ->
+                    val likeUser: List<LikesEntity> = repository.fetchLikeUsers(it)
+                    likeUserList.value = likeUser
+                }
+            } catch (e: Exception) {
+                Log.d(Constants.TAG, "fetchComments Faile: $e")
+            }
+        }
+    }
 
     //댓글 기능
     fun fetchComments(id: Int) {
         viewModelScope.launch {
             try {
                 selectPostId.value = id
+                bottomSheetType.value = BottomSheetType.COMMENT
                 selectPostId.value?.let { it ->
                     val commentsList: List<CommentWithProfileEntity> = repository.fetchComments(it)
                     comments.value = commentsList

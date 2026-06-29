@@ -1,9 +1,11 @@
 package com.newBie.new_bie.features.post.presentation.interfaces
 
 import com.newBie.new_bie.features.post.domain.entities.CommentWithProfileEntity
+import com.newBie.new_bie.features.post.domain.entities.LikesEntity
 import kotlinx.coroutines.flow.MutableStateFlow
 
 interface CommentBottomSheetViewModel {
+    val likeUserList: MutableStateFlow<List<LikesEntity>>
     val comments: MutableStateFlow<List<CommentWithProfileEntity>>
     val selectPostId: MutableStateFlow<Int?>
     val selectCommentId: MutableStateFlow<Int?>

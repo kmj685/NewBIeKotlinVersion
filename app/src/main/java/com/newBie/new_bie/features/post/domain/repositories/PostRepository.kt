@@ -36,4 +36,5 @@ interface PostRepository {
     suspend fun fetchUserPosts(userId: String, currentIndex: Int = 1, perPage: Int = 5): List<PostWithProfileEntity>
 
     suspend fun updateUserProfile(userId: String, image: String?, nickname: String, introduction: String)
+    suspend fun fetchLikeUsers(postId: Int): List<LikesEntity>
 }

@@ -121,7 +121,7 @@ fun LikesDto.toEntity(): LikesEntity{
     return LikesEntity(
         id = id,
         postId = postId,
-        userId = userId,
+        userId = userId.toEntity(),
         createdAt = createdAt
     )
 }

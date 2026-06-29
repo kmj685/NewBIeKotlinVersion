@@ -7,6 +7,6 @@ import kotlinx.serialization.Serializable
 data class LikesEntity(
     val id: Int,
     val postId: Int,
-    val userId: String,
+    val userId: UserEntity,
     val createdAt: String
 )

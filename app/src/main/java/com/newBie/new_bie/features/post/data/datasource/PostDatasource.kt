@@ -190,6 +190,32 @@ class PostDatasource {
         return list.firstOrNull()
     }
 
+    // 좋아요 유저 리스트 조회
+    suspend fun fetchLikeUserList(postId: Int): List<LikesEntity> {
+
+        val result = _supabase
+            .from("likes")
+            .select(
+                columns = Columns.raw(
+                    """
+                        id,
+                        post_id,
+                        created_at,
+                        user_id(*)
+                    """.trimIndent()
+                )
+            ) {
+                filter {
+                    eq("post_id", postId)
+                }
+            }
+            .decodeList<LikesDto>()
+
+        val list = result.map { it.toEntity() }
+
+        return list
+    }
+
     // ✅ 좋아요 추가
     suspend fun insertLike(
         postId: Int,

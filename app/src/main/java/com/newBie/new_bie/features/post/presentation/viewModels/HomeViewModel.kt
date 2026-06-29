@@ -9,6 +9,7 @@ import com.newBie.new_bie.core.utils.OrderByType
 import com.newBie.new_bie.core.utils.PageType
 import com.newBie.new_bie.features.post.data.repositories.PostRepositoryImpl
 import com.newBie.new_bie.features.post.domain.entities.CommentWithProfileEntity
+import com.newBie.new_bie.features.post.domain.entities.LikesEntity
 import com.newBie.new_bie.features.post.domain.entities.PostWithProfileEntity
 import com.newBie.new_bie.features.post.domain.repositories.PostRepository
 import com.newBie.new_bie.features.post.presentation.interfaces.CommentBottomSheetViewModel
@@ -20,10 +21,13 @@ import kotlinx.coroutines.launch
 
 class HomeViewModel : ViewModel(), CommentBottomSheetViewModel {
 
+    enum class BottomSheetType { COMMENT, LIKES }
+    var bottomSheetType: MutableStateFlow<BottomSheetType?> = MutableStateFlow(null)
     private val repository : PostRepository = PostRepositoryImpl()
     val pageType : PageType = PageType.HOME
     var posts : MutableStateFlow<List<PostWithProfileEntity>> = MutableStateFlow<List<PostWithProfileEntity>>(listOf())
     override var comments : MutableStateFlow<List<CommentWithProfileEntity>> = MutableStateFlow<List<CommentWithProfileEntity>>(listOf())
+    override val likeUserList: MutableStateFlow<List<LikesEntity>> = MutableStateFlow(listOf())
     override var selectPostId : MutableStateFlow<Int?> = MutableStateFlow(null)
     override val selectCommentId: MutableStateFlow<Int?> = MutableStateFlow(null)
 
@@ -237,12 +241,30 @@ class HomeViewModel : ViewModel(), CommentBottomSheetViewModel {
             }
         }
     }
+    // 좋아요 유저 리스트
+    fun fetchLikeUsers(id: Int){
+        viewModelScope.launch {
+            try {
+                selectPostId.value = id
+                bottomSheetType.value = BottomSheetType.LIKES
+
+                selectPostId.value?.let { it ->
+                    val likeUser: List<LikesEntity> = repository.fetchLikeUsers(it)
+                    likeUserList.value = likeUser
+                }
+            } catch (e: Exception) {
+                Log.d(Constants.TAG, "fetchComments Faile: $e")
+            }
+        }
+    }
 
     //댓글 기능
     fun fetchComments(id: Int) {
         viewModelScope.launch {
             try {
                 selectPostId.value = id
+                bottomSheetType.value = BottomSheetType.COMMENT
+
                 selectPostId.value?.let { it ->
                     val commentsList: List<CommentWithProfileEntity> = repository.fetchComments(it)
                     comments.value = commentsList

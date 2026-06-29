@@ -7,6 +7,7 @@ import com.newBie.new_bie.core.managers.SupabaseManager
 import com.newBie.new_bie.core.utils.Constants
 import com.newBie.new_bie.features.post.data.repositories.PostRepositoryImpl
 import com.newBie.new_bie.features.post.domain.entities.CommentWithProfileEntity
+import com.newBie.new_bie.features.post.domain.entities.LikesEntity
 import com.newBie.new_bie.features.post.domain.entities.PostImageEntity
 import com.newBie.new_bie.features.post.domain.entities.PostWithProfileEntity
 import com.newBie.new_bie.features.post.domain.repositories.PostRepository
@@ -19,6 +20,7 @@ class PostDetailViewModel : ViewModel(), CommentBottomSheetViewModel {
     private val repository : PostRepository = PostRepositoryImpl()
     var post : MutableStateFlow<PostWithProfileEntity?> = MutableStateFlow(null)
     override var selectPostId : MutableStateFlow<Int?> = MutableStateFlow(null)
+    override val likeUserList: MutableStateFlow<List<LikesEntity>> = MutableStateFlow(listOf())
 
     override var comments : MutableStateFlow<List<CommentWithProfileEntity>> = MutableStateFlow<List<CommentWithProfileEntity>>(listOf())
     override val selectCommentId: MutableStateFlow<Int?> = MutableStateFlow(null)

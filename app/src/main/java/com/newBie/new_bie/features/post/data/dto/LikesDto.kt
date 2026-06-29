@@ -7,6 +7,6 @@ import kotlinx.serialization.Serializable
 data class LikesDto(
     val id: Int,
     @SerialName("post_id") val postId: Int,
-    @SerialName("user_id") val userId: String,
+    @SerialName("user_id") val userId: UserDto,
     @SerialName("created_at") val createdAt: String
 )
