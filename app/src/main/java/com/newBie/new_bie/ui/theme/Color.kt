@@ -15,6 +15,6 @@ val BlackColor = Color(0xff101820)
 // 글씨색
 val OrangeColor = Color(0xffF2AA4C)
 // 본문 글씨색은 하얀색으로
-val GridColor = Color(0xFF151E28);
+val GridColor = Color(0xFF1D2733);
 
 val GreenColor = Color(0xFF569F56)

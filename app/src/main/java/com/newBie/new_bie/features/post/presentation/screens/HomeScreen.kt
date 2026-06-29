@@ -333,7 +333,8 @@ fun HomeScreen(
                         viewModel = viewModel,
                         screenHeight = screenHeight,
                         sheetState = sheetState,
-                        onDismiss = { }
+                        onDismiss = {},
+                        navController = navController
                     )
                 }
             }

@@ -52,7 +52,7 @@ fun AddGuestbookBottomSheetTextField(
             unfocusedIndicatorColor = Color.Transparent,
             cursorColor = OrangeColor
         ),
-        placeholder = { Text("내용을 입력해주세요!", fontSize = 18.sp) },
+        placeholder = { Text("내용을 입력해주세요!", fontSize = 18.sp, color = Color.White) },
         textStyle = TextStyle(color = Color.White, fontSize = 18.sp),
 //        label = {Text("제목", color = Color.White)},
 //            colors = OutlinedTextFieldDefaults.colors(),

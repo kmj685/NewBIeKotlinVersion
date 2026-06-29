@@ -107,6 +107,7 @@ class MainActivity : ComponentActivity() {
     // Compose에서 새 intent를 전달받기 위한 콜백
     private var intentHolder: ((Intent) -> Unit)? = null
 
+    // 앱이 백그라운드에 켜져 있는 상태에서 브라우저를 갔다가 다시 앱으로 돌아올 때 딥링크를 처리하기 위한 코드 (OnCreat과 이중으로 되어 있음)
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)

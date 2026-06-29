@@ -2,6 +2,7 @@ package com.newBie.new_bie.features.post.presentation.components.likesAndComment
 
 import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -40,12 +42,14 @@ import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.newBie.new_bie.R
 import com.newBie.new_bie.core.components.BaseAsyncImage
@@ -113,10 +117,23 @@ fun CommentItem(
             horizontalAlignment = Alignment.Start,
             modifier = Modifier.weight(1F)
         ) {
+            val masterId = "572addb9-303a-4118-84c7-894ca61cb557"
+
             Row(
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
+                horizontalArrangement = Arrangement.spacedBy(3.dp),
+                verticalAlignment = Alignment.CenterVertically
             ){
                 Text(nickName, color = OrangeColor)
+                if (userId == masterId){
+                    Text("관리자",
+                        color = Color.White,
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(Color.Gray)
+                            .padding(horizontal = 2.dp)
+                    )
+                }
+                Spacer(modifier = Modifier.width(5.dp))
                 Text(timeData, style = AppTextStyle.Date)
             }
 

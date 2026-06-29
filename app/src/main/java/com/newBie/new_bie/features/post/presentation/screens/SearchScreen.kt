@@ -195,7 +195,12 @@ fun SearchScreen(modifier: Modifier = Modifier, navController: NavController,vie
             }
         }
         if (selectPostId != null){
-            CommentBottomSheet(viewModel = viewModel, screenHeight=screenHeight, sheetState=sheetState, onDismiss = {})
+            CommentBottomSheet(
+                viewModel = viewModel,
+                screenHeight=screenHeight,
+                sheetState=sheetState,
+                onDismiss = {},
+                navController = navController)
         }
 
     }

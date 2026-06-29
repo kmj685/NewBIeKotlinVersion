@@ -194,7 +194,7 @@ fun MyProfileScreen(
                                             imageUrl = user?.profileImage,
                                             nickName = user?.nickName,
                                             introduce = user?.introduction,
-                                            userId = SupabaseManager.supabase.auth.currentUserOrNull()?.id,
+                                            userId = targetUserId,
                                             onImageClick = { isExpanded = true }
                                         )
 
@@ -233,7 +233,7 @@ fun MyProfileScreen(
                                         if (myProfile){
                                             Button(modifier = Modifier.fillMaxWidth(),
                                                 shape = RoundedCornerShape(12.dp),
-                                                colors = ButtonDefaults.buttonColors(containerColor = Color.Gray),
+                                                colors = ButtonDefaults.buttonColors(containerColor = OrangeColor),
                                                 onClick = {
                                                     navController.navigate("${Routes.MY_PROFILE}/${Routes.UPDATE_PROFILE}")
                                                 }) {
@@ -313,7 +313,7 @@ fun MyProfileScreen(
                                                         shape = RoundedCornerShape(12.dp),
                                                         modifier = Modifier.fillMaxWidth(),
                                                         colors = ButtonDefaults.buttonColors(
-                                                            containerColor = OrangeColor,
+                                                            containerColor = Color.Unspecified,
                                                             contentColor = Color.White
                                                         )
                                                     ) {

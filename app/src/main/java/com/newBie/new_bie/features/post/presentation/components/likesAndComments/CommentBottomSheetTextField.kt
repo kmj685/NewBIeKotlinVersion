@@ -51,7 +51,7 @@ fun CommentBottomSheetTextField(userCommentInput: String, onValueChange: (String
         ),
         value = userCommentInput,
         onValueChange = { onValueChange.invoke(it) },
-        placeholder = { Text("댓글을 입력해주세요!", fontSize = 18.sp) },
+        placeholder = { Text("댓글을 입력해주세요!", fontSize = 18.sp, color = Color.White) },
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
         keyboardActions = KeyboardActions(
             onSend = {

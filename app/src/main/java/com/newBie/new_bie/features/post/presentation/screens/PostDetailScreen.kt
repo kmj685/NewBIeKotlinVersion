@@ -268,7 +268,8 @@ fun PostDetailScreen(
                                 viewModel= viewModel,
                                 screenHeight = screenHeight,
                                 sheetState = sheetState,
-                                onDismiss = {showSheet = false}
+                                onDismiss = {showSheet = false},
+                                navController = navController
                             )
                         }
 

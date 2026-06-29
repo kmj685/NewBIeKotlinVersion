@@ -31,6 +31,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -42,17 +43,20 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
+import androidx.navigation.NavController
 import com.newBie.new_bie.core.components.BottomSheetTopBatTitle
+import com.newBie.new_bie.core.utils.Routes
 import com.newBie.new_bie.core.utils.toKoreaLocalDateTime
 import com.newBie.new_bie.core.utils.toTimeAgo
 import com.newBie.new_bie.features.post.presentation.interfaces.CommentBottomSheetViewModel
 import com.newBie.new_bie.ui.theme.BlackColor
 import com.newBie.new_bie.ui.theme.OrangeColor
+import kotlinx.coroutines.launch
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CommentBottomSheet(viewModel : CommentBottomSheetViewModel, screenHeight: Dp , sheetState: SheetState, onDismiss: () -> Unit){
+fun CommentBottomSheet(viewModel : CommentBottomSheetViewModel, screenHeight: Dp , sheetState: SheetState, onDismiss: () -> Unit, navController: NavController){
     val commentsList by viewModel.comments.collectAsState()
     val userCommentInput by viewModel.userCommentInput.collectAsState()
     val selectedCommentId by viewModel.selectCommentId.collectAsState()
@@ -63,6 +67,9 @@ fun CommentBottomSheet(viewModel : CommentBottomSheetViewModel, screenHeight: Dp
     val editCommentFocusRequester = remember { FocusRequester() }
     // 포커스 매니저는 포커스를 해제할 때 사용됨(여기서는)
     val focusManager = LocalFocusManager.current
+
+    // 시트를 내리는 애니메이션을 실행할 코루틴 스코프, LaunchedEffect를 람다 함수 블록 안에서 사용할 수 없으니까 버튼을 클릭하는 시점에서 쓸 rememberCoroutineScope()를 사용한다.
+    val scope = rememberCoroutineScope()
 
     ModalBottomSheet(
         containerColor = BlackColor,
@@ -109,7 +116,13 @@ fun CommentBottomSheet(viewModel : CommentBottomSheetViewModel, screenHeight: Dp
                             timeData = item.createdAt.toKoreaLocalDateTime().toTimeAgo(),
                             introduce = item.content,
                             userId = item.user.id,
-                            onImageClick = {},
+                            onImageClick = { scope.launch {
+                                sheetState.hide()
+                            }.invokeOnCompletion {
+                                viewModel.unSelectPostId()
+                                onDismiss()
+                                navController.navigate("${Routes.MY_PROFILE}/${item.user.id}")
+                            } },
                             selectedId = selectedCommentId,
                             onSelect = {viewModel.onSelectComment(commentId = item.id, content = item.content?:"")},
                             onUpdateInput = {viewModel.updateEditUserInput(it)},
