@@ -110,7 +110,9 @@ fun AddGuestbookBottomSheet(viewModel : AddGuestbooksBottomSheetViewModel, scree
                         BaseAsyncImage(
                             model = imageInput,
                             contentDescription = "방명록 사용자 입력 사진",
-                            shape = RoundedCornerShape(10.dp)
+                            shape = RoundedCornerShape(10.dp),
+                            modifier = Modifier
+                                .size(200.dp)
                         )
                         ImageDeleteButton{viewModel.deleteImage()}
                     }

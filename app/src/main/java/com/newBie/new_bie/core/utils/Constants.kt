@@ -67,3 +67,6 @@ enum class OrderByType{
  enum class BottomSheetType{
      COMMENT, LIKES
  }
+enum class PostingDialogType{
+    SAVE, CANCEL
+}

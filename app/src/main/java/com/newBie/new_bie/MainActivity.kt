@@ -147,8 +147,8 @@ class MainActivity : ComponentActivity() {
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             // 엣지 펑션에서 내용의 텍스트를 관리하고 있기 때문에 여기서의 내용(name. descriptionText) 들은 보험 같은 느낌
-            val name = "게시글 알림"
-            val descriptionText = "팔로우한 작가의 새 게시글 알림을 받습니다."
+            val name = "알림"
+            val descriptionText = "각종 알림을 받습니다."
             val importance = NotificationManager.IMPORTANCE_HIGH // 소리와 팝업을 위해 HIGH 설정
             val channel = NotificationChannel("post_channel", name, importance).apply {
                 description = descriptionText

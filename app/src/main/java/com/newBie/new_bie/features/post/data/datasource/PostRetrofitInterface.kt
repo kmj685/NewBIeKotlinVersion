@@ -63,7 +63,8 @@ interface PostRetrofitInterface {
     suspend fun fetchComments(
         @Query("post_id") postId: Int,
 //        @Header("Authorization") authorization: String = API.AUTHORIZATION,
-        @Header("Content-Type") contentType: String = API.CONTENT_TYPE
+        @Header("Content-Type") contentType: String = API.CONTENT_TYPE,
+        @Query("orderBy") orderBy : String,
     ): BaseResponse<List<CommentWithProfileDto>>
 
     @POST("posts")

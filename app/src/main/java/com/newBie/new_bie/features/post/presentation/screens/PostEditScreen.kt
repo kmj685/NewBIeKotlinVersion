@@ -58,8 +58,10 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.newBie.new_bie.core.components.BaseAsyncImage
+import com.newBie.new_bie.core.components.CommonDialog
 import com.newBie.new_bie.core.components.TopBarLayout
 import com.newBie.new_bie.core.components.rememberPhotoPicker
+import com.newBie.new_bie.core.utils.PostingDialogType
 import com.newBie.new_bie.core.utils.Routes
 
 import com.newBie.new_bie.features.notification.presentation.viewModels.NotificationViewModel
@@ -112,6 +114,10 @@ fun PostEditScreen(
 
     // 포스트 등록 인디케이터를 위한 플래그 값
     val isPosting by viewModel.isPosting.collectAsState()
+
+    // 게시물 등록 감지 플래그 값
+    val showDialog by viewModel.showDialog.collectAsState()
+    val dialogType by viewModel.dialogType.collectAsState()
 
     // 등록에 성공했다면 홈 화면으로 이동하고 스택 없애기
     LaunchedEffect(Unit) {
@@ -229,7 +235,8 @@ fun PostEditScreen(
                                 )
                             }
                             Button(onClick = {
-                                viewModel.insertPost(context = context)
+                                viewModel.dialogType.value = PostingDialogType.SAVE
+                                viewModel.showDialog.value = true
                             },
                                 enabled = titleInput.isNotEmpty() && contentInput.isNotEmpty() && !isPosting && selectCategoryList.isNotEmpty(),
                                 modifier = Modifier
@@ -357,6 +364,11 @@ fun PostEditScreen(
                 }
             }
         }
+        BackHandler(!isExpanded) {
+            viewModel.dialogType.value = PostingDialogType.CANCEL
+            viewModel.showDialog.value = true
+        }
+
         if(isPosting){
             Box(modifier = Modifier
                 .fillMaxSize()
@@ -364,6 +376,37 @@ fun PostEditScreen(
                 .clickable(enabled = false){},
                 contentAlignment = Alignment.Center) {
                 CircularProgressIndicator(color = OrangeColor)
+            }
+        }
+        if(showDialog){
+            when (dialogType){
+                PostingDialogType.SAVE -> {
+                    CommonDialog(
+                        onConfirm = {
+                            viewModel.insertPost(context = context)
+                            viewModel.showDialog.value = false
+                        },
+                        onDismissRequest = {
+                            viewModel.showDialog.value = false
+                        },
+                        askText = "수정한 게시물을 올리시겠습니까?"
+                    )
+                }
+                PostingDialogType.CANCEL -> {
+                    CommonDialog(
+                        onConfirm = {
+                            viewModel.showDialog.value = false
+                            viewModel.dialogType.value = null
+                            navController.popBackStack()
+                        },
+                        onDismissRequest = {
+                            viewModel.showDialog.value = false
+                            viewModel.dialogType.value = null
+                        },
+                        askText = "게시물을 수정하지 않고 나가시겠습니까?"
+                    )
+                }
+                null -> {}
             }
         }
     }

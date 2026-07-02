@@ -125,8 +125,8 @@ class PostRepositoryImpl : PostRepository {
         datasource.deletePost(postId)
     }
 
-    override suspend fun fetchComments(postId: Int): List<CommentWithProfileEntity> {
-        return datasource.fetchComments(postId)
+    override suspend fun fetchComments(postId: Int, orderBy: String): List<CommentWithProfileEntity> {
+        return datasource.fetchComments(postId, orderBy)
     }
 
     override suspend fun fetchUserPosts(

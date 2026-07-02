@@ -332,6 +332,7 @@ fun SearchPostView(viewModel: SearchResultViewModel, navController: NavControlle
     } else {
         LazyColumn(state = listState, modifier = Modifier
             .fillMaxSize()
+            .padding(8.dp)
             .background(BlackColor)) {
             itemsIndexed(posts) { index, post ->
                 PostItem(

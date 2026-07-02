@@ -83,8 +83,11 @@ class PostDatasource {
     }
 
     // 댓글 리스트
-    suspend fun fetchComments(postId: Int): List<CommentWithProfileEntity> {
-        val response = api.fetchComments(postId=postId).data?.map { it-> it.toEntity() }
+    suspend fun fetchComments(postId: Int, orderBy: String): List<CommentWithProfileEntity> {
+        val response = api.fetchComments(
+            postId = postId,
+            orderBy = orderBy,
+        ).data?.map { it-> it.toEntity() }
         if (response == null) return emptyList()
         else return response
     }

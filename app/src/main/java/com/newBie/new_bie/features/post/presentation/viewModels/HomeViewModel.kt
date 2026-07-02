@@ -266,7 +266,12 @@ class HomeViewModel : ViewModel(), CommentBottomSheetViewModel {
                 bottomSheetType.value = BottomSheetType.COMMENT
 
                 selectPostId.value?.let { it ->
-                    val commentsList: List<CommentWithProfileEntity> = repository.fetchComments(it)
+                    val commentsList: List<CommentWithProfileEntity> = repository.fetchComments(
+                        it,
+                        orderBy = setOrderBy(
+                            OrderByType.OLD_FIRST
+                        )
+                    )
                     comments.value = commentsList
                 }
             } catch (e: Exception) {

@@ -45,7 +45,9 @@ class FirebaseMessagingService : FirebaseMessagingService() {
         // 1. 데이터 추출
         val postId = remoteMessage.data["postId"]
         val followerId = remoteMessage.data["followerId"]
-        val guestbookId= remoteMessage.data["guestbookId"]
+        val guestbookId = remoteMessage.data["guestbookId"]
+        val likePostId = remoteMessage.data["likerId"]
+        val commentPostId = remoteMessage.data["commentPostId"]
         val type = remoteMessage.data["type"]
 
         Log.d("FCM_LOG", "받은 데이터 - postId: $postId, followerId: $followerId")
@@ -62,6 +64,8 @@ class FirebaseMessagingService : FirebaseMessagingService() {
             putExtra("postId", postId)
             putExtra("followerId", followerId)
             putExtra("guestbookId", guestbookId)
+            putExtra("likePostId", likePostId)
+            putExtra("commentPostId", commentPostId)
             putExtra("type", type)
         }
 

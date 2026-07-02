@@ -1,5 +1,7 @@
 package com.newBie.new_bie.features.notification.presentation.screens
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -41,12 +43,15 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.newBie.new_bie.core.utils.Routes
+import com.newBie.new_bie.core.utils.toKoreaLocalDateTime
+import com.newBie.new_bie.core.utils.toTimeAgo
 import com.newBie.new_bie.features.notification.presentation.components.NotificationItems
 import com.newBie.new_bie.features.notification.presentation.viewModels.NotificationViewModel
 import com.newBie.new_bie.features.post.presentation.components.SmallProfileComponent
 import com.newBie.new_bie.ui.theme.BlackColor
 import com.newBie.new_bie.ui.theme.OrangeColor
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NotificationsScreen(
     modifier: Modifier = Modifier,
@@ -184,9 +189,8 @@ fun NotificationsScreen(
                             NotificationItems(
                                 modifier = Modifier,
                                 imageUrl = item.senderId.profileImage,
-                                followingPostingUserName = item.senderId.nickName,
-                                followerUserName = item.senderId.nickName,
-                                guestbooksSenderUserName = item.senderId.nickName,
+                                userNickname = item.senderId.nickName,
+                                createdAt = item.createdAt.toKoreaLocalDateTime().toTimeAgo(),
                                 type = item.type,
                                 isRead = item.isRead,
                                 onClick = {
@@ -196,6 +200,8 @@ fun NotificationsScreen(
                                         "NEW_POST" -> navController.navigate("${Routes.POST}/${item.targetId.toIntOrNull()}")
                                         "NEW_FOLLOWER" -> navController.navigate("${Routes.MY_PROFILE}/${item.targetId}")
                                         "NEW_GUESTBOOK" -> navController.navigate("${Routes.GUESTBOOKS}/${item.targetId.toIntOrNull()}")
+                                        "NEW_LIKE" -> navController.navigate("${Routes.POST}/${item.targetId.toIntOrNull()}")
+                                        "NEW_COMMENT" -> navController.navigate("${Routes.POST}/${item.targetId.toIntOrNull()}")
                                     }
                                 },
                             )

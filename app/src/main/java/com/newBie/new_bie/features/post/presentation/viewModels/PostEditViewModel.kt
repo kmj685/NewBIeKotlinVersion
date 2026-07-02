@@ -22,6 +22,7 @@ import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import kotlin.collections.plus
 import androidx.core.net.toUri
+import com.newBie.new_bie.core.utils.PostingDialogType
 
 class PostEditViewModel : ViewModel() {
     private val repository : PostRepository = PostRepositoryImpl()
@@ -44,6 +45,10 @@ class PostEditViewModel : ViewModel() {
     // 게시물 등록 버튼 인디케이터
     private val _isPosting = MutableStateFlow<Boolean>(false)
     val isPosting = _isPosting.asStateFlow()
+
+    // 게시물 등록 다이얼로그 플래그 값
+    val showDialog = MutableStateFlow(false)
+    val dialogType = MutableStateFlow<PostingDialogType?>(null)
 
     init {
         getCategoryList()

@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChatBubble
@@ -34,6 +35,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -48,6 +50,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalFocusManager
@@ -56,6 +59,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.newBie.new_bie.core.components.BaseAsyncImage
+import com.newBie.new_bie.core.components.LinkifyText
 import com.newBie.new_bie.core.components.TopBarLayout
 import com.newBie.new_bie.core.managers.SupabaseManager
 import com.newBie.new_bie.core.utils.BottomSheetType
@@ -73,6 +77,11 @@ import com.newBie.new_bie.features.post.presentation.interfaces.CommentBottomShe
 import com.newBie.new_bie.features.post.presentation.viewModels.HomeViewModel
 import com.newBie.new_bie.features.post.presentation.viewModels.PostDetailViewModel
 import com.newBie.new_bie.ui.theme.AppTextStyle
+import com.newBie.new_bie.ui.theme.OrangeColor
+import com.tbuonomo.viewpagerdotsindicator.compose.DotsIndicator
+import com.tbuonomo.viewpagerdotsindicator.compose.model.DotGraphic
+import com.tbuonomo.viewpagerdotsindicator.compose.type.ShiftIndicatorType
+import com.tbuonomo.viewpagerdotsindicator.compose.type.WormIndicatorType
 import io.github.jan.supabase.auth.auth
 import kotlinx.coroutines.launch
 import net.engawapg.lib.zoomable.rememberZoomState
@@ -212,10 +221,31 @@ fun PostDetailScreen(
                                         )
                                     }
                                 }
+                                DotsIndicator(
+                                    dotCount = post?.postImages?.count() ?: 0,
+                                    type = WormIndicatorType(
+                                        dotsGraphic = DotGraphic(
+                                            color = Color.Transparent,
+                                            borderColor = OrangeColor,
+                                            borderWidth = 1.5.dp,
+                                            size = 10.dp),
+                                        wormDotGraphic = DotGraphic(
+                                            color = OrangeColor
+                                        )
+                                    ),
+                                    pagerState = pagerState,
+                                    modifier = Modifier
+                                        .padding(10.dp)
+                                )
                             }
                             Spacer(modifier = Modifier.height(20.dp))
 
-                            Text(post?.content ?: "", style = AppTextStyle.Content, )
+                            SelectionContainer {
+                                LinkifyText(
+                                    text = post?.content ?: "",
+                                    style = AppTextStyle.Content
+                                )
+                            }
 
                         }
                         Row(modifier = Modifier.fillMaxWidth().padding(10.dp)) {

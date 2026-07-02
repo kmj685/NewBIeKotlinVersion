@@ -34,9 +34,8 @@ fun NotificationItems(
     modifier: Modifier,
     imageUrl : String?,
     type: String,
-    followingPostingUserName : String?,
-    followerUserName : String?,
-    guestbooksSenderUserName: String?,
+    userNickname: String?,
+    createdAt: String?,
     isRead : Boolean,
     onClick : () -> Unit
     ) {
@@ -87,15 +86,33 @@ fun NotificationItems(
             modifier = Modifier
                 .weight(1F)
                 .heightIn(min = 60.dp)
+                .padding(horizontal = 10.dp)
         ) {
-            if (type == "NEW_POST"){
-                Text("${followingPostingUserName ?: "이름없음"}님이 새 게시글을 올렸습니다.", color = Color.White, maxLines = 2, overflow = TextOverflow.Ellipsis)
+            val message = when(type){
+                "NEW_POST" -> "${userNickname ?: "이름없음"}님이 새 게시글을 올렸습니다."
+                "NEW_FOLLOWER" -> "${userNickname ?: "이름없음"}님이 팔로우하기 시작했습니다."
+                "NEW_GUESTBOOK" -> "${userNickname ?: "이름없음"}님이 방명록을 남겼습니다."
+                "NEW_LIKE" -> "${userNickname ?: "이름없음"}님이 회원님의 게시글에 좋아요를 눌렀습니다."
+                "NEW_COMMENT" -> "${userNickname ?: "이름없음"}님이 회원님의 게시글에 댓글을 남겼습니다."
+                else -> ""
             }
-            if (type == "NEW_FOLLOWER"){
-                Text("${followerUserName ?: "이름없음"}님이 팔로우하기 시작했습니다.", color = Color.White, maxLines = 2, overflow = TextOverflow.Ellipsis)
-            }
-            if (type == "NEW_GUESTBOOK"){
-                Text("${guestbooksSenderUserName ?: "이름없음"}님이 방명록을 남겼습니다.", color = Color.White, maxLines = 2, overflow = TextOverflow.Ellipsis)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text(
+                    text = message,
+                    color = Color.White,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f)
+                )
+                Spacer(modifier = Modifier.width(6.dp))
+
+                Text(
+                    text = createdAt ?: "",
+                    color = Color.Gray,
+                    maxLines = 1,
+                )
             }
         }
     }

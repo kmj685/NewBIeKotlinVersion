@@ -183,4 +183,6 @@ dependencies {
     // Compose에서 hiltViewModel() 함수를 사용하기 위한 라이브러리
     implementation("androidx.hilt:hilt-navigation-compose:1.3.0")
 
+    // dotsindicator
+    implementation("com.tbuonomo:dotsindicator:5.0")
 }

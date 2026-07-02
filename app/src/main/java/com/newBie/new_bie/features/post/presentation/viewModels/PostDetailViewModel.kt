@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.newBie.new_bie.core.managers.SupabaseManager
 import com.newBie.new_bie.core.utils.BottomSheetType
 import com.newBie.new_bie.core.utils.Constants
+import com.newBie.new_bie.core.utils.OrderByType
 import com.newBie.new_bie.features.post.data.repositories.PostRepositoryImpl
 import com.newBie.new_bie.features.post.domain.entities.CommentWithProfileEntity
 import com.newBie.new_bie.features.post.domain.entities.LikesEntity
@@ -126,6 +127,14 @@ class PostDetailViewModel : ViewModel(), CommentBottomSheetViewModel {
         }
     }
 
+    private fun setOrderBy(type: OrderByType): String {
+        return when (type) {
+            OrderByType.NEW_FIRST -> "created_at.desc"
+            OrderByType.OLD_FIRST -> "created_at.asc"
+            OrderByType.LIKES_FIRST -> "likes_count.desc"
+        }
+    }
+
     fun fetchComments(id: Int) {
         viewModelScope.launch {
             try {
@@ -133,7 +142,12 @@ class PostDetailViewModel : ViewModel(), CommentBottomSheetViewModel {
                 bottomSheetType.value = BottomSheetType.COMMENT
 
                 selectPostId.value?.let { it ->
-                    val commentsList: List<CommentWithProfileEntity> = repository.fetchComments(it)
+                    val commentsList: List<CommentWithProfileEntity> = repository.fetchComments(
+                        it,
+                        orderBy = setOrderBy(
+                            type = OrderByType.OLD_FIRST
+                        )
+                    )
                     comments.value = commentsList
                 }
             } catch (e: Exception) {

@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.newBie.new_bie.core.managers.PhotoPickerManager
 import com.newBie.new_bie.core.managers.SupabaseManager
 import com.newBie.new_bie.core.utils.Constants.TAG
+import com.newBie.new_bie.core.utils.PostingDialogType
 import com.newBie.new_bie.features.post.data.repositories.PostRepositoryImpl
 import com.newBie.new_bie.features.post.domain.entities.CategoryTypeEntity
 import com.newBie.new_bie.features.post.domain.repositories.PostRepository
@@ -43,6 +44,9 @@ class PostAddViewModel : ViewModel() {
     // 게시물 등록 버튼 인디케이터
     private val _isPosting = MutableStateFlow<Boolean>(false)
     val isPosting = _isPosting.asStateFlow()
+
+    val showDialog = MutableStateFlow(false)
+    val dialogType = MutableStateFlow<PostingDialogType?>(null)
 
     init {
         getCategoryList()

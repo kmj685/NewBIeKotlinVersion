@@ -152,6 +152,8 @@ fun MainScreen(modifier: Modifier = Modifier, notificationIntent: Intent? = null
             val postId = notificationIntent?.getStringExtra("postId")
             val followerId = notificationIntent?.getStringExtra("followerId")
             val guestbookId = notificationIntent?.getStringExtra("guestbookId")
+            val likePostId = notificationIntent?.getStringExtra("likePostId")
+            val commentPostId = notificationIntent?.getStringExtra("commentPostId")
 
             // 2. 알림 데이터가 하나라도 있을 때만 라우팅 로직을 시작합니다.
             if (!postId.isNullOrEmpty() || !followerId.isNullOrEmpty() || !guestbookId.isNullOrEmpty()) {
@@ -171,6 +173,12 @@ fun MainScreen(modifier: Modifier = Modifier, notificationIntent: Intent? = null
                     }
                     !guestbookId.isNullOrEmpty() -> {
                         navController.navigate("${Routes.GUESTBOOKS}/${guestbookId}") { launchSingleTop = true }
+                    }
+                    !likePostId.isNullOrEmpty() -> {
+                        navController.navigate("${Routes.POST}/${likePostId}") { launchSingleTop = true }
+                    }
+                    !commentPostId.isNullOrEmpty() -> {
+                        navController.navigate("${Routes.POST}/${commentPostId}") { launchSingleTop = true }
                     }
                 }
             }

@@ -31,7 +31,7 @@ interface PostRepository {
     suspend fun updatePost(postId : Int, title : String, content : String, images : List<String>, categories : List<Int>)
     suspend fun searchAll(keyword : String, type : String = "all", currentIndex : Int = 1, perPage : Int = 5) : SearchResultEntity
     suspend fun deletePost(postId : Int)
-    suspend fun fetchComments(postId : Int) : List<CommentWithProfileEntity>
+    suspend fun fetchComments(postId : Int, orderBy: String) : List<CommentWithProfileEntity>
     suspend fun fetchUser(userId: String): UserEntity?
     suspend fun fetchUserPosts(userId: String, currentIndex: Int = 1, perPage: Int = 5): List<PostWithProfileEntity>
 
