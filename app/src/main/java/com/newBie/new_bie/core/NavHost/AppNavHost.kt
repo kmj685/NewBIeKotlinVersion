@@ -20,10 +20,15 @@ import com.newBie.new_bie.features.post.presentation.screens.PostAddScreen
 import com.newBie.new_bie.features.post.presentation.screens.PostDetailScreen
 import com.newBie.new_bie.features.post.presentation.screens.PostEditScreen
 import com.newBie.new_bie.features.post.presentation.screens.SearchScreen
+import com.newBie.new_bie.features.profile.presentation.screens.BlockUserListScreen
 import com.newBie.new_bie.features.profile.presentation.screens.FollowScreen
 import com.newBie.new_bie.features.profile.presentation.screens.GuestbookDetailScreen
 import com.newBie.new_bie.features.profile.presentation.screens.MyProfileScreen
+import com.newBie.new_bie.features.profile.presentation.screens.NoticeDetailScreen
+import com.newBie.new_bie.features.profile.presentation.screens.NoticesScreen
+import com.newBie.new_bie.features.profile.presentation.screens.NotificationSettingScreen
 import com.newBie.new_bie.features.profile.presentation.screens.SettingScreen
+import com.newBie.new_bie.features.profile.presentation.screens.TermsScreen
 import com.newBie.new_bie.features.profile.presentation.screens.UpdateProfileScreen
 import com.newBie.new_bie.features.teamProject.presentation.screens.TeamProjectListScreen
 
@@ -160,8 +165,15 @@ fun AppNavHost(modifier : Modifier, navController: NavHostController, context: C
             /* QuestionScreen() */
         }
 
+        composable("${Routes.MY_PROFILE}/${Routes.SETTING}/{userId}/${Routes.NOTIFICATION_SETTING}",
+            arguments = listOf(
+                navArgument("userId") { type = NavType.StringType }
+            )) {
+            NotificationSettingScreen(notificationViewModel = notificationViewModel, navController = navController)
+        }
+
         composable("${Routes.MY_PROFILE}/${Routes.SETTING}/${Routes.NOTICE}") {
-            /* NoticesScreen() */
+            NoticesScreen(navController = navController, notificationViewModel = notificationViewModel)
         }
 
         composable(
@@ -170,11 +182,25 @@ fun AppNavHost(modifier : Modifier, navController: NavHostController, context: C
                 navArgument("noticeId") { type = NavType.IntType }
             )
         ) {
-            /* NoticeDetailScreen(noticeId) */
+            NoticeDetailScreen(navController = navController, notificationViewModel = notificationViewModel)
         }
 
-        composable("${Routes.MY_PROFILE}/${Routes.SETTING}/${Routes.BLOCKED_USERS}") {
-            /* BlockedUserScreen() */
+        composable(
+            "${Routes.MY_PROFILE}/${Routes.SETTING}/{userId}/${Routes.BLOCKED_USERS}",
+            arguments = listOf(
+                navArgument("userId") {
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = null
+                }
+            )) {
+            BlockUserListScreen(
+                notificationViewModel = notificationViewModel, navController = navController
+            )
+        }
+
+        composable("${Routes.MY_PROFILE}/${Routes.SETTING}/${Routes.TERMS}"){
+            TermsScreen(navController = navController, notificationViewModel = notificationViewModel)
         }
 
         composable("${Routes.MY_PROFILE}/${Routes.UPDATE_PROFILE}") {

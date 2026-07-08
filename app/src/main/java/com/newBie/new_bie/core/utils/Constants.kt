@@ -50,6 +50,8 @@ object Routes {
 
     const val NOTIFICATION = "notification"
     const val GUESTBOOKS = "guestbooks"
+    const val NOTIFICATION_SETTING = "notification_setting"
+    const val TERMS = "terms"
 }
 
 

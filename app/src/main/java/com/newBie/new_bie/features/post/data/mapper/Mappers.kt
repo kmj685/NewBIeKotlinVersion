@@ -185,7 +185,8 @@ fun UserDto.toEntity(): UserEntity{
         followingCount = followingCount,
         followerCount = followerCount,
         email = email,
-        isBlocked = isBlocked
+        isBlocked = isBlocked,
+        fcmIsNotificationEnabled = fcmIsNotificationEnabled,
     )
 }
 
@@ -201,6 +202,7 @@ fun UserDtoWithSupabase.toEntity(): UserEntity{
         followerCount = followerCount,
         email = email,
         isBlocked = isBlocked,
-        postCount = postCount
+        postCount = postCount,
+        fcmIsNotificationEnabled = fcmIsNotificationEnabled
     )
 }

@@ -135,7 +135,8 @@ fun CommentBottomSheet(viewModel : CommentBottomSheetViewModel, screenHeight: Dp
                             },
                             onDelete = {viewModel.deleteComment(item.id, item.user.id)},
                             focusManager = focusManager,
-                            focusRequester = editCommentFocusRequester
+                            focusRequester = editCommentFocusRequester,
+                            targetUserId = item.user.id
                         )
                     }
                 }

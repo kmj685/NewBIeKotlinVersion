@@ -17,5 +17,6 @@ data class UserDto(
     @SerializedName("following_count") @SerialName("following_count") val followingCount: Int,
     @SerializedName("follower_count") @SerialName("follower_count") val followerCount: Int,
     val email: String?,
-    @SerializedName("is_blocked") @SerialName("is_blocked") val isBlocked: Boolean
+    @SerializedName("is_blocked") @SerialName("is_blocked") val isBlocked: Boolean,
+    @SerializedName("fcm_is_notification_enabled") @SerialName("fcm_is_notification_enabled") val fcmIsNotificationEnabled: Boolean
 )

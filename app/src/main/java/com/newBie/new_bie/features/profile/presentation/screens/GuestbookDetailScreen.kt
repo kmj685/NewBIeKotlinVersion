@@ -8,6 +8,7 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,6 +19,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChatBubble
@@ -44,17 +46,21 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.newBie.new_bie.core.components.BaseAsyncImage
+import com.newBie.new_bie.core.components.LinkifyText
 import com.newBie.new_bie.core.components.TopBarLayout
+import com.newBie.new_bie.core.managers.SupabaseManager
 import com.newBie.new_bie.core.utils.Routes
 import com.newBie.new_bie.core.utils.toKoreaLocalDateTime
 import com.newBie.new_bie.core.utils.toTimeAgo
 import com.newBie.new_bie.features.notification.presentation.viewModels.NotificationViewModel
 import com.newBie.new_bie.features.post.domain.entities.PostImageEntity
 import com.newBie.new_bie.features.post.presentation.components.SmallProfileComponent
+import com.newBie.new_bie.features.post.presentation.components.buttons.PostMoreVertButton
 import com.newBie.new_bie.features.profile.presentation.components.GuestBooksCommentsBottomSheet
 import com.newBie.new_bie.features.profile.presentation.viewModels.GuestbooksCommentsBottomSheetViewModel
 import com.newBie.new_bie.features.profile.presentation.viewModels.GuestbooksDetailViewModel
 import com.newBie.new_bie.ui.theme.AppTextStyle
+import io.github.jan.supabase.auth.auth
 import net.engawapg.lib.zoomable.rememberZoomState
 import net.engawapg.lib.zoomable.zoomable
 
@@ -136,6 +142,25 @@ fun GuestbookDetailScreen(
                                         navController.navigate("${Routes.MY_PROFILE}/${guestbook?.senderId?.id}")
                                     }
                                 )
+                                val currentId = SupabaseManager.supabase.auth.currentUserOrNull()?.id ?:""
+
+                                PostMoreVertButton(
+                                    targetId = guestbook?.senderId?.id ?:"",
+                                    targetIdNickname = guestbook?.senderId?.nickName ?:"",
+                                    currentId = currentId,
+                                    updateClick = {},
+                                    deletedClick = {
+                                        viewModel.deleteGuestbook(onSuccess = {
+                                            // 프로필 화면이 기다리고 있는 "profile_need_refresh"를 true로 변경!
+                                            navController.previousBackStackEntry?.savedStateHandle?.set("profile_need_refresh", true)
+                                            // 그 후 화면을 닫음
+                                            navController.popBackStack()
+                                        })
+                                                   },
+                                    navController = navController,
+                                    guestbooksMode = true,
+                                    hostId = guestbook?.receiverId?.id
+                                )
                             }
                             Text(guestbook?.title ?: "", style = AppTextStyle.Title, )
 
@@ -165,13 +190,15 @@ fun GuestbookDetailScreen(
                             }
                             Spacer(modifier = Modifier.height(20.dp))
 
-                            Text(guestbook?.content ?: "", style = AppTextStyle.Content, )
-
+                            SelectionContainer {
+                                LinkifyText(
+                                    text = guestbook?.content ?: "",
+                                    style = AppTextStyle.Content
+                                )
+                            }
                         }
-                        Row(modifier = Modifier.fillMaxWidth().padding(10.dp)) {
-
-                            Spacer(modifier = Modifier.width(16.dp))
-
+                        Row(modifier = Modifier.fillMaxWidth().padding(16.dp),
+                            horizontalArrangement = Arrangement.End) {
                             Row(
                                 modifier = Modifier.clickable(onClick = {
                                     guestbooksCommentsViewModel.getGuestbooksComments()
@@ -198,7 +225,8 @@ fun GuestbookDetailScreen(
                                 viewModel= guestbooksCommentsViewModel,
                                 screenHeight = screenHeight,
                                 sheetState = sheetState,
-                                onDismiss = {showSheet = false}
+                                onDismiss = {showSheet = false},
+                                navController = navController
                             )
                         }
 

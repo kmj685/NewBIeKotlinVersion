@@ -43,7 +43,7 @@ class FollowViewModel @Inject constructor(
 
     private val _targetUserId = MutableStateFlow<String?>(null)
 
-    private val _followerList = MutableStateFlow<List<FollowEntity>>(emptyList())
+    private val `_followerList` = MutableStateFlow<List<FollowEntity>>(emptyList())
     val followerList = _followerList.asStateFlow()
     private val _followingList = MutableStateFlow<List<FollowEntity>>(emptyList())
     val followingList = _followingList.asStateFlow()

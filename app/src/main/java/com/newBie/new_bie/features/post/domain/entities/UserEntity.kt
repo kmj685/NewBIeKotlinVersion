@@ -15,5 +15,6 @@ data class UserEntity(
     val followerCount: Int,
     val followingCount: Int,
     val email: String?,
-    val isBlocked: Boolean
+    val isBlocked: Boolean,
+    val fcmIsNotificationEnabled: Boolean
 )

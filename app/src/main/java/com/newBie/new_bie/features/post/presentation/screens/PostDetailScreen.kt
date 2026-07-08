@@ -55,6 +55,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
@@ -77,6 +78,7 @@ import com.newBie.new_bie.features.post.presentation.interfaces.CommentBottomShe
 import com.newBie.new_bie.features.post.presentation.viewModels.HomeViewModel
 import com.newBie.new_bie.features.post.presentation.viewModels.PostDetailViewModel
 import com.newBie.new_bie.ui.theme.AppTextStyle
+import com.newBie.new_bie.ui.theme.BlackColor
 import com.newBie.new_bie.ui.theme.OrangeColor
 import com.tbuonomo.viewpagerdotsindicator.compose.DotsIndicator
 import com.tbuonomo.viewpagerdotsindicator.compose.model.DotGraphic
@@ -118,13 +120,13 @@ fun PostDetailScreen(
     val isRead by notificationViewModel.isRead.collectAsState()
 
     val coroutineScope = rememberCoroutineScope()
+    val isDeletedPost by viewModel.isDeletedPost.collectAsState()
 
     LaunchedEffect(Unit) {
         if (id != 0) {
             viewModel.fetchPost(id)
         }
     }
-
 
     Scaffold(
         containerColor = Color.Transparent,
@@ -137,242 +139,252 @@ fun PostDetailScreen(
             )
         },
     ) { innerPadding ->
-        SharedTransitionLayout(
-            modifier = Modifier
-                .padding(top = innerPadding.calculateTopPadding())
-        ){
-            AnimatedContent(
-                targetState = isExpanded,
-                label = "ImageTransition"
-            ) { targetExpended ->
-                if (!targetExpended){
-                    Column(
-                        modifier = modifier.fillMaxSize()
-                    ) {
+        if (isDeletedPost) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(BlackColor),
+                contentAlignment = Alignment.Center
+            ){
+                Text(text = "삭제된 게시글 입니다.", fontSize = 40.sp, color = Color.Gray)
+            }
+        } else {
+            SharedTransitionLayout(
+                modifier = Modifier
+                    .padding(top = innerPadding.calculateTopPadding())
+            ){
+                AnimatedContent(
+                    targetState = isExpanded,
+                    label = "ImageTransition"
+                ) { targetExpended ->
+                    if (!targetExpended){
                         Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .weight(1f)
-                                .padding(horizontal = 10.dp)
-                                .verticalScroll(rememberScrollState())
+                            modifier = modifier.fillMaxSize()
                         ) {
-                            Row(
+                            Column(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(8.dp),
-                                verticalAlignment = Alignment.CenterVertically
+                                    .weight(1f)
+                                    .padding(horizontal = 10.dp)
+                                    .verticalScroll(rememberScrollState())
                             ) {
-                                SmallProfileComponent(
-                                    modifier = Modifier.weight(1f),
-                                    imageUrl = user?.profileImage ?: "",
-                                    nickName = user?.nickName ?: "",
-                                    introduce = post?.createdAt?.toKoreaLocalDateTime()?.toTimeAgo(),
-                                    userId = user?.id ?: "",
-                                    {
-                                        navController.navigate("${Routes.MY_PROFILE}/${user?.id}")
-                                    }
-                                )
-                                PostMoreVertButton(
-                                    targetId = user?.id ?: "",
-                                    currentId = currentUserId,
-                                    updateClick = {navController.navigate("${Routes.POST}/${post?.id}/${Routes.POST_EDIT}")},
-                                    deletedClick = {
-                                        coroutineScope.launch {
-                                            val isSuccess = viewModel.deletePost(id)
-                                            if (isSuccess){
-                                                navController.previousBackStackEntry?.savedStateHandle?.set("need_refresh", true)
-                                                navController.popBackStack() // 이전 화면으로 이동
-                                            }
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(8.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    SmallProfileComponent(
+                                        modifier = Modifier.weight(1f),
+                                        imageUrl = user?.profileImage ?: "",
+                                        nickName = user?.nickName ?: "",
+                                        introduce = post?.createdAt?.toKoreaLocalDateTime()?.toTimeAgo(),
+                                        userId = user?.id ?: "",
+                                        {
+                                            navController.navigate("${Routes.MY_PROFILE}/${user?.id}")
                                         }
+                                    )
+                                    PostMoreVertButton(
+                                        targetId = user?.id ?: "",
+                                        targetIdNickname = user?.nickName ?: "",
+                                        currentId = currentUserId,
+                                        updateClick = {navController.navigate("${Routes.POST}/${post?.id}/${Routes.POST_EDIT}")},
+                                        deletedClick = {
+                                            coroutineScope.launch {
+                                                val isSuccess = viewModel.deletePost(id)
+                                                if (isSuccess){
+                                                    navController.previousBackStackEntry?.savedStateHandle?.set("need_refresh", true)
+                                                    navController.popBackStack() // 이전 화면으로 이동
+                                                }
+                                            }
+                                        },
+                                        navController = navController
+                                    )
+                                }
+                                Text(post?.title ?: "", style = AppTextStyle.Title, )
 
+                                Spacer(modifier = Modifier.height(20.dp))
+
+                                if (post?.postImages?.isNotEmpty() == true && post != null){
+                                    val pagerState = rememberPagerState(
+                                        pageCount = { post?.postImages?.size ?: 0 }
+                                    )
+
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                    ) {
+                                        HorizontalPager(
+                                            state = pagerState
+                                        ) { page ->
+                                            val url = post?.postImages[page]?.imageUrl
+
+                                            BaseAsyncImage(
+                                                model = url,
+                                                contentDescription = null,
+                                                contentScale = ContentScale.Crop, // BoxFit.cover
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .clickable(
+                                                        onClick = {
+                                                            selectedImage = post?.postImages[page]
+                                                            isExpanded = true
+                                                        }
+                                                    )
+                                            )
+                                        }
                                     }
-                                )
+                                    DotsIndicator(
+                                        dotCount = post?.postImages?.count() ?: 0,
+                                        type = WormIndicatorType(
+                                            dotsGraphic = DotGraphic(
+                                                color = Color.Transparent,
+                                                borderColor = OrangeColor,
+                                                borderWidth = 1.5.dp,
+                                                size = 10.dp),
+                                            wormDotGraphic = DotGraphic(
+                                                color = OrangeColor
+                                            )
+                                        ),
+                                        pagerState = pagerState,
+                                        modifier = Modifier
+                                            .padding(10.dp)
+                                    )
+                                }
+                                Spacer(modifier = Modifier.height(20.dp))
+
+                                SelectionContainer {
+                                    LinkifyText(
+                                        text = post?.content ?: "",
+                                        style = AppTextStyle.Content
+                                    )
+                                }
+
                             }
-                            Text(post?.title ?: "", style = AppTextStyle.Title, )
+                            Row(modifier = Modifier.fillMaxWidth().padding(10.dp)) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        modifier = Modifier.clickable(onClick = {viewModel.likeToggle()}),
+                                        imageVector = if (post?.isLiked == true)
+                                            Icons.Default.Favorite
+                                        else
+                                            Icons.Default.Favorite,
+                                        contentDescription = null,
+                                        tint = if (post?.isLiked == true) Color.Red else Color.White
+                                    )
 
-                            Spacer(modifier = Modifier.height(20.dp))
+                                    Spacer(modifier = Modifier.width(4.dp))
 
-                            if (post?.postImages?.isNotEmpty() == true && post != null){
-                                val pagerState = rememberPagerState(
-                                    pageCount = { post?.postImages?.size ?: 0 }
-                                )
+                                    Text(
+                                        modifier = Modifier.clickable(onClick = {viewModel.fetchLikeUsers(post?.id ?:0)}),
+                                        text = "${post?.likesCount ?: 0}",
+                                        color = Color.White
+                                    )
+                                }
+
+                                Spacer(modifier = Modifier.width(16.dp))
+
+                                Row(
+                                    modifier = Modifier.clickable(onClick = {
+                                        viewModel.fetchComments(post?.id ?: 0)
+                                    }),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.ChatBubble,
+                                        contentDescription = null,
+                                        tint = Color.White
+                                    )
+
+                                    Spacer(modifier = Modifier.width(4.dp))
+
+                                    Text(
+                                        text = "${post?.commentsCount ?: 0}",
+                                        color = Color.White
+                                    )
+                                }
+                            }
+                            if (selectPostId != null) {
+                                when(bottomSheetType){
+                                    BottomSheetType.COMMENT -> {
+                                        CommentBottomSheet(
+                                            viewModel= viewModel,
+                                            screenHeight = screenHeight,
+                                            sheetState = sheetState,
+                                            onDismiss = {},
+                                            navController = navController
+                                        )
+                                    }
+                                    BottomSheetType.LIKES -> {
+                                        LikeUserListBottomSheet(
+                                            viewModel= viewModel,
+                                            screenHeight = screenHeight,
+                                            sheetState = sheetState,
+                                            onDismiss = {},
+                                            navController = navController
+                                        )
+                                    }
+                                    null -> {}
+                                }
+                            }
+
+                        }
+                    } else {
+                        // imageInputList에서 클릭한 사진의 인덱스를 찾아 초기 페이지로 설정
+                        val pagerState = rememberPagerState(
+
+                            initialPage = images.indexOf(selectedImage),
+                            pageCount = { images.size }
+                        )
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(Color.Black)
+                        ) {
+                            HorizontalPager(
+                                state = pagerState,
+                                modifier = Modifier.fillMaxSize()
+                            ) {page ->
+                                val currentUri = images[page].imageUrl
+                                val zoomState = rememberZoomState()
 
                                 Box(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentAlignment = Alignment.Center
                                 ) {
-                                    HorizontalPager(
-                                        state = pagerState
-                                    ) { page ->
-                                        val url = post?.postImages[page]?.imageUrl
-
-                                        BaseAsyncImage(
-                                            model = url,
-                                            contentDescription = null,
-                                            contentScale = ContentScale.Crop, // BoxFit.cover
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .clickable(
-                                                    onClick = {
-                                                        selectedImage = post?.postImages[page]
-                                                        isExpanded = true
-                                                    }
-                                                )
-                                        )
-                                    }
-                                }
-                                DotsIndicator(
-                                    dotCount = post?.postImages?.count() ?: 0,
-                                    type = WormIndicatorType(
-                                        dotsGraphic = DotGraphic(
-                                            color = Color.Transparent,
-                                            borderColor = OrangeColor,
-                                            borderWidth = 1.5.dp,
-                                            size = 10.dp),
-                                        wormDotGraphic = DotGraphic(
-                                            color = OrangeColor
-                                        )
-                                    ),
-                                    pagerState = pagerState,
-                                    modifier = Modifier
-                                        .padding(10.dp)
-                                )
-                            }
-                            Spacer(modifier = Modifier.height(20.dp))
-
-                            SelectionContainer {
-                                LinkifyText(
-                                    text = post?.content ?: "",
-                                    style = AppTextStyle.Content
-                                )
-                            }
-
-                        }
-                        Row(modifier = Modifier.fillMaxWidth().padding(10.dp)) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Icon(
-                                    modifier = Modifier.clickable(onClick = {viewModel.likeToggle()}),
-                                    imageVector = if (post?.isLiked == true)
-                                        Icons.Default.Favorite
-                                    else
-                                        Icons.Default.Favorite,
-                                    contentDescription = null,
-                                    tint = if (post?.isLiked == true) Color.Red else Color.White
-                                )
-
-                                Spacer(modifier = Modifier.width(4.dp))
-
-                                Text(
-                                    modifier = Modifier.clickable(onClick = {viewModel.fetchLikeUsers(post?.id ?:0)}),
-                                    text = "${post?.likesCount ?: 0}",
-                                    color = Color.White
-                                )
-                            }
-
-                            Spacer(modifier = Modifier.width(16.dp))
-
-                            Row(
-                                modifier = Modifier.clickable(onClick = {
-                                    viewModel.fetchComments(post?.id ?: 0)
-                                }),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.ChatBubble,
-                                    contentDescription = null,
-                                    tint = Color.White
-                                )
-
-                                Spacer(modifier = Modifier.width(4.dp))
-
-                                Text(
-                                    text = "${post?.commentsCount ?: 0}",
-                                    color = Color.White
-                                )
-                            }
-                        }
-                        if (selectPostId != null) {
-                            when(bottomSheetType){
-                                BottomSheetType.COMMENT -> {
-                                    CommentBottomSheet(
-                                        viewModel= viewModel,
-                                        screenHeight = screenHeight,
-                                        sheetState = sheetState,
-                                        onDismiss = {},
-                                        navController = navController
+                                    BaseAsyncImage(
+                                        model = currentUri,
+                                        contentDescription = "확대 이미지",
+                                        contentScale = ContentScale.Fit,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .sharedElement(
+                                                rememberSharedContentState(key = "image_$currentUri"),
+                                                animatedVisibilityScope = this@AnimatedContent,
+                                            )
+                                            .zoomable(zoomState)
                                     )
                                 }
-                                BottomSheetType.LIKES -> {
-                                    LikeUserListBottomSheet(
-                                        viewModel= viewModel,
-                                        screenHeight = screenHeight,
-                                        sheetState = sheetState,
-                                        onDismiss = {},
-                                        navController = navController
-                                    )
-                                }
-                                null -> {}
                             }
-                        }
-
-                    }
-                } else {
-                    // imageInputList에서 클릭한 사진의 인덱스를 찾아 초기 페이지로 설정
-                    val pagerState = rememberPagerState(
-
-                        initialPage = images.indexOf(selectedImage),
-                        pageCount = { images.size }
-                    )
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(Color.Black)
-                    ) {
-                        HorizontalPager(
-                            state = pagerState,
-                            modifier = Modifier.fillMaxSize()
-                        ) {page ->
-                            val currentUri = images[page].imageUrl
-                            val zoomState = rememberZoomState()
-
-                            Box(
-                                modifier = Modifier.fillMaxSize(),
-                                contentAlignment = Alignment.Center
+                            // 닫기 버튼
+                            IconButton(
+                                onClick = { isExpanded = false },
+                                modifier = Modifier.align(Alignment.TopEnd).padding(16.dp)
                             ) {
-                                BaseAsyncImage(
-                                    model = currentUri,
-                                    contentDescription = "확대 이미지",
-                                    contentScale = ContentScale.Fit,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .sharedElement(
-                                            rememberSharedContentState(key = "image_$currentUri"),
-                                            animatedVisibilityScope = this@AnimatedContent,
-                                        )
-                                        .zoomable(zoomState)
-                                )
+                                Icon(Icons.Default.Close, contentDescription = "닫기", tint = Color.White)
                             }
                         }
-                        // 닫기 버튼
-                        IconButton(
-                            onClick = { isExpanded = false },
-                            modifier = Modifier.align(Alignment.TopEnd).padding(16.dp)
-                        ) {
-                            Icon(Icons.Default.Close, contentDescription = "닫기", tint = Color.White)
-                        }
-                    }
-                    // 안드로이드 뒤로가기 키 설정
-                    BackHandler() {
-                        if (isExpanded){
-                            isExpanded = false
+                        // 안드로이드 뒤로가기 키 설정
+                        BackHandler() {
+                            if (isExpanded){
+                                isExpanded = false
+                            }
                         }
                     }
                 }
             }
         }
-
     }
-
 }

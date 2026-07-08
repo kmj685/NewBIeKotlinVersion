@@ -72,7 +72,6 @@ import com.newBie.new_bie.core.utils.toTimeAgo
 import com.newBie.new_bie.features.post.presentation.components.PostItem
 import com.newBie.new_bie.features.post.presentation.components.SmallProfileComponent
 import com.newBie.new_bie.features.post.presentation.components.likesAndComments.CommentBottomSheet
-import com.newBie.new_bie.features.post.presentation.components.likesAndComments.CommentItem
 import com.newBie.new_bie.features.post.presentation.components.likesAndComments.LikeUserListBottomSheet
 import com.newBie.new_bie.features.post.presentation.viewModels.SearchResultViewModel
 import com.newBie.new_bie.ui.theme.BlackColor

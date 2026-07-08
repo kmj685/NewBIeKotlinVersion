@@ -9,4 +9,6 @@ interface GuestbooksRepository {
     suspend fun getGuestbook(guestbookId: Int): GuestbooksEntity?
     // 방명록 입력
     suspend fun insertGuestbook(receiverId: String, senderId: String, content: String, image: String?)
+    // 방명록 삭제
+    suspend fun deleteGuestbook(guestbookId: Int)
 }

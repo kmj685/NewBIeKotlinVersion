@@ -3,6 +3,7 @@ package com.newBie.new_bie.features.profile.data.datasources
 import android.util.Log
 import com.newBie.new_bie.core.managers.SupabaseManager
 import com.newBie.new_bie.core.utils.Constants
+import com.newBie.new_bie.core.utils.Constants.TAG
 import com.newBie.new_bie.features.post.data.dto.PostWithProfileDto
 import com.newBie.new_bie.features.post.data.dto.UserDto
 import com.newBie.new_bie.features.post.data.mapper.toEntity

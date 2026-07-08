@@ -26,7 +26,9 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.newBie.new_bie.core.components.BottomSheetTopBatTitle
+import com.newBie.new_bie.core.utils.Routes
 import com.newBie.new_bie.core.utils.toKoreaLocalDateTime
 import com.newBie.new_bie.core.utils.toTimeAgo
 import com.newBie.new_bie.features.post.presentation.components.likesAndComments.CommentBottomSheetTextField
@@ -37,7 +39,13 @@ import com.newBie.new_bie.ui.theme.BlackColor
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GuestBooksCommentsBottomSheet(viewModel : GuestbooksCommentsBottomSheetViewModel, screenHeight: Dp, sheetState: SheetState, onDismiss: () -> Unit){
+fun GuestBooksCommentsBottomSheet(
+    viewModel : GuestbooksCommentsBottomSheetViewModel,
+    screenHeight: Dp,
+    sheetState: SheetState,
+    onDismiss: () -> Unit,
+    navController: NavController
+){
     val commentsList by viewModel.guestbooksComments.collectAsState()
     val userCommentInput by viewModel.userCommentInput.collectAsState()
     val selectedCommentId by viewModel.selectCommentId.collectAsState()
@@ -95,7 +103,9 @@ fun GuestBooksCommentsBottomSheet(viewModel : GuestbooksCommentsBottomSheetViewM
                                 timeData = item.createdAt.toKoreaLocalDateTime().toTimeAgo(),
                                 introduce = item.content,
                                 userId = item.authorId.id,
-                                onImageClick = {},
+                                onImageClick = {
+                                    navController.navigate("${Routes.MY_PROFILE}/${item.authorId.id}")
+                                },
                                 selectedId = selectedCommentId,
                                 onSelect = {viewModel.onSelectComment(commentId = item.id, content = item.content?:"")},
                                 onUpdateInput = {viewModel.updateEditUserInput(it)},
@@ -108,7 +118,8 @@ fun GuestBooksCommentsBottomSheet(viewModel : GuestbooksCommentsBottomSheetViewM
                                 },
                                 onDelete = {viewModel.deleteComment(item.id, item.authorId.id)},
                                 focusManager = focusManager,
-                                focusRequester = editCommentFocusRequester
+                                focusRequester = editCommentFocusRequester,
+                                targetUserId = item.authorId.id
                             )
                         }
 

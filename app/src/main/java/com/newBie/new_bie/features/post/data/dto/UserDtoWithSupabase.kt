@@ -15,5 +15,6 @@ data class UserDtoWithSupabase(
     @SerialName("following_count") val followingCount: Int,
     @SerialName("follower_count") val followerCount: Int,
     val email: String?,
-    @SerialName("is_blocked") val isBlocked: Boolean
+    @SerialName("is_blocked") val isBlocked: Boolean,
+    @SerialName("fcm_is_notification_enabled") val fcmIsNotificationEnabled: Boolean
 )

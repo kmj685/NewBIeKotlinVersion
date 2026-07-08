@@ -123,7 +123,7 @@ fun MyProfileScreen(
 
     // 게시물 수정하면 자동으로 refresh
     val savedStateHandle = navController.currentBackStackEntry?.savedStateHandle
-    val needRefresh by savedStateHandle?.getStateFlow("need_refresh", false)?.collectAsState()
+    val profileNeedRefresh by savedStateHandle?.getStateFlow("profile_need_refresh", false)?.collectAsState()
         ?:remember { mutableStateOf(false) }
 
     // 등록에 성공했다면 ModalBottomSheet 내리기
@@ -135,10 +135,10 @@ fun MyProfileScreen(
             }
         }
     }
-    LaunchedEffect(needRefresh) {
-        if (needRefresh){
+    LaunchedEffect(profileNeedRefresh) {
+        if (profileNeedRefresh){
             viewModel.refreshAll()
-            savedStateHandle?.set("need_refresh", false)
+            savedStateHandle?.set("profile_need_refresh", false)
         }
     }
 
@@ -155,7 +155,8 @@ fun MyProfileScreen(
                 focusManager = focusManager,
                 setting = true,
                 navController = navController,
-                isRead = isRead
+                isRead = isRead,
+                targetUserNickname = user?.nickName
             )},
         bottomBar = { BottomTapBar(navController = navController, pageSet = PageSet.PROFILE) },
         containerColor = Color.Transparent

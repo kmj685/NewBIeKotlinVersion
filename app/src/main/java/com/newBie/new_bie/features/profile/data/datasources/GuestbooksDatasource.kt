@@ -101,4 +101,14 @@ class GuestbooksDatasource @Inject constructor(){
                 }
             )
     }
+
+    // 방명록 삭제
+    suspend fun deleteGuestbook(guestbookId: Int){
+        _supabase.from("guestbooks")
+            .delete {
+                filter {
+                    eq("id", guestbookId)
+                }
+            }
+    }
 }

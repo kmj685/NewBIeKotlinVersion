@@ -29,13 +29,17 @@ class PostDetailViewModel : ViewModel(), CommentBottomSheetViewModel {
     override var userCommentInput: MutableStateFlow<String> = MutableStateFlow("")
     override val editUserCommentInput: MutableStateFlow<String> = MutableStateFlow("")
     var bottomSheetType: MutableStateFlow<BottomSheetType?> = MutableStateFlow(null)
+    val isDeletedPost: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
 
     var images : MutableStateFlow<List<PostImageEntity>> = MutableStateFlow(listOf())
     fun fetchPost(id : Int) {
         viewModelScope.launch {
             val result = repository.fetchPostItem(id)
-            if (result == null)return@launch
+            if (result == null){
+                isDeletedPost.value = true
+                return@launch
+            }
             post.value = result
             images.value = result.postImages
         }

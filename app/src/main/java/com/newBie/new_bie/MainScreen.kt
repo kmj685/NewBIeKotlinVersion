@@ -36,14 +36,18 @@ fun MainScreen(modifier: Modifier = Modifier, notificationIntent: Intent? = null
             when(it) {
                 is SessionStatus.Authenticated -> {
 
-
-                    it.session.user?.id?.let {
-                        navController.navigate(Routes.HOME) {
-                            popUpTo(Routes.LOGIN) {
-                                inclusive = true
+                    // 현재 LOGIN 화면에 있을 때만 HOME으로 이동 (백그라운드 복귀 시 불필요한 이동 방지)
+                    val currentRoute = navController.currentDestination?.route
+                    if (currentRoute == Routes.LOGIN || currentRoute == null) {
+                        it.session.user?.id?.let {
+                            navController.navigate(Routes.HOME) {
+                                popUpTo(Routes.LOGIN) {
+                                    inclusive = true
+                                }
+                                launchSingleTop = true
                             }
-                            launchSingleTop = true
                         }
+                    }
 //                        SupabaseManager.fetchUser(it)
 //                        val userNickname = SupabaseManager.userInfoState.value?.nickName
 //                        if(userNickname == null) navController.navigate("setNickName")
@@ -81,24 +85,6 @@ fun MainScreen(modifier: Modifier = Modifier, notificationIntent: Intent? = null
 //                                launchSingleTop = true
 //                            }
 //                        }
-
-                    }
-//                    it.session.user?.id?.let { blockedUserId ->
-//                        val fetchedUser = SupabaseManager.fetchUser(blockedUserId)
-//                        if (fetchedUser.isBanned) {
-//                            navController.navigate("blocked_user/${blockedUserId}?name=${fetchedUser.nickname}")  {
-//                                // 기존 화면 스택들 모두 날리기
-//                                popUpTo(navController.graph.startDestinationId) {
-//                                    inclusive = true
-//                                }
-//                                // 화면 하나만 나오게 처리
-//                                launchSingleTop = true
-//                            }
-//                        } else {
-//                            isAuthLoggedIn = true
-//                        }
-//                    }
-
 
                     println("Received new authenticated session.")
 
@@ -139,51 +125,47 @@ fun MainScreen(modifier: Modifier = Modifier, notificationIntent: Intent? = null
     // 알림 클릭으로 받은 intent 처리 — MainScreen 내부의 진짜 navController 사용
     LaunchedEffect(notificationIntent) {
 
-        supabase.auth.sessionStatus.collect { status ->
-            if(status is SessionStatus.Authenticated){
-                // 일단 기본 화면(HOME)으로 이동 (스택 정리)
-                navController.navigate(Routes.HOME){
-                    popUpTo(Routes.HOME) {inclusive = false}
-                    launchSingleTop = true
-                }
+        // 알림 데이터 먼저 확인
+        val postId = notificationIntent?.getStringExtra("postId")
+        val followerId = notificationIntent?.getStringExtra("followerId")
+        val guestbookId = notificationIntent?.getStringExtra("guestbookId")
+        val likePostId = notificationIntent?.getStringExtra("likePostId")
+        val commentPostId = notificationIntent?.getStringExtra("commentPostId")
+
+        // 알림 데이터가 하나라도 있을 때만 라우팅 로직을 시작합니다.
+        if (!postId.isNullOrEmpty() || !followerId.isNullOrEmpty() || !guestbookId.isNullOrEmpty()
+            || !likePostId.isNullOrEmpty() || !commentPostId.isNullOrEmpty()) {
+
+            // 유저가 '인증(Authenticated)' 상태가 될 때까지 기다립니다. (이미 로그인 상태면 즉시 통과)
+            supabase.auth.sessionStatus
+                .filterIsInstance<SessionStatus.Authenticated>()
+                .first()
+
+            // 일단 기본 화면(HOME)으로 이동 (스택 정리)
+            navController.navigate(Routes.HOME){
+                popUpTo(Routes.HOME) {inclusive = false}
+                launchSingleTop = true
             }
 
-            // 그 다음 해당 화면으로 추가 이동
-            val postId = notificationIntent?.getStringExtra("postId")
-            val followerId = notificationIntent?.getStringExtra("followerId")
-            val guestbookId = notificationIntent?.getStringExtra("guestbookId")
-            val likePostId = notificationIntent?.getStringExtra("likePostId")
-            val commentPostId = notificationIntent?.getStringExtra("commentPostId")
-
-            // 2. 알림 데이터가 하나라도 있을 때만 라우팅 로직을 시작합니다.
-            if (!postId.isNullOrEmpty() || !followerId.isNullOrEmpty() || !guestbookId.isNullOrEmpty()) {
-
-                // 🔥 중요: 유저가 '인증(Authenticated)' 상태가 될 때까지 기다립니다. (이미 로그인 상태면 즉시 통과)
-                supabase.auth.sessionStatus
-                    .filterIsInstance<SessionStatus.Authenticated>()
-                    .first()
-
-                // 4. 데이터 목적지에 맞게 최종 화면으로 이동시킵니다.
-                when {
-                    !postId.isNullOrEmpty() -> {
-                        navController.navigate("${Routes.POST}/${postId}") { launchSingleTop = true }
-                    }
-                    !followerId.isNullOrEmpty() -> {
-                        navController.navigate("${Routes.MY_PROFILE}/${followerId}") { launchSingleTop = true }
-                    }
-                    !guestbookId.isNullOrEmpty() -> {
-                        navController.navigate("${Routes.GUESTBOOKS}/${guestbookId}") { launchSingleTop = true }
-                    }
-                    !likePostId.isNullOrEmpty() -> {
-                        navController.navigate("${Routes.POST}/${likePostId}") { launchSingleTop = true }
-                    }
-                    !commentPostId.isNullOrEmpty() -> {
-                        navController.navigate("${Routes.POST}/${commentPostId}") { launchSingleTop = true }
-                    }
+            // 데이터 목적지에 맞게 최종 화면으로 이동시킵니다.
+            when {
+                !postId.isNullOrEmpty() -> {
+                    navController.navigate("${Routes.POST}/${postId}") { launchSingleTop = true }
+                }
+                !followerId.isNullOrEmpty() -> {
+                    navController.navigate("${Routes.MY_PROFILE}/${followerId}") { launchSingleTop = true }
+                }
+                !guestbookId.isNullOrEmpty() -> {
+                    navController.navigate("${Routes.GUESTBOOKS}/${guestbookId}") { launchSingleTop = true }
+                }
+                !likePostId.isNullOrEmpty() -> {
+                    navController.navigate("${Routes.POST}/${likePostId}") { launchSingleTop = true }
+                }
+                !commentPostId.isNullOrEmpty() -> {
+                    navController.navigate("${Routes.POST}/${commentPostId}") { launchSingleTop = true }
                 }
             }
         }
-
     }
 
     AppNavHost(modifier = modifier.fillMaxSize(), navController = navController, context = context)

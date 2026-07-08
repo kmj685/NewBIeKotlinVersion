@@ -5,6 +5,7 @@ import com.newBie.new_bie.core.managers.RetrofitManager
 import com.newBie.new_bie.core.managers.SupabaseManager
 //import com.newBie.new_bie.core.managers.SupabaseManager.supabase
 import com.newBie.new_bie.core.utils.Constants
+import com.newBie.new_bie.core.utils.Constants.TAG
 import com.newBie.new_bie.features.post.data.dto.ActionResponse
 import com.newBie.new_bie.features.post.data.dto.CategoryTypeDto
 import com.newBie.new_bie.features.post.data.dto.CategoryTypeDtoWithSupabase
@@ -46,10 +47,14 @@ class PostDatasource {
 
     // 게시글 단건 조회
     suspend fun fetchPostItem(id: Int): PostWithProfileEntity? {
-
-        val dto = api.fetchPostItem(id).data
-        Log.d(Constants.TAG, "fetchPostItem의 dto : ${dto} ")
-        return dto?.toEntity()
+        return try {
+            val dto = api.fetchPostItem(id).data
+            Log.d(Constants.TAG, "fetchPostItem의 dto : ${dto} ")
+            dto?.toEntity()
+        } catch (e: Exception){
+            Log.e(TAG, "fetchPostItem: ${e.message}", )
+            null
+        }
     }
 
     // 게시글 리스트 조회

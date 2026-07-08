@@ -54,7 +54,6 @@ import com.newBie.new_bie.core.utils.toKoreaLocalDateTime
 import com.newBie.new_bie.core.utils.toTimeAgo
 import com.newBie.new_bie.features.post.presentation.components.buttons.ImageDeleteButton
 import com.newBie.new_bie.features.post.presentation.components.likesAndComments.CommentBottomSheetTextField
-import com.newBie.new_bie.features.post.presentation.components.likesAndComments.CommentItem
 import com.newBie.new_bie.features.profile.presentation.viewModels.AddGuestbooksBottomSheetViewModel
 import com.newBie.new_bie.features.profile.presentation.viewModels.GuestbooksCommentsBottomSheetViewModel
 import com.newBie.new_bie.ui.theme.BlackColor

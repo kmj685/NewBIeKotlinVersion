@@ -44,4 +44,8 @@ class GuestbooksRepositoryImpl @Inject constructor(private val datasource: Guest
             image = image
         )
     }
+
+    override suspend fun deleteGuestbook(guestbookId: Int) {
+        datasource.deleteGuestbook(guestbookId)
+    }
 }

@@ -1,6 +1,7 @@
 package com.newBie.new_bie.core.components
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -23,6 +24,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,13 +35,16 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHost
 import com.newBie.new_bie.R
+import com.newBie.new_bie.core.block.presentation.BlockUserViewModel
 import com.newBie.new_bie.core.managers.SupabaseManager
 import com.newBie.new_bie.core.utils.Constants
 import com.newBie.new_bie.core.utils.Routes
@@ -51,7 +56,13 @@ fun TopBarLayout(title: String,
                  moreVert: Boolean = false, targetId: String? = null, focusManager: FocusManager? = null,
                  setting: Boolean = false, isRead : Boolean,
                  navController: NavController,
-                 logoMode: Boolean = false) {
+                 logoMode: Boolean = false,
+                 blockUserViewModel: BlockUserViewModel = hiltViewModel(),
+                 targetUserNickname: String? = null
+) {
+    val context = LocalContext.current
+    val showReportDialog by blockUserViewModel.showReportDialog.collectAsState()
+
 
     if (logoMode) {
         Row(
@@ -137,15 +148,22 @@ fun TopBarLayout(title: String,
                             }
                         ) {
                             DropdownMenuItem(
-                                text = { Text("신고") },
-                                onClick = { /* Do something... */
+                                text = { Text("차단") },
+                                onClick = { 
                                     expanded = false
+                                    blockUserViewModel.insertBlockUser(
+                                        targetId = targetId
+                                    )
+                                    Toast.makeText(context, "${targetUserNickname}을 성공적으로 차단했습니다.", Toast.LENGTH_SHORT).show()
+                                    navController.popBackStack()
+
                                 }
                             )
                             DropdownMenuItem(
-                                text = { Text("차단") },
-                                onClick = { /* Do something... */
+                                text = { Text("신고") },
+                                onClick = {
                                     expanded = false
+                                    blockUserViewModel.showReportDialog(true)
                                 }
                             )
                         }
@@ -158,5 +176,23 @@ fun TopBarLayout(title: String,
                 }
             }
         }
+    }
+    if (showReportDialog) {
+        ReportDialog(
+            onConfirm = { category, content ->
+                targetId?.let {
+                    blockUserViewModel.insertReportUser(
+                        reportedId = targetId,
+                        category = category,
+                        content = content.ifBlank { null } // 아무것도 안 적었으면 null 처리
+                    )
+                    Toast.makeText(context, "신고가 성공적으로 접수되었습니다.", Toast.LENGTH_SHORT).show()
+                }
+            },
+            onDismissRequest = {
+                // 💡 취소하거나 바깥 누르면 다이얼로그를 닫습니다.
+                blockUserViewModel.showReportDialog(false)
+            }
+        )
     }
 }
