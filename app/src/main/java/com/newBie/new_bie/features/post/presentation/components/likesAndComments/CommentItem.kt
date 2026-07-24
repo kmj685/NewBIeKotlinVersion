@@ -17,6 +17,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.Check
@@ -58,6 +59,7 @@ import coil3.compose.AsyncImage
 import com.newBie.new_bie.R
 import com.newBie.new_bie.core.block.presentation.BlockUserViewModel
 import com.newBie.new_bie.core.components.BaseAsyncImage
+import com.newBie.new_bie.core.components.LinkifyText
 import com.newBie.new_bie.core.components.ReportDialog
 import com.newBie.new_bie.core.managers.SupabaseManager
 import com.newBie.new_bie.core.utils.Constants
@@ -182,7 +184,11 @@ fun CommentItem(
 
                 }
             } else{
-                Text(introduce ?: "", color = Color.White)
+                SelectionContainer() {
+                    LinkifyText(
+                        introduce ?:"", style = TextStyle(color = Color.White)
+                    )
+                }
             }
         }
         var expanded by remember { mutableStateOf(false) }
